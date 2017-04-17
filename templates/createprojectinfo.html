@@ -1,0 +1,117 @@
+<section class="content">
+	<div class="create-proj-cont">
+		<div class="create-proj-wrp steps-wrp">
+			<div ng-include="'templates/partials/steps.html'"></div>
+			<div class="steps-content">
+				<div class="row steps-content-basic">
+					<div class="col-md-8">
+						<h5>Upload Cover Image</h5>
+						<div class="drag-drop-box">
+							<div class="upload-img"><span class="glyphicon glyphicon-cloud-upload"></span></div>
+							<h4>DRAG &amp; DROP</h4>
+							<p>OR</p>
+							<h5>Browse</h5>
+							<p>Supported files: JPEG, PNG <br>Size upto 30MB</p>
+						</div>
+						<div class="steps-form">
+							<div class="input-wrp">
+								<label class="f-label">Location</label>
+								<md-input-container class="md-block" flex-gt-sm>
+									<label class="ph-label">Select Your City</label>
+									<md-select ng-model="user.state">
+										<md-option ng-repeat="city in cityList" value="{{city.city}}">
+											{{city.city}}
+										</md-option>
+									</md-select>
+								</md-input-container>
+							</div>
+							  
+							<div class="input-wrp">
+								<label class="f-label">Project Cateogy</label>
+								<md-input-container class="md-block" flex-gt-sm>
+									<label class="ph-label">Select Any</label>
+									<md-select ng-model="user.category">
+										<md-option ng-repeat="category in categoryList" value="{{category.name}}">
+											{{category.name}}
+										</md-option>
+									</md-select>
+								</md-input-container>
+							</div>
+							  
+							<div class="input-wrp">
+								<label class="f-label">Project Title</label>
+								<md-input-container>
+									<label class="ph-label">Give a title</label>
+									<input type="text">
+								</md-input-container>
+							</div>
+							
+							<div class="input-wrp">
+								<label class="f-label">Project Description</label>
+								<md-input-container>
+									<label class="ph-label">Describe here</label>
+									<input type="text">
+								</md-input-container>
+							</div>
+							
+							<div class="input-wrp">
+								<label class="f-label">About</label>
+								<md-input-container>
+									<label class="ph-label">My one-liner about project</label>
+									<input type="text">
+								</md-input-container>
+							</div>
+							
+						</div>
+					</div>
+					<div class="col-md-4">
+						<h5>Preview</h5>
+						<div class="poster">
+							<div class="p-img"><img src="assets/images/poster-bg.png"></div>
+							<h5 class="poster-title">Lorem Ipsum is simply dummy text of the printing</h5>
+							<div class="owner clearfix">
+								<div class="owner-img"><img src="assets/images/owner-bg.png"></div>
+								<h5 class="owner-name pull-left">Project Owner Name</h5>
+							</div>
+							<div class="funded-wrp">
+								<div class="f-progress">
+									<div class="p-process"></div>
+								</div>
+							</div>
+							<div class="row proj-statistics">
+								<div class="col-md-4 col-sm-4 ps-fund">
+									<h5>0</h5>
+									<p>Funded</p>
+								</div>
+								<div class="col-md-4 col-sm-4 ps-views">
+									<h5>0</h5>
+									<p>Views</p>
+								</div>
+								<div class="col-md-4 col-sm-4 ps-days">
+									<h5>0</h5>
+									<p>Days</p>
+								</div>
+							</div>										
+						</div>						
+					</div>
+				</div>
+			</div>
+			<div class="steps-footer">
+				<div class="row">
+					<div class="col-md-6 prev">
+						<a href="#createproject" class="steps-back" style="margin-top:31px;">
+							<i class="fa fa-arrow-left" aria-hidden="true"></i><span>Back</span>
+						</a>
+					</div>
+					<div class="col-md-6 next">
+						<p class="cont">Continue to</p>
+						<p><a href="#createprojectdetails" class="steps-back">
+							<span>Project Details</span>
+							<i class="fa fa-arrow-right" aria-hidden="true"></i>
+						</a></p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>

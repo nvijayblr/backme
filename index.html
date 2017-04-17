@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<!-- Meta-Information -->
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<!--<meta name="google-signin-client_id" content="47668821926-a6d2btq3e6o0up035mpv8sekqte7hfp9.apps.googleusercontent.com">-->
+		<title>BACKME</title>
+		
+		<link href="https://fonts.googleapis.com/css?family=Roboto+Slab|Roboto+Condensed:100,300,400,700" rel="stylesheet">
+
+		<link rel="stylesheet" type="text/css" href="assets/css/bootstrap.css">
+		<link rel="stylesheet" type="text/css" href="assets/loading-bar/loading-bar.css">
+
+		<!-- Angular Material style sheet -->
+		<link rel="stylesheet" href="assets/angular-material/angular-material.min.css">
+
+		<link rel="stylesheet" type="text/css" href="assets/css/style.css">
+		<link rel="stylesheet" type="text/css" href="assets/css/font-awesome.min.css">
+		
+		<link rel="icon" type="image/png" sizes="16x16" href="favicon.png">
+	</head>
+	
+	<body ng-app="backMe" ng-controller="appCtrl">
+		
+		<div ng-include="'templates/partials/headers.html'"></div>
+		
+		<div ui-view></div>
+		
+		<div ng-include="'templates/partials/footers.html'"></div>
+
+		<!--Begin: Login Modal -->
+		  <div class="modal fade loginModal" id="loginModal" role="dialog" data-backdrop="static" data-keyboard="false">
+			<div class="modal-dialog">
+			  <div class="modal-content">
+				<div class="modal-header">
+				  <button type="button" class="close" data-dismiss="modal">&times;</button>
+				  <h4 class="modal-title"><img src="assets/images/logo.png"></h4>
+				</div>
+				<div class="modal-body">
+					<div class="login-wrp">
+						<div class="login-section">
+							<label>Email</label>
+							<input type="text" class="txt-login" placeholder="Your email"/>
+							<label>Password</label>
+							<div class="pwd-wrp">
+								<input type="password" ng-model="loginSettings.password" class="txt-login" placeholder="Choose a password" ng-show="showPassword"/>
+								<input type="text" ng-model="loginSettings.password" class="txt-login" placeholder="Choose a password" ng-show="!showPassword"/>
+								<a href="" class="show-pwd" ng-click="showHidePassword();">{{showPassword?'Show Password':'Hide Password'}}</a>
+							</div>
+							<button class="btn btn-default btn-subscribe btn-login">Login</button>
+							<div class="or-label">or</div>
+						</div>
+					</div>
+					<div class="login-social">
+						<div class="login-section">
+							<a class="btn btn-block btn-social btn-facebook">
+								<span class="fa fa-facebook"></span> Sign in with Facebook
+							</a>
+							<a class="btn btn-block btn-social btn-google">
+								<span class="fa fa-google"></span> Sign in with Google
+							</a>						
+						</div>
+					</div>
+					<div class="sign-up-msg">
+						<p>Don't have account? <a href="" ng-click="showSignUp();">Sing up here</a></p>
+					</div>
+				</div>
+			  </div>
+			</div>
+		  </div>
+		<!--End: Login Modal -->
+		
+		<!--Begin: Signup Modal -->
+		  <div class="modal fade loginModal" id="signUpModal" role="dialog" data-backdrop="static" data-keyboard="false">
+			<div class="modal-dialog">
+			  <div class="modal-content">
+				<div class="modal-header">
+				  <button type="button" class="close" data-dismiss="modal">&times;</button>
+				  <h4 class="modal-title">Discover Amaging Talent!</h4>
+				</div>
+				<div class="modal-body">
+					<div class="login-social">
+						<div class="login-section">
+							<a class="btn btn-block btn-social btn-facebook">
+								<span class="fa fa-facebook"></span> Sign in with Facebook
+							</a>
+							<a class="btn btn-block btn-social btn-google" id="signInButton">
+								<span class="fa fa-google"></span> Sign in with Google
+							</a>						
+						</div>
+						<div class="or-label">or Sign up using</div>
+					</div>
+					<div class="login-wrp">
+						<div class="login-section sign-login-section">
+							<!--<label>Email</label>
+							<input type="text" class="txt-login" placeholder="Your email"/>
+							<label>Password</label>
+							<div class="pwd-wrp">
+								<input type="password" ng-model="signUpSettings.password" class="txt-login" placeholder="Choose a password" ng-show="showPassword"/>
+								<input type="text" ng-model="signUpSettings.password" class="txt-login" placeholder="Choose a password" ng-show="!showPassword"/>
+								<a href="" class="show-pwd" ng-click="showHidePassword();">{{showPassword?'Show Password':'Hide Password'}}</a>
+							</div>-->
+							<md-input-container>
+								<label>Email</label>
+								<input type="email" ng-model="signUpSettings.userId">
+							</md-input-container>
+
+							<md-input-container class="pwd-wrp" ng-show="showPassword">
+								<label>Password</label>
+								<input ng-model="signUpSettings.password" type="password">
+								<a href="" class="show-pwd" ng-click="showHidePassword();">{{showPassword?'Show Password':'Hide Password'}}</a>
+							</md-input-container>
+
+							<md-input-container class="pwd-wrp" ng-show="!showPassword">
+								<label>Password</label>
+								<input ng-model="signUpSettings.password" type="text">
+								<a href="" class="show-pwd" ng-click="showHidePassword();">{{showPassword?'Show Password':'Hide Password'}}</a>
+							</md-input-container>
+
+							<button class="btn btn-default btn-subscribe btn-login" ng-click="showSignUpComplete();">Create Account</button>
+							<p class="create-acc-msg">Lorem Ipsum is simply dummy text of the printing and 	typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+						</div>
+					</div>
+					<div class="sign-up-msg">
+						<p>Already have an account? <a href="" ng-click="showLogin();">Login here</a></p>
+					</div>
+				</div>
+			  </div>
+			</div>
+		  </div>
+		<!--End: Signup Modal -->
+		
+		<!--Begin: Signup Finish Modal -->
+		  <div class="modal fade loginModal signUpFinishModal" id="signUpFinishModal" role="dialog" data-backdrop="static" data-keyboard="false">
+			<div class="modal-dialog">
+			  <div class="modal-content">
+				<div class="modal-header">
+				  <button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+				<div class="modal-body">
+					<div class="login-social">
+						<div class="login-section">
+							<h4>What do you want to see?</h4>
+							<div class="row">
+								<div class="col-md-6">
+									<ul class="interest">
+										<li><md-checkbox md-no-ink class="md-primary">Singer</md-checkbox></li>
+										<li><md-checkbox md-no-ink class="md-primary">Cute</md-checkbox></li>
+										<li><md-checkbox md-no-ink class="md-primary">Funny</md-checkbox></li>
+										<li><md-checkbox md-no-ink class="md-primary">Prank</md-checkbox></li>
+										<li><md-checkbox md-no-ink class="md-primary">Music</md-checkbox></li>
+									</ul>
+								</div>
+								<div class="col-md-6">
+									<ul class="interest">
+										<li><md-checkbox md-no-ink class="md-primary">Singer</md-checkbox></li>
+										<li><md-checkbox md-no-ink class="md-primary">Cute</md-checkbox></li>
+										<li><md-checkbox md-no-ink class="md-primary">Funny</md-checkbox></li>
+										<li><md-checkbox md-no-ink class="md-primary">Prank</md-checkbox></li>
+										<li><md-checkbox md-no-ink class="md-primary">Music</md-checkbox></li>
+									</ul>
+								</div>
+							</div>
+							<md-input-container>
+								<label>Name</label>
+								<input type="text">
+							</md-input-container>
+							<div class="social-connect">
+								<h5>Social Connect <span class="opt">(Optional)</span></h5>
+								<div class="conenect-wrp">
+								  <md-checkbox md-no-ink ng-model="data.cb1" aria-label="F" class="fb-cb social-cb">f</md-checkbox>
+								  <md-checkbox md-no-ink ng-model="data.cb2" aria-label="T" class="tw-cb social-cb">t</md-checkbox>
+								  <md-checkbox md-no-ink ng-model="data.cb3" aria-label="G" class="go-cb social-cb">g</md-checkbox>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="login-wrp">
+						<div class="login-section sign-login-section">
+							<p class="create-acc-msg">
+								<md-checkbox md-no-ink class="md-primary">I agree to <a href="">terms &amp; conditions.</a></md-checkbox>
+							</p>
+							<button class="btn btn-default btn-subscribe btn-login" ng-click="finishSignup();">Finish</button>
+						</div>
+					</div>
+				</div>
+			  </div>
+			</div>
+		  </div>
+		<!--End: Signup Modal -->
+    <!--<div id="nav">
+      <div id="signin" class="g-signin2"></div>
+      <button id="signout" ng-click="signOut()">Signout</button>
+      <button id="disconnect" ng-click="disconnect()">Disconnect</button>      
+    </div>-->
+		
+	</body>
+
+	<!--begin libs-->
+	<script src="assets/angular/jquery.min.js"></script>
+	<script src="assets/bootstrap/js/bootstrap.min.js"></script>
+	<script src="assets/angular/angular.min.js"></script>
+	<script src="assets/angular/angular-ui-router.js"></script>
+	<script src="assets/loading-bar/loading-bar.min.js"></script>
+	
+	<script src="assets/moment/moment.js"></script>
+	
+	<!-- Angular Material Library -->
+	<script src="assets/angular-animate/angular-animate.min.js"></script>
+	<script src="assets/angular-material/angular-aria.min.js"></script>
+	<script src="assets/angular-material/angular-material.min.js"></script>
+
+	<script src="appJS/app.js"></script>
+
+	<!--begin services-->
+	<script src="appJS/services/BaseServices.js"></script>
+	<script src="appJS/services/HttpServices.js"></script>
+
+	<!--begin controllers-->
+	<script src="appJS/controllers/backMeCtrl.js"></script>
+	<script src="appJS/controllers/appCtrl.js"></script>
+	<script src="appJS/controllers/homeCtrl.js"></script>
+	<script src="appJS/controllers/aboutCtrl.js"></script>
+	<script src="appJS/controllers/teamCtrl.js"></script>
+	<script src="appJS/controllers/createprojectCtrl.js"></script>
+	<script src="appJS/controllers/createprojectinfoCtrl.js"></script>
+	<script src="appJS/controllers/createprojectdetailsCtrl.js"></script>
+	<script src="appJS/controllers/createprojectrewardsCtrl.js"></script>
+	<script src="appJS/controllers/createprojectaccountCtrl.js"></script>
+	<!--end controllers-->
+
+	<!--<script src="https://apis.google.com/js/platform.js?onload=appStart" async defer></script>-->
+	
+</html>
