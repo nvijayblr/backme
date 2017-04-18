@@ -432,12 +432,23 @@ h6 {
     background-color: #fff;
     background-image: none;
 }
+.google-btn-wrp {
+	margin-top: 15px;
+}
+.abcRioButtonBlue {
+	height: 42px !important;
+    width: 100% !important;
+	background-color: #dd4b39 !important;
+	border-radius: 4px;
+	-webkit-border-radius: 4px;
+}
 .btn-login {
 	display: block;
     width: 100%;
 	font-size: 20px;
 	margin-top: 40px;
 }
+
 .login-social .fb-login, .login-social .fb-login:focus {
 	margin-top:5px;
 	text-transform:none;

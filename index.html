@@ -5,10 +5,10 @@
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<!--<meta name="google-signin-client_id" content="47668821926-a6d2btq3e6o0up035mpv8sekqte7hfp9.apps.googleusercontent.com">-->
+		<meta name="google-signin-client_id" content="47668821926-a6d2btq3e6o0up035mpv8sekqte7hfp9.apps.googleusercontent.com">
 		<title>BACKME</title>
 		
-		<link href="https://fonts.googleapis.com/css?family=Roboto+Slab|Roboto+Condensed:100,300,400,700" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Roboto|Roboto+Slab|Roboto+Condensed:100,200,300,400,500,700,800" rel="stylesheet">
 
 		<link rel="stylesheet" type="text/css" href="assets/css/bootstrap.css">
 		<link rel="stylesheet" type="text/css" href="assets/loading-bar/loading-bar.css">
@@ -20,12 +20,12 @@
 		<link rel="stylesheet" type="text/css" href="assets/css/font-awesome.min.css">
 		
 		<link rel="icon" type="image/png" sizes="16x16" href="favicon.png">
+
 	</head>
 	
 	<body ng-app="backMe" ng-controller="appCtrl">
 		
 		<div ng-include="'templates/partials/headers.html'"></div>
-		
 		<div ui-view></div>
 		
 		<div ng-include="'templates/partials/footers.html'"></div>
@@ -41,15 +41,23 @@
 				<div class="modal-body">
 					<div class="login-wrp">
 						<div class="login-section">
-							<label>Email</label>
-							<input type="text" class="txt-login" placeholder="Your email"/>
-							<label>Password</label>
-							<div class="pwd-wrp">
-								<input type="password" ng-model="loginSettings.password" class="txt-login" placeholder="Choose a password" ng-show="showPassword"/>
-								<input type="text" ng-model="loginSettings.password" class="txt-login" placeholder="Choose a password" ng-show="!showPassword"/>
+							<md-input-container>
+								<label>Your email</label>
+								<input type="email" ng-model="loginSettings.loginId">
+							</md-input-container>
+
+							<md-input-container class="pwd-wrp" ng-show="showPassword">
+								<label>Password</label>
+								<input ng-model="loginSettings.password" type="password">
 								<a href="" class="show-pwd" ng-click="showHidePassword();">{{showPassword?'Show Password':'Hide Password'}}</a>
-							</div>
-							<button class="btn btn-default btn-subscribe btn-login">Login</button>
+							</md-input-container>
+
+							<md-input-container class="pwd-wrp" ng-show="!showPassword">
+								<label>Password</label>
+								<input ng-model="loginSettings.password" type="text">
+								<a href="" class="show-pwd" ng-click="showHidePassword();">{{showPassword?'Show Password':'Hide Password'}}</a>
+							</md-input-container>							
+							<button class="btn btn-default btn-subscribe btn-login" ng-click="appLogin(loginSettings.loginId, loginSettings.password);">Login</button>
 							<div class="or-label">or</div>
 						</div>
 					</div>
@@ -58,9 +66,16 @@
 							<a class="btn btn-block btn-social btn-facebook">
 								<span class="fa fa-facebook"></span> Sign in with Facebook
 							</a>
-							<a class="btn btn-block btn-social btn-google">
-								<span class="fa fa-google"></span> Sign in with Google
-							</a>						
+							<div class="google-btn-wrp">
+								<div class="" id="googleLogin">
+									<span class="fa fa-google"></span> Sign in with Google
+								</div>
+								<!--<div class="btn btn-block btn-social btn-google">
+									<span class="fa fa-google"></span> Sign in with Google
+								</div>-->
+								<!--<div id="googleLogin"></div>-->
+							</div>
+							<!--<button ng-click="googleLotout();">Logout</button>-->							
 						</div>
 					</div>
 					<div class="sign-up-msg">
@@ -86,7 +101,7 @@
 							<a class="btn btn-block btn-social btn-facebook">
 								<span class="fa fa-facebook"></span> Sign in with Facebook
 							</a>
-							<a class="btn btn-block btn-social btn-google" id="signInButton">
+							<a class="btn btn-block btn-social btn-google">
 								<span class="fa fa-google"></span> Sign in with Google
 							</a>						
 						</div>
@@ -118,8 +133,8 @@
 								<input ng-model="signUpSettings.password" type="text">
 								<a href="" class="show-pwd" ng-click="showHidePassword();">{{showPassword?'Show Password':'Hide Password'}}</a>
 							</md-input-container>
-
-							<button class="btn btn-default btn-subscribe btn-login" ng-click="showSignUpComplete();">Create Account</button>
+							<!--ng-click="showSignUpComplete();"-->
+							<button class="btn btn-default btn-subscribe btn-login" ng-click="appSignup(signUpSettings.userId, signUpSettings.password);">Create Account</button>
 							<p class="create-acc-msg">Lorem Ipsum is simply dummy text of the printing and 	typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
 						</div>
 					</div>
@@ -190,14 +205,10 @@
 			</div>
 		  </div>
 		<!--End: Signup Modal -->
-    <!--<div id="nav">
-      <div id="signin" class="g-signin2"></div>
-      <button id="signout" ng-click="signOut()">Signout</button>
-      <button id="disconnect" ng-click="disconnect()">Disconnect</button>      
-    </div>-->
-		
+
 	</body>
 
+	
 	<!--begin libs-->
 	<script src="assets/angular/jquery.min.js"></script>
 	<script src="assets/bootstrap/js/bootstrap.min.js"></script>
@@ -213,11 +224,15 @@
 	<script src="assets/angular-material/angular-material.min.js"></script>
 
 	<script src="appJS/app.js"></script>
+	<script src="appJS/appConstant.js"></script>
 
 	<!--begin services-->
 	<script src="appJS/services/BaseServices.js"></script>
 	<script src="appJS/services/HttpServices.js"></script>
 
+	<!--begin directives-->
+	<!--<script src="assets/library/google-plus-signin.js"></script>-->
+	
 	<!--begin controllers-->
 	<script src="appJS/controllers/backMeCtrl.js"></script>
 	<script src="appJS/controllers/appCtrl.js"></script>
@@ -231,6 +246,6 @@
 	<script src="appJS/controllers/createprojectaccountCtrl.js"></script>
 	<!--end controllers-->
 
-	<!--<script src="https://apis.google.com/js/platform.js?onload=appStart" async defer></script>-->
-	
+	<script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
+
 </html>
