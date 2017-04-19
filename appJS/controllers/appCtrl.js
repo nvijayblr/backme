@@ -6,11 +6,12 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 		password: ''
 	}
 	_scope.userProfile = {};
-	
+	_scope.loggedIn = false;
 	_scope.signUpSettings = {
 		loginId : '',
 		password: ''
 	}
+	
 	_scope.showPassword = true;
 	_scope.showLogin = function() {
 		_scope.loginSettings = {
@@ -68,6 +69,7 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 			url: _appConstant.baseUrl + 'login?email='+_email+'&pass='+_pass
 		}, function(data){
 			_scope.userProfile.name = _email;
+			_scope.loggedIn = true;
 			$('#loginModal').modal('hide');
 		});
 	}
@@ -89,6 +91,7 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 		}, function(data){
 			$('#signUpModal').modal('hide');
 			_scope.userProfile.name = _email;
+			_scope.loggedIn = true;
 		});
 	}
 	
@@ -97,6 +100,7 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 	_scope.googleLoginSuccess = function(_googleUser) {
 		_scope.profile = _googleUser.getBasicProfile();
 		_scope.userProfile.name = _scope.profile.getName();
+		_scope.loggedIn = true;
 		console.log(_scope.userProfile.name)
 		_scope.$apply();
 		$('#signUpModal').modal('hide');
@@ -120,6 +124,7 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 			console.log('Logged out.');
 		});
 		_scope.userProfile = {};
+		_scope.loggedIn = false;
 	}
 	
 	_window.renderButton = function() {
