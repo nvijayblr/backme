@@ -1,6 +1,10 @@
 'use strict';
-backMe.controller('createprojectCtrl', ['$scope', 'BaseServices', '$timeout', function(_scope, _services, _timeout){
+backMe.controller('createprojectCtrl', ['$scope', 'BaseServices', '$timeout', '$state', function(_scope, _services, _timeout, _state){
 
-	console.log('createprojectCtrl');
+	console.log('createprojectCtrl', _scope.loggedIn);
+	if(!_scope.loggedIn) {
+		_state.go('home')
+		return false;
+	}
 
 }]);

@@ -1,18 +1,19 @@
 'use strict';
-backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope', '$window', 'appConstant', function(_scope, _services, _timeout, _rootScope, _window, _appConstant){
+backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope', '$window', '$state', '$mdToast', 'appConstant', function(_scope, _services, _timeout, _rootScope, _window, _state, _mdToast, _appConstant){
 
 	_scope.loginSettings = {
 		loginId : '',
 		password: ''
 	}
-	_scope.userProfile = {};
-	_scope.loggedIn = false;
 	_scope.signUpSettings = {
 		loginId : '',
 		password: ''
 	}
 	
+	_scope.userProfile = {};
+	_scope.loggedIn = false;
 	_scope.showPassword = true;
+
 	_scope.showLogin = function() {
 		_scope.loginSettings = {
 			loginId : '',
@@ -45,23 +46,17 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 		_scope.showPassword = !_scope.showPassword;
 	}
 
-	$(document).off('hidden.bs.modal');
-	$(".modal").on('hidden.bs.modal', function () {
-		if($(".modal.fade.in").length > 0) {
-			$('body').addClass('modal-open');
+	_scope.startProject = function() {
+		if(_scope.loggedIn) {
+			_state.go('createproject')
+		} else {
+			_scope.showLogin();
 		}
-		if(!$(".modal.fade.in").length) {
-			$('body').css('padding-right',0);
-		}
-	});
-
-	_rootScope.$on("$locationChangeSuccess", function (event, currentRoute, previousRoute) {
-		window.scrollTo(0, 0);
-	});
-
+	}
+	
 	_scope.appLogin = function(_email, _pass) {
 		if(!_email || !_pass) {
-			alert('Please enter the userId or password');
+			_services.toast.show('Please enter the userId or password');
 			return;
 		}
 		_services.http.serve({
@@ -77,7 +72,7 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 
 	_scope.appSignup = function(_email, _pass) {
 		if(!_email || !_pass) {
-			alert('Please enter the email id or password');
+			_services.toast.show('Please enter the email id or password');
 			return;
 		}
 		_scope.signup = {
@@ -127,7 +122,7 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 		_scope.loggedIn = false;
 	}
 	
-	_window.renderButton = function() {
+	_window.renderGoogleButton = function() {
 		gapi.signin2.render('googleLogin', {
 			'scope': 'profile email',
 			'width': 240,
@@ -139,7 +134,22 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 		});
     }
 	/*End the google sign in*/
+	
+	/*Begin the common functions for the application*/
+	$(document).off('hidden.bs.modal');
+	$(".modal").on('hidden.bs.modal', function () {
+		if($(".modal.fade.in").length > 0) {
+			$('body').addClass('modal-open');
+		}
+		if(!$(".modal.fade.in").length) {
+			$('body').css('padding-right',0);
+		}
+	});
 
+	_rootScope.$on("$locationChangeSuccess", function (event, currentRoute, previousRoute) {
+		window.scrollTo(0, 0);
+	});
+	/*End the common functions for the application*/
 
 }]);
 

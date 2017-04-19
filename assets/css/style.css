@@ -975,6 +975,9 @@ md-datepicker {
 	-moz-box-shadow: 0px 3px 5px 1px rgba(132,137,140,1);
 	box-shadow: 0px 3px 5px -1px rgba(132,137,140,1);
 }
+md-toast {z-index: 10000!important; right: 20px !important;}
+md-toast .md-toast-content {background-color: #00897b !important;}
+
 
 @media screen and (min-width:992px) {
 	.proj-wrp {

@@ -16,15 +16,15 @@
 			<!-- Collect the nav links, forms, and other content for toggling -->
 			<div class="collapse navbar-collapse" id="header-top-nav">
 			  <ul class="nav navbar-nav top-nav">
-				<li><a href="#createproject">START A PROJECT</a></li>
+				<li><a href="" ng-click="startProject();">START A PROJECT</a></li>
 				<li><a href="#about">ABOUT US</a></li>
 				<li><a href="#team">TEAM</a></li>
 			  </ul>
 			  <ul class="nav navbar-nav navbar-right top-nav">
 				<li class="top-search"><a href=""><span class="glyphicon glyphicon-search"></span></a></li>
-				<li class="singup"><a href="" ng-click="showLogin()" ng-if="!userProfile.name"><span class="glyphicon glyphicon-lock"></span>LOGIN/SIGNUP</a></li>
-				<li class="singup"><a href="" ng-click="googleLotout()" ng-if="userProfile.name"><span class="glyphicon glyphicon-lock"></span>LOGOUT</a></li>
-				<li><a href="">{{userProfile.name}}</a></li>
+				<li class="singup" ng-if="!loggedIn"><a href="" ng-click="showLogin()"><span class="glyphicon glyphicon-lock"></span>LOGIN/SIGNUP</a></li>
+				<li class="singup" ng-if="loggedIn"><a href="" ng-click="googleLotout()"><span class="glyphicon glyphicon-lock"></span>LOGOUT</a></li>
+				<li ng-if="loggedIn"><a href="">{{userProfile.name}}</a></li>
 			  </ul>
 			</div>
 		  </div>
