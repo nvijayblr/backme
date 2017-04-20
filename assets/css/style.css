@@ -93,6 +93,9 @@ h6 {
 .top-nav li a:hover {
 	color: #b3b3b3;
 }
+.top-nav li a:active {
+	color: #6c6c6c;
+}
 .logo {
     text-align: center;
     position: relative;
@@ -190,6 +193,9 @@ h6 {
 .proj-category .right-nav li a:hover, .proj-category .right-nav li a:active, .proj-category .right-nav li a.active {
 	border-left: 4px solid #00897b;	
 	color: #00897b;	
+}
+.proj-category .right-nav li a:active {
+	color: #000;
 }
 .search {
 	margin: 0 0 20px 0;
@@ -334,6 +340,9 @@ h6 {
 	border-color: #6dc2b9;
 	color: #fff;
 	outline: none;
+}
+.btn-default.btn-subscribe:active {
+	background-color: #00897b;
 }
 .group-subscribe {
 	margin-bottom: 10px;
@@ -1201,9 +1210,149 @@ md-toast .md-toast-content {background-color: #00897b !important;}
 	font-weight: 100;
 	margin: 30px 0 0 0;
 }
-
-
-
+.support-box.support {
+	padding: 0;
+    background: #fff;
+    border: 0;
+}
+.support-box.support .amount {
+    font-size: 30px;
+    font-weight: bold;
+    color: #2a2a2a;
+	margin-bottom: 0;
+}
+.support-box.support .amount .fa-rupee {
+    margin-right: 4px;
+}
+.support-box.support .s-title {
+	text-transform: capitalize;
+    font-size: 18px;
+	color: #727272;
+	margin: 5px 0 25px 0;
+}
+.support-box.support .funded-wrp p.desc {
+	color: #727272;
+	font-size: 14px;
+	margin-top: 10px;
+}
+.support-box.support .funded-wrp .f-progress .p-completed {
+    border: 2px solid #b4b4b4;
+}
+.support-box.support .funded-wrp .f-progress .p-process {
+    border:2px solid #ebebeb;
+}
+.s-proj-title {
+	color: #2a2a2a;
+	font-size: 20px;
+	font-weight: bold;
+	text-transform: uppercase;
+	margin: 30px 0 15px 0;
+}
+.s-proj-title .fa-shield {
+	margin-right: 8px;
+    top: 2px;
+    position: relative;
+}
+.support-me {
+	padding: 20px 0 10px;
+}
+.support-me .btn-default.btn-subscribe {
+	display: block;
+	-webkit-box-shadow: 0px 3px 5px -2px rgba(0,0,0,0.75);
+	-moz-box-shadow: 0px 3px 5px -2px rgba(0,0,0,0.75);
+	box-shadow: 0px 3px 5px -2px rgba(0,0,0,0.75);
+	font-size: 28px;
+	font-weight: bold;
+}
+.support-me .desc {
+    color: #6c6c6c;
+    margin: 14px 0;
+    font-size: 16px;
+}
+.sm-group {
+	position: relative;
+}
+.sm-group .fa-rupee {
+	position: absolute;
+    left: 12px;
+    top: 11px;
+    font-size: 43px;
+    color: #2a2a2a;
+}
+.sm-group .sm-txt {
+	float: left;
+    height: 59px;
+    font-size: 25px;
+    padding-left: 40px;
+    width: 50%;
+    border: 1px solid #00897b;
+}
+.sm-group .btn-default.btn-subscribe.sm-btn {
+	
+}
+.partners .p-logo {
+	padding: 7px;
+	border: 1px solid #e5e5e5;
+	border-radius: 4px;
+	-webkit-border-radius: 4px;
+	float: left;
+	margin: 10px 10px 10px 0;
+}
+.partners .p-logo img{
+	max-width: 100px;
+	height: 25px;
+}
+.partners .p-logo.last {
+	margin-right: 0;
+}
+.sim-proj {
+	margin-bottom: 5px;
+}
+.sim-proj img {
+	width: 100%;
+}
+.sim-proj .title {
+    width: 100%;
+    margin-top: 0;
+    color: #2a2a2a;
+    font-size: 18px;
+    font-weight: bold;
+    line-height: 21px;
+}
+.sim-proj .desc {
+    font-size: 14px;
+    color: #6c6c6c;
+}
+.people-wrp {
+	margin-top: 15px;
+	height: 80px;
+}
+.people-wrp .fa-user {
+	color: #b4b4b4;
+	font-size: 18px;
+	margin-right: 5px;
+}
+.days-wrp {
+	position: relative;
+}
+.total-days {
+	width: 65px;
+	height: 65px;
+	border: 4px solid #ebebeb;
+	border-radius: 40px;
+	-webkit-border-radius: 40px;
+}
+.completed-days {
+	width: 65px;
+	height: 65px;
+	border: 4px solid #b4b4b4;
+	border-radius: 40px;
+	-webkit-border-radius: 40px;
+	position: absolute;
+    left: 0;
+    top: 0px;
+}
+}
 
 
 
