@@ -147,7 +147,7 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 	});
 
 	_rootScope.$on("$locationChangeSuccess", function (event, currentRoute, previousRoute) {
-		window.scrollTo(0, 0);
+		$('#backme-page').scrollTop(0);
 	});
 	/*End the common functions for the application*/
 
