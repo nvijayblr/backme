@@ -12,7 +12,7 @@ backMe.controller('projectCtrl', ['$scope', 'BaseServices', '$timeout', '$state'
 	}
 
 	_scope.supportMeContinue = function() {
-		_scope.showSupportMe = true;
+		_state.go('checkout');
 	}
 
 }]);
