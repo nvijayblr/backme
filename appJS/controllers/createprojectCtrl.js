@@ -4,7 +4,6 @@ backMe.controller('createprojectCtrl', ['$scope', 'BaseServices', '$timeout', '$
 	console.log('createprojectCtrl', _scope.loggedIn);
 	if(!_scope.loggedIn) {
 		_state.go('home')
-		return false;
 	}
 
 }]);

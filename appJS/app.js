@@ -47,6 +47,11 @@ backMe
 				templateUrl: 'templates/createprojectaccount.html',
 				controller: 'createprojectaccountCtrl'
 		})
+		.state('project', {
+				url: '/project',
+				templateUrl: 'templates/project.html',
+				controller: 'projectCtrl'
+		})
 		;
 
 }]);
