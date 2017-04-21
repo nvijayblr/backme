@@ -1,14 +1,13 @@
 <section class="content">
-	<div class="create-proj-cont checkout-cont">
-		<div class="title-wrp">
-			<h6 class="check-sub-title">You're contributing to Sameer's</h6>
-			<h4 class="check-title">Lorem ipsum dolor sit amet, consectetuer adipiscing elit</h4>
-		</div>
-		<div class="create-proj-wrp steps-wrp row">
-			<div class="checkout-wrp">
-			
-				<div class="steps-content col-md-8">
-					<div class="row steps-content-basic">
+	<div class="create-proj-cont">
+		<div class="checkout-cont row">
+			<div class="title-wrp">
+				<h6 class="check-sub-title">You're contributing to Sameer's</h6>
+				<h4 class="check-title">Lorem ipsum dolor sit amet, consectetuer adipiscing elit</h4>
+			</div>
+			<div class="col-md-9">
+				<div class="checkout-wrp">
+					<div class="clearfix steps-content-basic">
 						<div class="donation-wrp">
 							<h4>Enter your donation</h4>
 							<md-input-container class="rupees">
@@ -94,16 +93,29 @@
 									<input type="email">
 								</md-input-container>
 							</div>
+
+							<div class="support-me">
+								<a class="btn btn-default btn-lg btn-subscribe ng-scope" ng-click="supportMe()">Donate</a>
+							</div>							
 						</div>
 					</div>
 				</div>
-
-				<div class="steps-content support-me col-md-4">
-					<div class="donation-wrp prfile">
-						<h4>Support Sameer</h4>
+			</div>
+			<div class="checkout-wrp-right support-me col-md-3">
+				<div class="user-wrp prfile">
+					<h4 class="uname">Support Sameer</h4>
+					<div class="user-img"><img src="assets/images/user-img.png"/></div>
+					<h3 class="amount"><i class="fa fa-rupee" aria-hidden="true"></i>24,000<sup>.00</sup></h3>
+					<div class="funded-wrp">
+						<div class="f-progress">
+							<div class="p-process"></div>
+							<div class="p-completed"></div>
+						</div>
 					</div>
+					<p class="fund">24% amount achievd of 100,000</p>
 				</div>
 			</div>
+			
 		</div>
 	</div>
 </section>

@@ -1354,12 +1354,35 @@ md-toast .md-toast-content {background-color: #00897b !important;}
     left: 0;
     top: 0px;
 }
-.checkout-cont .checkout-wrp {
-	width: 77%;
+.checkout-cont {
+    width: 77%;
+    min-height: 500px;
+	margin: auto;
+}
+.checkout-wrp {
+	min-height: 500px;
+	background-color: #f7f7f7;
+	-webkit-box-shadow: 0px 1px 3px 1px rgba(132,137,140,1);
+	-moz-box-shadow: 0px 1px 3px 1px rgba(132,137,140,1);
+	box-shadow: 0px 1px 3px 1px rgba(132,137,140,1);
+}
+.checkout-wrp-right {
+	min-height: 510px;
+	background-color: #f7f7f7;
+	-webkit-box-shadow: 0px 1px 3px 1px rgba(132,137,140,1);
+	-moz-box-shadow: 0px 1px 3px 1px rgba(132,137,140,1);
+	box-shadow: 0px 1px 3px 1px rgba(132,137,140,1);
+}
+.checkout-wrp .steps-form {
+	padding: 30px 100px;
+}
+.checkout-cont .create-proj-wrp {
+    width: auto;
 }
 .checkout-cont .title-wrp {
     margin: auto;
     padding-bottom: 20px;
+	padding-left: 12px;
 }
 .checkout-cont .check-sub-title {
 	color: #6c6c6c;
@@ -1373,7 +1396,7 @@ md-toast .md-toast-content {background-color: #00897b !important;}
 }
 .checkout-cont .donation-wrp {
 	background-color: #83fff2;
-	padding: 40px 80px;
+	padding: 30px 80px 10px;
 }
 .checkout-cont .credit-title {
 	text-align: center;
@@ -1385,9 +1408,54 @@ md-toast .md-toast-content {background-color: #00897b !important;}
 .donation-wrp.prfile {
 	text-align: center;
 }
-
-
-
+.checkout-wrp-right.support-me {
+	padding: 0;
+	background-color: #ffffff;
+}
+.checkout-wrp-right .user-wrp {
+	background-color: #83fff2;
+	height: 204px;
+	padding-top: 30px;
+	text-align: center;
+}
+.checkout-wrp-right .user-wrp .uname{
+	font-size: 23px;
+	color: #2a2a2a;
+	font-weight: bold;
+}
+.checkout-wrp-right .user-wrp .user-img{
+	width: 160px;
+	height: 160px;
+	margin: auto;
+    position: relative;
+    top: 18px;	
+}
+.checkout-wrp-right .user-wrp .user-img img{
+	width: 160px;
+	height: 160px;
+	border: 4px solid #ffffff;
+	border-radius: 180px;
+	-webkit-border-radius: 180px;
+}
+.checkout-wrp-right .user-wrp .amount{
+	font-size: 30px;
+    font-weight: bold;
+    color: #2a2a2a;
+	margin-top: 70px;
+}
+.checkout-wrp-right .user-wrp .amount .fa-rupee{
+    margin-right: 6px;
+}
+.checkout-wrp-right .funded-wrp {
+    margin-top: 60px;
+    padding: 0 26px;
+}
+.checkout-wrp-right p.fund {
+    margin-top: 14px;
+    color: #727272;
+    font-size: 20px;
+    padding: 0 25px;
+}
 
 /*common responsive styles for all pages*/
 @media screen and (min-width:992px) {
@@ -1416,18 +1484,6 @@ md-toast .md-toast-content {background-color: #00897b !important;}
 }
 
 @media screen and (max-width:768px) {
-	.logo {
-		position: absolute;
-    	top: 17px;
-		left: 10px;
-	}
-	.top-nav li {
-    	float: none;
-		margin-left: 22px;
-	}
-	.top-nav li.top-search {
-		display: none;
-	}
 	.container-menu {
 		padding: 0;
 	}
@@ -1441,6 +1497,18 @@ md-toast .md-toast-content {background-color: #00897b !important;}
 }
 
 @media screen and (max-width:540px) {
+	.logo {
+		position: absolute;
+    	top: 17px;
+		left: 10px;
+	}
+	.top-nav li {
+    	float: none;
+		margin-left: 22px;
+	}
+	.top-nav li.top-search {
+		display: none;
+	}
 	.or-label {
 		display: none;
 	}
