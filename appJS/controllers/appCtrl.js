@@ -73,7 +73,6 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 			_appConstant.currentUser.name = _email;
 			_scope.loggedUser = _appConstant.currentUser;
 			localStorage.setItem('backMeUser', JSON.stringify(_appConstant.currentUser));
-			_services.toast.show('Logged in successfully.');
 			_scope.loggedIn = true;
 			$('#loginModal').modal('hide');
 		});
@@ -137,7 +136,6 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 		_scope.loggedUser = {};
 		_scope.loggedIn = false;
 		localStorage.removeItem('backMeUser');
-		_services.toast.show('Logged in successfully.');		
 	}
 	
 	_window.renderGoogleButton = function() {

@@ -10,18 +10,18 @@
 			<h4 class="db-title">Sameer Singer</h4>
 			<p class="db-loc">Delhi, India</p>
 		</div>
-		<div class="row">
+		<div class="row" ng-init="tab=1">
 			<div class="col-md-8">
 				<div class="profile-left">
 					<div class="tabs">
 						<ul class="clearfix">
-							<li><a href="" class="active">My Projects</a></li>
-							<li><a href="">Personal Details</a></li>
-							<li><a href="">Account Information</a></li>
+							<li><a href="" ng-class="tab==1?'active':''" ng-click="tab=1;">My Projects</a></li>
+							<li><a href="" ng-class="tab==2?'active':''" ng-click="tab=2;">Personal Details</a></li>
+							<li><a href="" ng-class="tab==3?'active':''" ng-click="tab=3;">Account Information</a></li>
 						</ul>
 					</div>
 					<!--Begin the My Project tab-->
-					<div class="my-proj-tab-content">
+					<div class="my-proj-tab-content" ng-show="tab==1">
 						<div class="my-project">
 							<div class="row project">
 								<div class="col-md-8">
@@ -159,6 +159,102 @@
 						</div>
 					</div>
 					<!--End of the My Project tab-->
+					
+					<!--Begin the Personal details tab-->
+					<div class="proj-steps-wrp personal-details" ng-show="tab==2">
+						<div class="steps-form">
+							<div class="input-wrp">
+								<label class="f-label">Upload Your Photo</label>
+								<md-input-container>
+									<label class="ph-label">Upload Your Photo</label>
+									<input type="text">
+								</md-input-container>
+							</div>
+							<div class="input-wrp">
+								<label class="f-label">Name</label>
+								<md-input-container>
+									<label class="ph-label">Your name</label>
+									<input type="text">
+								</md-input-container>
+							</div>
+							<div class="input-wrp">
+								<label class="f-label">Mobile Number</label>
+								<md-input-container>
+									<label class="ph-label">Your mobile number</label>
+									<input type="text">
+								</md-input-container>
+							</div>
+							<div class="input-wrp">
+								<label class="f-label">Social Media Connect</label>
+								<div class="social-connect">
+									<div class="conenect-wrp">
+									  <md-checkbox md-no-ink ng-model="data.cb1" aria-label="F" class="fb-cb social-cb">f</md-checkbox>
+									  <md-checkbox md-no-ink ng-model="data.cb2" aria-label="T" class="tw-cb social-cb">t</md-checkbox>
+									  <md-checkbox md-no-ink ng-model="data.cb3" aria-label="G" class="go-cb social-cb">g</md-checkbox>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="steps-form">
+							<div class="input-wrp">
+								<label class="f-label">About Me</label>
+								<md-input-container>
+									<label class="ph-label">Describe About You</label>
+									<input type="text">
+								</md-input-container>
+							</div>
+							<div class="input-wrp">
+								<label class="f-label">My Hobbies</label>
+								<md-input-container>
+									<label class="ph-label">Describe Your Hobbies</label>
+									<input type="text">
+								</md-input-container>
+							</div>
+							<div class="input-wrp">
+								<label class="f-label">My Goals</label>
+								<md-input-container>
+									<label class="ph-label">Describe Your Goals</label>
+									<input type="text">
+								</md-input-container>
+							</div>
+							<div class="support-me">
+								<a class="btn btn-default btn-lg btn-subscribe ng-scope" ng-click="supportMe()">Update Personal Details</a>
+							</div>							
+						</div>
+					</div>
+					<!--End the Personal details tab-->
+					
+					<!--Begin the Account details tab-->
+					<div class="proj-steps-wrp account-details" ng-show="tab==3">
+						<div class="steps-form">
+							<div class="input-wrp">
+								<label class="f-label">Current Passowrd</label>
+								<md-input-container>
+									<label class="ph-label">Enter Your Current Passowrd</label>
+									<input type="password">
+								</md-input-container>
+							</div>
+							<div class="input-wrp">
+								<label class="f-label">New Passowrd</label>
+								<md-input-container>
+									<label class="ph-label">Enter New Passowrd</label>
+									<input type="password">
+								</md-input-container>
+							</div>
+							<div class="input-wrp">
+								<label class="f-label">Re-enter New Passowrd</label>
+								<md-input-container>
+									<label class="ph-label">Re-enter Your New Passowrd</label>
+									<input type="password">
+								</md-input-container>
+							</div>
+							<div class="support-me">
+								<a class="btn btn-default btn-lg btn-subscribe ng-scope" ng-click="supportMe()">Update Account Information</a>
+							</div>							
+						</div>
+					</div>
+					<!--End the Account details tab-->
+					
 				</div>
 			</div>
 			<div class="col-md-4">

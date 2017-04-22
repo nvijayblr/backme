@@ -1523,7 +1523,7 @@ md-toast .md-toast-content {background-color: #00897b !important;}
 .dashboard .tabs ul li {
 	margin: 0;
 	padding: 0;
-	width: 33%;
+	width: 33.33333333%;
 	float: left;
 	list-style: none inside;
 }
@@ -1637,22 +1637,51 @@ md-toast .md-toast-content {background-color: #00897b !important;}
 	color: #6c6c6c;
 	line-height: 23px;
 }
+.my-project .support-me .btn-default.btn-subscribe {
+	font-size: 20px;
+}
+.my-proj-tab-content, .personal-details, .account-details.show {
+    z-index: 100;
+    opacity: 1;
+}
 
+/*begin the styles for when showing/hiding the element */
+.ng-hide-remove, .ng-hide-remove, .ng-enter { 
+    -webkit-transition : 0.5s ease-in-out opacity;
+    -moz-transition    : 0.5s ease-in-out opacity;
+    -ms-transition     : 0.5s ease-in-out opacity;
+    -o-transition      : 0.5s ease-in-out opacity;
+    transition         : 0.5s ease-in-out opacity;
+    opacity            : 0.9;
+}
+.ng-hide, .ng-leave {
+    opacity : 0;
+}
+/*end the styles for when showing/hiding the element */
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/*begin the styles for when change the view*/
+.fade-view {
+    height: 100%;
+    opacity: 1;
+}
+.fade-view.ng-enter,
+.fade-view.ng-leave {
+    -webkit-transition: all 0.5s ease;
+    transition: all 1s ease;
+}
+.fade-view.ng-enter {
+    opacity: 0;
+}
+.fade-view.ng-enter-active {
+    opacity: 1;
+}
+.fade-view.ng-leave {
+    opacity: 1;
+}
+.fade-view.ng-leave-active {
+    opacity: 0;
+}
+/*begin the styles for when change the view*/
 
 /*common responsive styles for all pages*/
 @media screen and (min-width:992px) {
