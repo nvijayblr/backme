@@ -57,6 +57,11 @@ backMe
 				templateUrl: 'templates/checkout.html',
 				controller: 'checkoutCtrl'
 		})
+		.state('dashboard', {
+				url: '/dashboard',
+				templateUrl: 'templates/dashboard.html',
+				controller: 'dashboardCtrl'
+		})
 		;
 
 }]);

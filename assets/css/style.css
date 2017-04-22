@@ -57,6 +57,7 @@ h6 {
 	box-shadow: 0px 1px 3px 1px rgba(132,137,140,1);
 	position: relative;
 	height: 64px;
+	z-index: 1000;
 }
 .banner {
 	height: 465px;
@@ -1153,7 +1154,7 @@ md-toast .md-toast-content {background-color: #00897b !important;}
 	margin-bottom: 20px;
 }
 .support-box .amount{
-	font-size: 56px;
+	font-size: 35px;
 	font-weight: bold;
 	color: #00897b;
 }
@@ -1193,7 +1194,7 @@ md-toast .md-toast-content {background-color: #00897b !important;}
 	margin-left: 100px;
 }
 .support-box .amount sup{
-	font-size: 42px;
+	font-size: 28px;
 	top: -.4em;
 }
 
@@ -1423,14 +1424,14 @@ md-toast .md-toast-content {background-color: #00897b !important;}
 	color: #2a2a2a;
 	font-weight: bold;
 }
-.checkout-wrp-right .user-wrp .user-img{
+.user-wrp .user-img{
 	width: 160px;
 	height: 160px;
 	margin: auto;
     position: relative;
     top: 18px;	
 }
-.checkout-wrp-right .user-wrp .user-img img{
+.user-wrp .user-img img{
 	width: 160px;
 	height: 160px;
 	border: 4px solid #ffffff;
@@ -1456,6 +1457,202 @@ md-toast .md-toast-content {background-color: #00897b !important;}
     font-size: 20px;
     padding: 0 25px;
 }
+
+/* dashboard page styles*/
+.dashboard-content {
+    background-color: #fafafa;
+    min-height: 700px;
+    padding: 0 0 25px 0;
+    border-bottom: 1px solid #cfcfcf;
+}
+.db-banner {
+	text-align: center;
+}
+.db-banner .db-title{
+	font-size: 26px;
+	font-weight: bold;
+	text-transform: uppercase;
+}
+.db-banner .db-loc{
+	font-size: 20px;
+	color: #6c6c6c;
+}
+.db-banner .db-profile-wrp{
+	height: 290px;
+}
+.db-banner .user-wrp .user-img{
+    top: -72px;
+    width: 168px;
+    height: 168px;
+    border: 4px solid #00897b;
+    border-radius: 180px;
+    -webkit-border-radius: 180px;
+}
+.db-banner .user-wrp .user-img img{
+	border-width: 6px;
+}
+.db-banner .user-wrp{
+	height: 115px;
+}
+.db-banner .db-profile-pic {
+	width: 65%;
+	margin: auto;
+	text-align: center;
+	height: 660px;
+	border: 1px solid gray;
+    border-radius: 50%;
+	background-repeat: no-repeat;
+	background-position: center bottom;
+	background-color: transparent;
+    position: relative;
+    top: -370px;	
+}
+.profile-left, .profile-right {
+	border: 1px solid #e2e2e2;
+	border-radius: 4px;
+	-webkit-border-radius: 4px;
+	padding: 20px;
+	background-color: #fff;
+}
+.dashboard .tabs ul {
+	margin: 0;
+	padding: 0;
+	border-bottom: 1px solid #9b9b9b;
+	width: 100%;
+}
+.dashboard .tabs ul li {
+	margin: 0;
+	padding: 0;
+	width: 33%;
+	float: left;
+	list-style: none inside;
+}
+.dashboard .tabs ul li a {
+	display: block;
+	padding: 10px 0;
+	font-size: 18px;
+	color: #6c6c6c;
+	font-weight: bold;
+	text-transform: uppercase;
+	text-align: center;
+}
+.dashboard .tabs ul li a.active, .dashboard .tabs ul li a:hover {
+	border-bottom: 4px solid #4ce8d8;
+}
+.dashboard .my-project {
+	padding: 30px 0;
+	border-bottom: 1px solid #e2e2e2;
+}
+.dashboard .my-project.last {
+	border-bottom: 0;
+}
+.my-project .proj-banner{
+	background-position: center center;
+	background-repeat: no-repeat;
+	height: 328px;
+}
+.my-project .proj-info .views, .my-project .proj-info .comments, .my-project .proj-info .likes{
+	float: left;
+	width: 33%;
+	text-align: center;
+}
+.my-project .proj-banner-wrp {
+	position: relative;
+}
+.my-project .proj-info {
+	background-color: #000;
+	opacity: 0.7;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+}
+.my-project .proj-info h5 {
+	font-size: 28px;
+	font-weight: 100;
+	color: #fff;
+}
+.my-project .proj-info p {
+	font-size: 16px;
+	font-weight: 100;
+	color: #fff;
+}
+.my-project .proj-info p .fa {
+	margin-right: 6px;
+}
+.my-project .btn {
+	width: 100%;
+	text-transform: uppercase;
+	font-size: 16px;
+	color: #3c3c3c;
+	margin-top: 16px;
+	font-weight: 100;
+}
+.my-project .p-desc {
+	font-size: 20px;
+	color: #414141;
+	margin-top: 14px;
+}
+.my-project .statistics {
+	text-align: center;
+}
+.my-project .amount {
+    font-size: 27px;
+    font-weight: 100;
+    color: #3c3c3c;
+    margin-bottom: 0;
+}
+.my-project .s-title {
+    text-transform: capitalize;
+    font-size: 16px;
+    color: #6c6c6c;
+    margin: 5px 0 80px 0;
+}
+.my-project a.extend, .my-project a.extend:link {
+    display: block;
+	margin: 20px 0;
+	font-size: 16px;
+	color: #9c9c9c;
+	text-decoration: underline;
+}
+.my-project a.extend:hover {
+	text-decoration: none;
+}
+.profile-right .user-section {
+	padding-bottom: 25px;
+	border-bottom: 1px solid #e2e2e2;
+	margin-bottom: 30px;
+}
+.profile-right .user-section.last {
+	border-bottom: 0;
+}
+.profile-right .user-section h5 {
+	font-size: 20px;
+	color: #6c6c6c;
+	font-weight: bold;
+	text-transform: uppercase;
+}
+.profile-right .user-section p {
+	font-size: 16px;
+	color: #6c6c6c;
+	line-height: 23px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /*common responsive styles for all pages*/
 @media screen and (min-width:992px) {

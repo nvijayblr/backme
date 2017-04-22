@@ -1,6 +1,6 @@
 'use strict';
 backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope', '$window', '$state', '$mdToast', 'appConstant', function(_scope, _services, _timeout, _rootScope, _window, _state, _mdToast, _appConstant){
-
+	
 	_scope.loginSettings = {
 		loginId : '',
 		password: ''
@@ -10,9 +10,16 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 		password: ''
 	}
 	
-	_scope.userProfile = {};
+	_scope.loggedUser = {};
 	_scope.loggedIn = false;
 	_scope.showPassword = true;
+
+	if(_appConstant.currentUser != '') {
+		_scope.loggedUser = _appConstant.currentUser;
+		_scope.loggedIn = true;
+	} else {
+		_appConstant.currentUser = {};
+	}
 
 	_scope.showLogin = function() {
 		_scope.loginSettings = {
@@ -63,7 +70,10 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 			method: 'GET',
 			url: _appConstant.baseUrl + 'login?email='+_email+'&pass='+_pass
 		}, function(data){
-			_scope.userProfile.name = _email;
+			_appConstant.currentUser.name = _email;
+			_scope.loggedUser = _appConstant.currentUser;
+			localStorage.setItem('backMeUser', JSON.stringify(_appConstant.currentUser));
+			_services.toast.show('Logged in successfully.');
 			_scope.loggedIn = true;
 			$('#loginModal').modal('hide');
 		});
@@ -85,7 +95,9 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 			inputData: _scope.signup
 		}, function(data){
 			$('#signUpModal').modal('hide');
-			_scope.userProfile.name = _email;
+			_appConstant.currentUser.name = _email;
+			_scope.loggedUser = _appConstant.currentUser;
+			localStorage.setItem('backMeUser', JSON.stringify(_appConstant.currentUser));
 			_scope.loggedIn = true;
 		});
 	}
@@ -94,9 +106,11 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 	_scope.profile = {};
 	_scope.googleLoginSuccess = function(_googleUser) {
 		_scope.profile = _googleUser.getBasicProfile();
-		_scope.userProfile.name = _scope.profile.getName();
+		_appConstant.currentUser.name = _scope.profile.getName();
+		_appConstant.currentUser.email = _scope.profile.getId();
+		_scope.loggedUser = _appConstant.currentUser;
 		_scope.loggedIn = true;
-		console.log(_scope.userProfile.name)
+		localStorage.setItem('backMeUser', JSON.stringify(_appConstant.currentUser));
 		_scope.$apply();
 		$('#signUpModal').modal('hide');
 		$('#loginModal').modal('hide');
@@ -112,14 +126,18 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 		console.log(obj)
 	}
 	
-	_scope.googleLotout = function() {
+	/*log out from app, google, fb*/
+	_scope.doLotout = function() {
 		gapi.auth2.getAuthInstance().disconnect().then(function(){
-			_scope.userProfile = {};
+			_appConstant.currentUser = {};
+			_scope.loggedUser = {}
 			_scope.$apply();
-			console.log('Logged out.');
 		});
-		_scope.userProfile = {};
+		_appConstant.currentUser = {};
+		_scope.loggedUser = {};
 		_scope.loggedIn = false;
+		localStorage.removeItem('backMeUser');
+		_services.toast.show('Logged in successfully.');		
 	}
 	
 	_window.renderGoogleButton = function() {

@@ -23,8 +23,8 @@
 			  <ul class="nav navbar-nav navbar-right top-nav">
 				<li class="top-search"><a href=""><span class="glyphicon glyphicon-search"></span></a></li>
 				<li class="singup" ng-if="!loggedIn"><a href="" ng-click="showLogin()"><span class="glyphicon glyphicon-lock"></span>LOGIN/SIGNUP</a></li>
-				<li class="singup" ng-if="loggedIn"><a href="" ng-click="googleLotout()"><span class="glyphicon glyphicon-lock"></span>LOGOUT</a></li>
-				<li ng-if="loggedIn"><a href="">{{userProfile.name}}</a></li>
+				<li class="singup" ng-if="loggedIn"><a href="" ng-click="doLotout()"><span class="glyphicon glyphicon-lock"></span>LOGOUT</a></li>
+				<li ng-if="loggedIn"><a href="#dashboard">{{loggedUser.name}}</a></li>
 			  </ul>
 			</div>
 		  </div>
