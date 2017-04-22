@@ -1,8 +1,8 @@
 'use strict';
-var backMe = angular.module('backMe', ['ui.router', 'angular-loading-bar', 'ngMaterial']);
+var backMe = angular.module('backMe', ['ui.router', 'angular-loading-bar', 'ngMaterial', 'facebook']);
 
 backMe
-.config(['$stateProvider', '$urlRouterProvider', function(_stateProvider, _urlRouterProvider) {
+.config(['$stateProvider', '$urlRouterProvider', 'FacebookProvider', function(_stateProvider, _urlRouterProvider, FacebookProvider) {
     
     _urlRouterProvider.otherwise('/home');
     
@@ -64,4 +64,12 @@ backMe
 		})
 		;
 
+		/*config facebook login button*/
+		var myAppId = '211137599382729';
+		FacebookProvider.init(myAppId);
+
+}]);
+
+backMe.run(['$rootScope', '$window', function(_rootScope, _window) {
+	console.log('app run phase...')
 }]);

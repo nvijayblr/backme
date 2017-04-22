@@ -1,5 +1,5 @@
 'use strict';
-backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope', '$window', '$state', '$mdToast', 'appConstant', function(_scope, _services, _timeout, _rootScope, _window, _state, _mdToast, _appConstant){
+backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope', '$window', '$state', '$mdToast', 'appConstant', 'Facebook',  function(_scope, _services, _timeout, _rootScope, _window, _state, _mdToast, _appConstant, Facebook){
 	
 	_scope.loginSettings = {
 		loginId : '',
@@ -113,12 +113,10 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 		_scope.$apply();
 		$('#signUpModal').modal('hide');
 		$('#loginModal').modal('hide');
-		
 		/*console.log('ID: ' + _scope.profile.getId()); 
 		console.log('Name: ' + _scope.profile.getName());
 		console.log('Image URL: ' + _scope.profile.getImageUrl());
 		console.log('Email: ' + _scope.profile.getEmail());*/ 
-		
 	}
 	
 	_scope.googleLoginFailure = function(obj) {
@@ -131,6 +129,11 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 			_appConstant.currentUser = {};
 			_scope.loggedUser = {}
 			_scope.$apply();
+		});
+		Facebook.logout(function() {
+			_scope.$apply(function() {
+				_scope.loggedUser = {}
+			});
 		});
 		_appConstant.currentUser = {};
 		_scope.loggedUser = {};
@@ -151,6 +154,52 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
     }
 	/*End the google sign in*/
 	
+	/*begin the facebook login*/
+	_scope.$watch(
+		function() {
+		  return Facebook.isReady();
+		},
+		function(newVal) {
+		  if (newVal)
+			_scope.facebookReady = true;
+		}
+	);
+      
+	_scope.userIsConnectedInFB = false;
+
+	_scope.getFacebookUser = function() {
+		Facebook.api('/me', function(response) {
+			_scope.$apply(function() {
+				_appConstant.currentUser.name = response.name;
+				_appConstant.currentUser.email = response.name;
+				_scope.loggedUser = _appConstant.currentUser;
+				localStorage.setItem('backMeUser', JSON.stringify(_appConstant.currentUser));
+				_scope.loggedIn = true;
+				$('#signUpModal').modal('hide');
+				$('#loginModal').modal('hide');
+			});
+		});
+	}
+	
+	Facebook.getLoginStatus(function(response) {
+		if (response.status == 'connected') {
+			_scope.$apply(function() {
+				_scope.userIsConnectedInFB = true;
+			});
+			_scope.getFacebookUser();
+		}
+	});
+      
+	_scope.loginWithFacebook = function() {
+		if(!_scope.userIsConnectedInFB) {
+			Facebook.login(function(response) {
+				if (response.status == 'connected') {
+					_scope.getFacebookUser();
+				}
+			});
+		}
+	};
+  /*end the facebook login*/	
 	/*Begin the common functions for the application*/
 	$(document).off('hidden.bs.modal');
 	$(".modal").on('hidden.bs.modal', function () {

@@ -65,7 +65,7 @@
 						</div>
 						<div class="login-social">
 							<div class="login-section">
-								<a class="btn btn-block btn-social btn-facebook">
+								<a class="btn btn-block btn-social btn-facebook" ng-disabled="!facebookReady" ng-click="loginWithFacebook()">
 									<span class="fa fa-facebook"></span> Sign in with Facebook
 								</a>
 								<div class="google-btn-wrp">
@@ -100,7 +100,7 @@
 					<div class="modal-body">
 						<div class="login-social">
 							<div class="login-section">
-								<a class="btn btn-block btn-social btn-facebook">
+								<a class="btn btn-block btn-social btn-facebook" ng-disabled="!facebookReady" ng-click="loginWithFacebook()">
 									<span class="fa fa-facebook"></span> Sign in with Facebook
 								</a>
 								<a class="btn btn-block btn-social btn-google">
@@ -208,8 +208,8 @@
 			  </div>
 		<!--End: Signup Modal -->
 		</md-content>
+          
 	</body>
-
 	
 	<!--begin libs-->
 	<script src="assets/angular/jquery.min.js"></script>
@@ -252,6 +252,8 @@
 	<script src="appJS/controllers/dashboardCtrl.js"></script>
 	<!--end controllers-->
 
+	<!--social login-->
+    <script src="assets/library/angular-facebook.js"></script>
 	<script src="https://apis.google.com/js/platform.js?onload=renderGoogleButton" async defer></script>
 
 </html>
