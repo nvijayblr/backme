@@ -411,6 +411,15 @@ h6 {
 	font-weight: normal;
 	margin: 30px 0 15px;
 }
+.loginModal label.p-lable {
+	margin-bottom: 0;
+    font-size: 20px !important;
+    font-weight: 100 !important;
+	color: #c5c5c5 !important;
+}
+.loginModal label.f-label {
+	margin-bottom: 0;
+}
 .loginModal .login-section {
 	padding: 10px 50px 40px 50px;
 	position: relative;
@@ -564,6 +573,12 @@ h6 {
 .loginModal md-input-container, .checkout-cont .donation-wrp md-input-container {
 	display: block;
 	margin-top: 50px;
+}
+.loginModal md-input-container {
+    margin-top: 30px;
+}
+md-input-container, md-input-container .md-input, md-input-container .md-placeholder, md-input-container label:not(.md-no-float):not(.md-container-ignore) {
+	padding-left: 0 !important;
 }
 md-input-container .show-pwd {
     position: absolute;
@@ -853,7 +868,7 @@ md-input-container.md-input-focused label:not(.md-no-float), md-input-container.
 	margin-bottom: 5px;
 }
 .steps-form md-input-container label {
-    margin-bottom: 5px;
+    margin-bottom: 0;
     font-size: 24px !important;
 }
 .steps-form md-input-container {
@@ -922,7 +937,7 @@ md-input-container.rupees .ph-label {
 }
 
 md-input-container.rupees .md-input {
-	padding-left: 25px;
+	padding-left: 25px !important;
 }
 a.add-more{
 	color: #00897b;
@@ -957,11 +972,10 @@ md-datepicker {
 	padding-left: 34px;
 }
 .reward-box .input-wrp .fa-rupee {
-    font-weight: bold;
     position: absolute;
-    font-size: 32px;
-    top: 6px;
-    left: 8px;
+    font-size: 25px;
+    top: 8px;
+    left: 11px;
 }
 .input-wrp textarea {
 	height:100px;

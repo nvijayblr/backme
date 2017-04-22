@@ -43,19 +43,21 @@
 					<div class="modal-body">
 						<div class="login-wrp">
 							<div class="login-section">
+								<label class="f-label">Email</label>
 								<md-input-container>
-									<label>Your email</label>
+									<label class="p-lable">Your email</label>
 									<input type="email" ng-model="loginSettings.loginId">
 								</md-input-container>
 
+								<label class="f-label">Password</label>
 								<md-input-container class="pwd-wrp" ng-show="showPassword">
-									<label>Password</label>
+									<label class="p-lable">Password</label>
 									<input ng-model="loginSettings.password" type="password">
 									<a href="" class="show-pwd" ng-click="showHidePassword();">{{showPassword?'Show Password':'Hide Password'}}</a>
 								</md-input-container>
 
 								<md-input-container class="pwd-wrp" ng-show="!showPassword">
-									<label>Password</label>
+									<label class="p-lable">Password</label>
 									<input ng-model="loginSettings.password" type="text">
 									<a href="" class="show-pwd" ng-click="showHidePassword();">{{showPassword?'Show Password':'Hide Password'}}</a>
 								</md-input-container>							
@@ -111,21 +113,15 @@
 						</div>
 						<div class="login-wrp">
 							<div class="login-section sign-login-section">
-								<!--<label>Email</label>
-								<input type="text" class="txt-login" placeholder="Your email"/>
-								<label>Password</label>
-								<div class="pwd-wrp">
-									<input type="password" ng-model="signUpSettings.password" class="txt-login" placeholder="Choose a password" ng-show="showPassword"/>
-									<input type="text" ng-model="signUpSettings.password" class="txt-login" placeholder="Choose a password" ng-show="!showPassword"/>
-									<a href="" class="show-pwd" ng-click="showHidePassword();">{{showPassword?'Show Password':'Hide Password'}}</a>
-								</div>-->
+								<label class="f-label">Email</label>
 								<md-input-container>
-									<label>Email</label>
+									<label class="p-lable">Your email</label>
 									<input type="email" ng-model="signUpSettings.userId">
 								</md-input-container>
-
+								
+								<label class="f-label">Password</label>
 								<md-input-container class="pwd-wrp" ng-show="showPassword">
-									<label>Password</label>
+									<label class="p-lable">Choose a password</label>
 									<input ng-model="signUpSettings.password" type="password">
 									<a href="" class="show-pwd" ng-click="showHidePassword();">{{showPassword?'Show Password':'Hide Password'}}</a>
 								</md-input-container>
