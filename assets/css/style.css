@@ -1,7 +1,7 @@
 body {
 	/*font-family: 'Roboto Slab', serif;*/
-	font-family: 'Roboto Condensed', sans-serif;
-	font-size: 14px;
+	font-family: 'Roboto', sans-serif;
+	font-size: 16px;
 	color: #2a2a2a;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
@@ -290,7 +290,21 @@ h6 {
 }
 .footer .pay-method {
 	text-align: center;
+	cursor: pointer;
 }
+.footer .pay-method .active {
+	display: inline;
+}
+.footer .pay-method .hover {
+	display: none;
+}
+.footer .pay-method:hover .active {
+	display: none;
+}
+.footer .pay-method:hover .hover {
+	display: inline;
+}
+
 .footer .trustpay {
 	border-bottom: 1px solid #ccc;
 	margin-bottom: 60px;
