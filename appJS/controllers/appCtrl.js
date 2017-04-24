@@ -98,10 +98,32 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 			_scope.loggedUser = _appConstant.currentUser;
 			localStorage.setItem('backMeUser', JSON.stringify(_appConstant.currentUser));
 			_scope.loggedIn = true;
+		}, function(err) {
+			_services.toast.show(err.data);
 		});
 	}
 	
 	/*Begin the google sign in*/
+	var auth2; 
+	gapi.load('auth2', function(){
+		auth2 = gapi.auth2.init({
+			client_id: _appConstant.googleClientId + '.apps.googleusercontent.com',
+			cookiepolicy: 'single_host_origin',
+			scope: 'profile'
+		});
+		_scope.attachGoogleLogin(document.getElementById('googleLogin'));
+		_scope.attachGoogleLogin(document.getElementById('googleSignup'));
+	});
+	_scope.attachGoogleLogin = function (element) {
+		auth2.attachClickHandler(element, {},
+			function(googleUser) {
+				_scope.googleLoginSuccess(googleUser);
+			}, function(error) {
+				_scope.googleLoginFailure(error);
+			}
+		);
+	}
+	
 	_scope.profile = {};
 	_scope.googleLoginSuccess = function(_googleUser) {
 		_scope.profile = _googleUser.getBasicProfile();
