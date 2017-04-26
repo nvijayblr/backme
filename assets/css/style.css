@@ -1748,9 +1748,6 @@ md-toast .md-toast-content {background-color: #00897b !important;}
 	.proj-steps .steps-bar, .proj-steps .steps {
 		display: none;
 	} 
-}
-
-@media screen and (max-width:540px) {
 	.logo {
 		position: absolute;
     	top: 17px;
@@ -1763,6 +1760,9 @@ md-toast .md-toast-content {background-color: #00897b !important;}
 	.top-nav li.top-search {
 		display: none;
 	}
+}
+
+@media screen and (max-width:540px) {
 	.or-label {
 		display: none;
 	}
