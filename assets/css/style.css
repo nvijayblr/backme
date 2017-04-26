@@ -104,10 +104,42 @@ h6 {
     width: 120px;
     margin: auto;
 }
+.top-nav li.top-search {
+	margin-top: 18px;
+}
 .top-search .glyphicon {
     margin-top: 3px;
     margin-right: 20px;
 }
+.top-search .ts-search-icon {
+	display: inline-block;
+}
+.top-search .ts-search-txt {
+	display: inline-block;
+	width: 0px;
+	border-width: 0;
+	padding: 0 5px;
+	-webkit-transition: all .2s;
+	-moz-transition: all .2s;
+	transition: all .2s;
+}
+.top-search.active .ts-search-txt {
+	display: inline-block;
+	width: 300px;
+	-webkit-transition: all .5s;
+	-moz-transition: all .5s;
+	transition: all .5s;
+	font-size: 16px;
+}
+.top-search .close-search {
+	display: none;
+}
+.top-search.active .close-search {
+	display: inline-block;
+    color: #00897b;
+    cursor: pointer;
+}
+
 .singup .glyphicon {
 	margin-right: 6px;
     color: #b3b3b3;
@@ -199,9 +231,14 @@ h6 {
 	color: #000;
 }
 .search {
-	margin: 0 0 20px 0;
-	padding-bottom: 22px;
-	border-bottom: 1px solid #cfcfcf;
+	margin: 0 0 20px 40px;
+}
+.search .cat-title {
+	font-size: 27px;
+    color: #2a2a2a;
+    font-weight: 300;
+    padding-top: 0;
+    margin-top: 0;
 }
 .txt-search,.txt-search:focus {
 	border-radius: 20px;

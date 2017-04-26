@@ -18,13 +18,16 @@
 			  <ul class="nav navbar-nav top-nav">
 				<li><a href="" ng-click="startProject();">START A PROJECT</a></li>
 				<li><a href="#about">ABOUT US</a></li>
-				<li><a href="#team">TEAM</a></li>
 			  </ul>
 			  <ul class="nav navbar-nav navbar-right top-nav">
-				<li class="top-search"><a href=""><span class="glyphicon glyphicon-search"></span></a></li>
-				<li class="singup" ng-if="!loggedIn"><a href="" ng-click="showLogin()"><span class="glyphicon glyphicon-lock"></span>LOGIN/SIGNUP</a></li>
-				<li class="singup" ng-if="loggedIn"><a href="" ng-click="doLotout()"><span class="glyphicon glyphicon-lock"></span>LOGOUT</a></li>
-				<li ng-if="loggedIn"><a href="#dashboard">{{loggedUser.name}}</a></li>
+				<li class="top-search" ng-class="showSearch?'active':''">
+					<a href="" class="ts-search-icon" ng-click="startSearch()"><i class="fa fa-search" aria-hidden="true"></i></a>
+				  	<input type="text" class="ts-search-txt" placeholder="Try searching locations & campaigns"/>
+					<i class="fa fa-times close-search" aria-hidden="true" ng-click="closeSearch()"></i>
+				  </li>
+				<li class="singup" ng-if="!loggedIn && !showSearch"><a href="" ng-click="showLogin()"><span class="glyphicon glyphicon-lock"></span>LOGIN/SIGNUP</a></li>
+				<li class="singup" ng-if="loggedIn && !showSearch"><a href="" ng-click="doLotout()"><span class="glyphicon glyphicon-lock"></span>LOGOUT</a></li>
+				<li ng-if="loggedIn && !showSearch"><a href="#dashboard">{{loggedUser.name}}</a></li>
 			  </ul>
 			</div>
 		  </div>

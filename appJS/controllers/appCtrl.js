@@ -13,7 +13,8 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 	_scope.loggedUser = {};
 	_scope.loggedIn = false;
 	_scope.showPassword = true;
-
+	_scope.showSearch = false;
+	
 	if(_appConstant.currentUser != '') {
 		_scope.loggedUser = _appConstant.currentUser;
 		_scope.loggedIn = true;
@@ -21,6 +22,13 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 		_appConstant.currentUser = {};
 	}
 
+	_scope.startSearch = function() {
+		_scope.showSearch = true;
+	}
+	_scope.closeSearch = function() {
+		_scope.showSearch = false;
+	}
+	
 	_scope.showLogin = function() {
 		_scope.loginSettings = {
 			loginId : '',
