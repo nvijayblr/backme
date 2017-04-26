@@ -1,0 +1,93 @@
+<section class="content">
+	<div class="create-proj-cont">
+		<div class="create-proj-wrp steps-wrp">
+			<div ng-include="'templates/partials/steps.html'"></div>
+			<div class="steps-content">
+				<div class="row steps-content-basic">
+					<div class="proj-steps-wrp">
+						<h5>PROFILE INFORMATION</h5>
+						<div class="steps-form">
+							<div class="input-wrp">
+								<label class="f-label">Upload Your Photo</label>
+								<md-input-container>
+									<label class="ph-label">Upload Your Photo</label>
+									<input type="text">
+								</md-input-container>
+							</div>
+							<div class="input-wrp">
+								<label class="f-label">Name</label>
+								<md-input-container>
+									<label class="ph-label">Your name</label>
+									<input type="text">
+								</md-input-container>
+							</div>
+							<div class="input-wrp">
+								<label class="f-label">Email</label>
+								<md-input-container>
+									<label class="ph-label">Your email</label>
+									<input type="email" ng-model="signUpSettings.userId">
+								</md-input-container>
+							</div>
+							<div class="input-wrp">
+								<label class="f-label">Mobile Number</label>
+								<md-input-container>
+									<label class="ph-label">Your mobile number</label>
+									<input type="text">
+								</md-input-container>
+							</div>
+							<div class="input-wrp">
+								<label class="f-label">Social Media Connect</label>
+								<div class="social-connect">
+									<div class="conenect-wrp">
+									  <md-checkbox md-no-ink ng-model="data.cb1" aria-label="F" class="fb-cb social-cb">f</md-checkbox>
+									  <md-checkbox md-no-ink ng-model="data.cb2" aria-label="T" class="tw-cb social-cb">t</md-checkbox>
+									  <md-checkbox md-no-ink ng-model="data.cb3" aria-label="G" class="go-cb social-cb">g</md-checkbox>
+									</div>
+								</div>
+							</div>
+						</div>
+						<h5>BANK ACCOUNT INFORMATION</h5>
+						<div class="steps-form">
+							<div class="input-wrp">
+								<label class="f-label">Bank Account Information</label>
+								<md-input-container>
+									<label class="ph-label">Your name</label>
+									<input type="text">
+								</md-input-container>
+							</div>
+							<div class="input-wrp">
+								<label class="f-label">Bank Account Number</label>
+								<md-input-container>
+									<label class="ph-label">Account Number</label>
+									<input type="text">
+								</md-input-container>
+							</div>
+							<div class="input-wrp">
+								<label class="f-label">IFSC Code</label>
+								<md-input-container>
+									<label class="ph-label">IFSC Code</label>
+									<input type="text">
+								</md-input-container>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="steps-footer">
+				<div class="row">
+					<div class="col-md-6 col-sm-6  col-xs-6 prev">
+						<p class="cont">Back to</p>
+						<a href="#/create/rewards" class="steps-back"><i class="fa fa-arrow-left" aria-hidden="true"></i><span>Rewards &amp; Services</span></a>
+					</div>
+					<div class="col-md-6 col-sm-6 col-xs-6 next">
+						<p class="cont">Continue to</p>
+						<p><a href="#/create/preview" class="steps-back">
+							<span>Preview &amp; Submit</span>
+							<i class="fa fa-arrow-right" aria-hidden="true"></i>
+						</a></p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>

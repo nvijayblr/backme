@@ -22,35 +22,41 @@ backMe
 				templateUrl: 'templates/team.html',
 				controller: 'teamCtrl'
 		})
-		.state('createproject', {
+		.state('create', {
+				abstract: true,
+				url: '/create',
+				template: '<div ui-view class="fade-view"/>',
+				controller: 'createprojectCtrl'
+		})
+		.state('create.createproject', {
 				url: '/createproject',
 				templateUrl: 'templates/createproject.html',
 				controller: 'createprojectCtrl'
 		})
-		.state('createprojectinfo', {
-				url: '/createprojectinfo',
-				templateUrl: 'templates/createprojectinfo.html',
-				controller: 'createprojectinfoCtrl'
+		.state('create.projectinfo', {
+				url: '/projectinfo',
+				templateUrl: 'templates/projectinfo.html',
+				controller: 'projectinfoCtrl'
 		})
-		.state('createprojectdetails', {
-				url: '/createprojectdetails',
-				templateUrl: 'templates/createprojectdetails.html',
-				controller: 'createprojectdetailsCtrl'
+		.state('create.projectdetails', {
+				url: '/projectdetails',
+				templateUrl: 'templates/projectdetails.html',
+				controller: 'projectdetailsCtrl'
 		})
-		.state('createprojectrewards', {
-				url: '/createprojectrewards',
-				templateUrl: 'templates/createprojectrewards.html',
-				controller: 'createprojectrewardsCtrl'
+		.state('create.rewards', {
+				url: '/rewards',
+				templateUrl: 'templates/rewards.html',
+				controller: 'rewardsCtrl'
 		})
-		.state('createprojectaccount', {
-				url: '/createprojectaccount',
-				templateUrl: 'templates/createprojectaccount.html',
-				controller: 'createprojectaccountCtrl'
+		.state('create.profile', {
+				url: '/profile',
+				templateUrl: 'templates/profile.html',
+				controller: 'profileCtrl'
 		})
-		.state('createprojectpreview', {
-				url: '/createprojectpreview',
-				templateUrl: 'templates/createprojectpreview.html',
-				controller: 'createprojectpreviewCtrl'
+		.state('create.preview', {
+				url: '/preview',
+				templateUrl: 'templates/preview.html',
+				controller: 'previewCtrl'
 		})
 		.state('project', {
 				url: '/project',

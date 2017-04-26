@@ -63,7 +63,7 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 
 	_scope.startProject = function() {
 		if(_scope.loggedIn) {
-			_state.go('createproject')
+			_state.go('create.createproject')
 		} else {
 			_scope.showLogin();
 		}
