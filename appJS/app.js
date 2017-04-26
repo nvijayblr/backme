@@ -47,6 +47,11 @@ backMe
 				templateUrl: 'templates/createprojectaccount.html',
 				controller: 'createprojectaccountCtrl'
 		})
+		.state('createprojectpreview', {
+				url: '/createprojectpreview',
+				templateUrl: 'templates/createprojectpreview.html',
+				controller: 'createprojectpreviewCtrl'
+		})
 		.state('project', {
 				url: '/project',
 				templateUrl: 'templates/project.html',

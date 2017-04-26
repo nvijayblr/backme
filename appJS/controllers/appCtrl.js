@@ -235,7 +235,7 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
   /*end the facebook login*/	
 	/*Begin the common functions for the application*/
 	$(document).off('hidden.bs.modal');
-	$(".modal").on('hidden.bs.modal', function () {
+	$(document).on('hidden.bs.modal', function () {
 		if($(".modal.fade.in").length > 0) {
 			$('body').addClass('modal-open');
 		}
@@ -243,7 +243,7 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 			$('body').css('padding-right',0);
 		}
 	});
-
+	
 	_rootScope.$on("$locationChangeSuccess", function (event, currentRoute, previousRoute) {
 		$('#backme-page').scrollTop(0);
 	});
