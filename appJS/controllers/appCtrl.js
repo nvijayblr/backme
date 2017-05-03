@@ -1,6 +1,7 @@
 'use strict';
 backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope', '$window', '$state', '$mdToast', 'appConstant', 'Facebook',  function(_scope, _services, _timeout, _rootScope, _window, _state, _mdToast, _appConstant, Facebook){
 	
+	_scope.appConstant = _appConstant;
 	_scope.loginSettings = {
 		loginId : '',
 		password: ''
@@ -63,7 +64,7 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 
 	_scope.startProject = function() {
 		if(_scope.loggedIn) {
-			_state.go('create.createproject')
+			_state.go('create.startproject')
 		} else {
 			_scope.showLogin();
 		}

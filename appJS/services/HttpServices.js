@@ -7,7 +7,7 @@ backMe
 			'url': _params['url'],
 			data: _params['inputData'] ? _params['inputData'] : {}
 			/*,headers:{ 
-				'Content-Type': "application/json;"
+				'Content-Type': "application/json"
 			}*/
 		};
 		

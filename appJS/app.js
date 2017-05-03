@@ -1,5 +1,5 @@
 'use strict';
-var backMe = angular.module('backMe', ['ui.router', 'angular-loading-bar', 'ngMaterial', 'facebook']);
+var backMe = angular.module('backMe', ['ui.router', 'angular-loading-bar', 'ngMaterial', 'facebook', 'ngFileUpload']);
 
 backMe
 .config(['$stateProvider', '$urlRouterProvider', 'FacebookProvider', function(_stateProvider, _urlRouterProvider, FacebookProvider) {
@@ -28,13 +28,13 @@ backMe
 				template: '<div ui-view class="fade-view"/>',
 				controller: 'createprojectCtrl'
 		})
-		.state('create.createproject', {
-				url: '/createproject',
-				templateUrl: 'templates/createproject.html',
-				controller: 'createprojectCtrl'
+		.state('create.startproject', {
+				url: '/startproject',
+				templateUrl: 'templates/startproject.html',
+				controller: 'startprojectCtrl'
 		})
 		.state('create.projectinfo', {
-				url: '/projectinfo',
+				url: '/projectinfo/:projectId',
 				templateUrl: 'templates/projectinfo.html',
 				controller: 'projectinfoCtrl'
 		})
@@ -84,3 +84,8 @@ backMe
 backMe.run(['$rootScope', '$window', function(_rootScope, _window) {
 	console.log('app run phase...')
 }]);
+/*.state('app.extendreservation', {
+		url: 'extendreservation/:userId/:reservationId/:outTime',
+		templateUrl: 'templates/extendreservation.html',
+		controller: 'extendreservationCtrl'
+})*/

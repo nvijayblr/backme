@@ -1,38 +1,21 @@
 'use strict';
-backMe.controller('projectinfoCtrl', ['$scope', 'BaseServices', '$timeout', function(_scope, _services, _timeout){
+backMe.controller('projectinfoCtrl', ['$scope', 'BaseServices', '$timeout', 'Upload', 'appConstant', function(_scope, _services, _timeout, _http, _appConstant){
 	_scope.step = 1;
 	_scope.stepsTitle = "Enter Basic Project Information:";
-	_scope.cityList = [
-		  {
-			  'state': 'KA',
-			  'city': 'Banglore',
-		  },
-		  {
-			  'state': 'KA',
-			  'city': 'Mysore',
-		  },
-		  {
-			  'state': 'TN',
-			  'city': 'Chennai',
-		  },
-		  {
-			  'state': 'TN',
-			  'city': 'Coimbatore',
-		  }
-	];
-	_scope.categoryList = [
-		  {
-			  'name': 'Signer'
-		  },
-		  {
-			  'name': 'Drama'
-		  },
-		  {
-			  'name': 'Music'
-		  },
-		  {
-			  'name': 'Test'
-		  }
-	];
-	
+	_scope.posterImg = null;
+
+	_scope.startProjectDetails = function() {
+		_scope.data = _scope.project;
+		_scope.data.posterImg = _scope.posterImg ? _scope.posterImg : {};
+		
+		_http.upload({
+			method: 'POST',
+			url: _appConstant.baseUrl + 'projects',
+			data: _scope.data
+		}).then(function(data) {
+			console.log(data);
+		}, function(err) {
+			console.log(err);
+		});
+	}
 }]);
