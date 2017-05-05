@@ -63,7 +63,7 @@
 								<label class="f-label">Project Description</label>
 								<md-input-container>
 									<label class="ph-label">Describe here</label>
-									<input type="text" ng-model="project.description">
+									<textarea ng-model="project.description"></textarea>
 								</md-input-container>
 							</div>
 							
@@ -71,7 +71,7 @@
 								<label class="f-label">About</label>
 								<md-input-container>
 									<label class="ph-label">My one-liner about project</label>
-									<input type="text" ng-model="project.about">
+									<textarea ng-model="project.about"></textarea>
 								</md-input-container>
 							</div>
 						</div>
@@ -120,12 +120,10 @@
 						</a>
 					</div>
 					<div class="col-md-6 next">
-						<p class="cont">Continue to</p>
-						<p><!--<a href="#/create/projectdetails" class="steps-back">-->
-							<a href="" ng-click="startProjectDetails();" class="steps-back">
-							<span>Project Details</span>
-							<i class="fa fa-arrow-right" aria-hidden="true"></i>
-						</a></p>
+						<a href="" ng-click="startProjectDetails();" class="steps-back">
+							<p class="cont">Continue to</p>
+							<p><span>Project Details</span><i class="fa fa-arrow-right" aria-hidden="true"></i></p>
+						</a>
 					</div>
 				</div>
 			</div>

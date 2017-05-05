@@ -33,13 +33,13 @@ backMe
 				templateUrl: 'templates/startproject.html',
 				controller: 'startprojectCtrl'
 		})
-		.state('create.projectinfo', {
-				url: '/projectinfo/:projectId',
-				templateUrl: 'templates/projectinfo.html',
-				controller: 'projectinfoCtrl'
+		.state('create.basicinfo', {
+				url: '/basicinfo/:projectId',
+				templateUrl: 'templates/basicinfo.html',
+				controller: 'basicinfoCtrl'
 		})
 		.state('create.projectdetails', {
-				url: '/projectdetails',
+				url: '/projectdetails/:projectId',
 				templateUrl: 'templates/projectdetails.html',
 				controller: 'projectdetailsCtrl'
 		})

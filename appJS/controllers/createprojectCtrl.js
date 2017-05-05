@@ -29,14 +29,13 @@ backMe.controller('createprojectCtrl', ['$scope', 'BaseServices', '$timeout', '$
 				_scope.projectId = data[0].projectId;
 				_scope.project = data[0];
 			}
-			console.log(_scope.project);
+			console.log('_scope.projectId',_scope.projectId)
 			_scope.disableStartProject = false;
 		}, function(err) {
 			console.log(err)
 		});
 	}
 	_scope.getProjectByUser();
-
 }]);
 
  /* {
