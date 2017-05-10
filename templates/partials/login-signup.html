@@ -12,7 +12,9 @@
 					<label class="f-label">Email</label>
 					<md-input-container>
 						<label class="p-lable">Your email</label>
-						<input type="email" ng-model="loginSettings.loginId">
+						<input type="email" ng-model="loginSettings.email">
+						<div class="md-errors-spacer"></div>
+						<div class="error-lable">Please enter a valid email.</div>
 					</md-input-container>
 
 					<label class="f-label">Password</label>
@@ -27,7 +29,7 @@
 						<input ng-model="loginSettings.password" type="text">
 						<a href="" class="show-pwd" ng-click="showHidePassword();">{{showPassword?'Show Password':'Hide Password'}}</a>
 					</md-input-container>							
-					<button class="btn btn-default btn-subscribe btn-login" ng-click="appLogin(loginSettings.loginId, loginSettings.password);">Login</button>
+					<button class="btn btn-default btn-subscribe btn-login" ng-click="appLogin(loginSettings.email, loginSettings.password);">Login</button>
 					<div class="or-label">or</div>
 				</div>
 			</div>
@@ -45,7 +47,7 @@
 				</div>
 			</div>
 			<div class="sign-up-msg">
-				<p>Don't have account? <a href="" ng-click="showSignUp();">Sing up here</a></p>
+				<p>Don't have account? <a href="" ng-click="showSignUp();">Sign up here</a></p>
 			</div>
 		</div>
 	  </div>
@@ -78,7 +80,7 @@
 					<label class="f-label">Email</label>
 					<md-input-container>
 						<label class="p-lable">Your email</label>
-						<input type="email" ng-model="signUpSettings.userId">
+						<input type="email" ng-model="signUpSettings.email">
 					</md-input-container>
 
 					<label class="f-label">Password</label>
@@ -94,7 +96,7 @@
 						<a href="" class="show-pwd" ng-click="showHidePassword();">{{showPassword?'Show Password':'Hide Password'}}</a>
 					</md-input-container>
 					<!--ng-click="showSignUpComplete();"-->
-					<button class="btn btn-default btn-subscribe btn-login" ng-click="appSignup(signUpSettings.userId, signUpSettings.password);">Create Account</button>
+					<button class="btn btn-default btn-subscribe btn-login" ng-click="appSignup(signUpSettings.email, signUpSettings.password);">Create Account</button>
 					<p class="create-acc-msg">Lorem Ipsum is simply dummy text of the printing and 	typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
 				</div>
 			</div>

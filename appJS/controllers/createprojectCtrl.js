@@ -5,7 +5,34 @@ backMe.controller('createprojectCtrl', ['$scope', 'BaseServices', '$timeout', '$
 		_state.go('home')
 	}
 	_scope.projectId = 'new';
-	_scope.project = {};
+	
+	_scope.userId = _appConstant.currentUser.userId;
+	
+	_scope.project = {
+		"title": "",
+		"category": "",
+		"location": "",
+		"coverImage": "",
+		"about": "",
+		"description": "",
+		"videosImages": "",
+		"moneyNeeded": "",
+		"endByDate": "",
+		"userId": _scope.userId,
+		"name": "",
+		"userPhoto": "",
+		"email": "",
+		"mobileNumer": "",
+		"accountName": "",
+		"accountNo": "",
+		"ifscCode": "",
+		"facebook": "",
+		"twitter": "",
+		"googleplus": "",
+		"status": "DRAFT",
+		"noOfDays": "",
+		"daysDate": ""
+	  };
 	_scope.disableStartProject = true;
 	_scope.cityList = [
 		  {'state': 'KA', 'city': 'Banglore',},
@@ -28,8 +55,9 @@ backMe.controller('createprojectCtrl', ['$scope', 'BaseServices', '$timeout', '$
 			if(data.length) {
 				_scope.projectId = data[0].projectId;
 				_scope.project = data[0];
+				_scope.project.endByDate = _scope.project.endByDate ? moment(_scope.project.endByDate).toDate() : null;
+				_scope.project.endByDate = (_scope.project.endByDate == 'Invalid Date') ? null : _scope.project.endByDate;
 			}
-			console.log('_scope.projectId',_scope.projectId)
 			_scope.disableStartProject = false;
 		}, function(err) {
 			console.log(err)

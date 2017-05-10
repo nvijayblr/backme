@@ -44,17 +44,17 @@ backMe
 				controller: 'projectdetailsCtrl'
 		})
 		.state('create.rewards', {
-				url: '/rewards',
+				url: '/rewards/:projectId',
 				templateUrl: 'templates/rewards.html',
 				controller: 'rewardsCtrl'
 		})
 		.state('create.profile', {
-				url: '/profile',
+				url: '/profile/:projectId',
 				templateUrl: 'templates/profile.html',
 				controller: 'profileCtrl'
 		})
 		.state('create.preview', {
-				url: '/preview',
+				url: '/preview/:projectId',
 				templateUrl: 'templates/preview.html',
 				controller: 'previewCtrl'
 		})

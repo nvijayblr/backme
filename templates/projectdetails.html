@@ -5,58 +5,73 @@
 			<div class="steps-content">
 				<div class="row steps-content-basic">
 					<div class="proj-steps-wrp">
-						<h5>Upload Videos &amp; Pictures</h5>
-						<div class="drag-drop-box">
+						<h5 class="f-label">Upload Videos &amp; Pictures</h5>
+						<div class="drag-drop-box drop-box" 
+							 ngf-select 
+							 ngf-drop 
+							 ng-model="projectImages" 
+							 name="projectImages" 
+							 ngf-pattern="'image/*'"
+							 ngf-accept="'image/*'" 
+							 ngf-max-size="10MB"
+							 ngf-max-files="8"
+							 ngf-multiple="false">
+							<!--<div class="upload-img">-->
 							<div class="upload-img"><span class="glyphicon glyphicon-cloud-upload"></span></div>
 							<h4>DRAG &amp; DROP</h4>
 							<p>OR</p>
 							<h5>Browse</h5>
 							<p>Supported files: JPEG, PNG <br>Size upto 30MB</p>
 						</div>
-
+						<!--ng-if="!project.coverImage || posterImg"-->
+						<div class="preview-images" style="text-align:center;">
+							<img  ngf-size="{width: 80, height: 50}" ngf-thumbnail="projectImages||'assets/images/img_not_available.png'">
+						</div>
 						<div class="steps-form">
 							<div class="input-wrp">
 								<label class="f-label">How Much Money I Need</label>
 								<md-input-container class="rupees">
 									<label class="ph-label">Money needed</label>
 									<i class="fa fa-rupee"></i>
-									<input type="text">
+									<input type="text" ng-model="project.moneyNeeded">
 								</md-input-container>
 							</div>
 							<div class="row clearfix">
 								<label class="f-label" style="margin-left: 18px;">How I'm Going to Spend the Money</label>
-								<div class="col-md-5">
-									<div class="input-wrp">
-										<md-input-container class="rupees">
-											<label class="ph-label">50,000</label>
-											<i class="fa fa-rupee"></i>
-											<input type="text">
-										</md-input-container>
+								<div ng-repeat="spend in project.spendmoney track by $index">
+									<div class="col-md-5">
+										<div class="input-wrp">
+											<md-input-container class="rupees">
+												<label class="ph-label">5000</label>
+												<i class="fa fa-rupee"></i>
+												<input type="text" ng-model="spend.amount">
+											</md-input-container>
+										</div>
 									</div>
-								</div>
-								<div class="col-md-7">
-									<div class="input-wrp">
-										<md-input-container>
-											<label class="ph-label">Description</label>
-											<input type="text">
-										</md-input-container>
+									<div class="col-md-7">
+										<div class="input-wrp">
+											<md-input-container>
+												<label class="ph-label">Description</label>
+												<input type="text" ng-model="spend.description">
+											</md-input-container>
+										</div>
 									</div>
 								</div>
 							</div>
-							<div class="row">
-								<div class="col-md-12 text-right"><a href="" class="add-more">+ Add More</a></div>
+							<div class="row" ng-if="project.spendmoney.length<3">
+								<div class="col-md-12 text-right"><a href="" class="add-more" ng-click="addSpendMoney(project.spendmoney)">+ Add More</a></div>
 							</div>
 
 							<div class="input-wrp">
 								<label class="f-label" style="margin-bottom:20px;">Funding Duration</label>
-								<md-radio-group ng-model="data.group1">
+								<md-radio-group ng-model="project.daysDate"> 
 									<md-radio-button value="Days" class="md-primary">No. of Days</md-radio-button>
 										<md-input-container>
 											<label class="ph-label">30</label>
-											<input type="text">
+											<input type="text" ng-model="project.noOfDays">
 										</md-input-container>
 									<md-radio-button value="Date">End by Date</md-radio-button>
-									<md-datepicker ng-model="ctrl.myDate" md-placeholder=""></md-datepicker>
+									<md-datepicker ng-model="project.endByDate" md-placeholder=""></md-datepicker>
 								</md-radio-group>
 							</div>
 						</div>
@@ -72,7 +87,7 @@
 						</a>
 					</div>
 					<div class="col-md-6 next">
-						<a href="#/create/rewards" class="steps-back">
+						<a ng-click="startRewards()" class="steps-back">
 							<p class="cont">Continue to</p>
 							<p><span>Rewards &amp; Services</span><i class="fa fa-arrow-right" aria-hidden="true"></i></p>
 						</a>

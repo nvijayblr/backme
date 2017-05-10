@@ -18,30 +18,30 @@
 								<label class="f-label">Name</label>
 								<md-input-container>
 									<label class="ph-label">Your name</label>
-									<input type="text">
+									<input type="text" ng-model="project.name">
 								</md-input-container>
 							</div>
 							<div class="input-wrp">
 								<label class="f-label">Email</label>
 								<md-input-container>
 									<label class="ph-label">Your email</label>
-									<input type="email" ng-model="signUpSettings.userId">
+									<input type="email" ng-model="project.email">
 								</md-input-container>
 							</div>
 							<div class="input-wrp">
 								<label class="f-label">Mobile Number</label>
 								<md-input-container>
 									<label class="ph-label">Your mobile number</label>
-									<input type="text">
+									<input type="text" ng-model="project.mobileNumer">
 								</md-input-container>
 							</div>
 							<div class="input-wrp">
-								<label class="f-label">Social Media Connect</label>
+								<label class="f-label" style="margin-bottom:20px;">Social Media Connect</label>
 								<div class="social-connect">
 									<div class="conenect-wrp">
-									  <md-checkbox md-no-ink ng-model="data.cb1" aria-label="F" class="fb-cb social-cb">f</md-checkbox>
-									  <md-checkbox md-no-ink ng-model="data.cb2" aria-label="T" class="tw-cb social-cb">t</md-checkbox>
-									  <md-checkbox md-no-ink ng-model="data.cb3" aria-label="G" class="go-cb social-cb">g</md-checkbox>
+									  <md-checkbox md-no-ink ng-model="project.facebook" aria-label="F" class="fb-cb social-cb">f</md-checkbox>
+									  <md-checkbox md-no-ink ng-model="project.twitter" aria-label="T" class="tw-cb social-cb">t</md-checkbox>
+									  <md-checkbox md-no-ink ng-model="project.googleplus" aria-label="G" class="go-cb social-cb">g</md-checkbox>
 									</div>
 								</div>
 							</div>
@@ -52,21 +52,21 @@
 								<label class="f-label">Bank Account Information</label>
 								<md-input-container>
 									<label class="ph-label">Your name</label>
-									<input type="text">
+									<input type="text" ng-model="project.accountName">
 								</md-input-container>
 							</div>
 							<div class="input-wrp">
 								<label class="f-label">Bank Account Number</label>
 								<md-input-container>
 									<label class="ph-label">Account Number</label>
-									<input type="text">
+									<input type="text" ng-model="project.accountNo">
 								</md-input-container>
 							</div>
 							<div class="input-wrp">
 								<label class="f-label">IFSC Code</label>
 								<md-input-container>
 									<label class="ph-label">IFSC Code</label>
-									<input type="text">
+									<input type="text" ng-model="project.ifscCode">
 								</md-input-container>
 							</div>
 						</div>
@@ -76,13 +76,13 @@
 			<div class="steps-footer">
 				<div class="row">
 					<div class="col-md-6 col-sm-6  col-xs-6 prev">
-						<a href="#/create/rewards" class="steps-back">
+						<a href="#/create/rewards/{{projectId}}" class="steps-back">
 							<p class="cont">Back to</p>
 							<i class="fa fa-arrow-left" aria-hidden="true"></i><span>Rewards &amp; Services</span>
 						</a>
 					</div>
 					<div class="col-md-6 col-sm-6 col-xs-6 next">
-						<a href="#/create/preview" class="steps-back">
+						<a ng-click="startPreview()" class="steps-back">
 							<p class="cont">Continue to</p>
 							<p><span>Preview &amp; Submit</span><i class="fa fa-arrow-right" aria-hidden="true"></i></p>
 						</a>

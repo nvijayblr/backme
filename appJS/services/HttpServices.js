@@ -6,9 +6,9 @@ backMe
 			'method': _params['method'],
 			'url': _params['url'],
 			data: _params['inputData'] ? _params['inputData'] : {}
-			/*,headers:{ 
+			,headers:{ 
 				'Content-Type': "application/json"
-			}*/
+			}
 		};
 		
 		_http(_requestParam).then(function(result){

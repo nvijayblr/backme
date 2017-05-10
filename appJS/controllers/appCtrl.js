@@ -3,11 +3,11 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 	
 	_scope.appConstant = _appConstant;
 	_scope.loginSettings = {
-		loginId : '',
+		email : '',
 		password: ''
 	}
 	_scope.signUpSettings = {
-		loginId : '',
+		email : '',
 		password: ''
 	}
 	
@@ -32,7 +32,7 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 	
 	_scope.showLogin = function() {
 		_scope.loginSettings = {
-			loginId : '',
+			email : '',
 			password: ''
 		}
 		_scope.showPassword = true;
@@ -41,7 +41,7 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 	}
 	_scope.showSignUp = function() {
 		_scope.signUpSettings = {
-			loginId : '',
+			email : '',
 			password: ''
 		}
 		_scope.showPassword = true;
@@ -72,20 +72,23 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 	
 	_scope.appLogin = function(_email, _pass) {
 		if(!_email || !_pass) {
-			_services.toast.show('Please enter the userId or password');
+			_services.toast.show('Please enter the Email or password');
 			return;
 		}
+		_scope.data
 		_services.http.serve({
-			method: 'GET',
-			url: _appConstant.baseUrl + 'login?email='+_email+'&pass='+_pass
+			method: 'POST',
+			url: _appConstant.baseUrl + 'login',
+			inputData: _scope.loginSettings
 		}, function(data){
+			_appConstant.currentUser = data[0];
 			_appConstant.currentUser.name = _email;
 			_scope.loggedUser = _appConstant.currentUser;
 			localStorage.setItem('backMeUser', JSON.stringify(_appConstant.currentUser));
 			_scope.loggedIn = true;
 			$('#loginModal').modal('hide');
 		}, function(err){
-			_services.toast.show(err.data);
+			_services.toast.show('Invalid Email/Password.');
 		});
 	}
 	
@@ -95,14 +98,10 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 			_services.toast.show('Please enter the email id or password');
 			return;
 		}
-		_scope.signup = {
-			'email': _email,
-			'pass' : _pass
-		}
 		_services.http.serve({
 			method: 'POST',
 			url: _appConstant.baseUrl + 'signup',
-			inputData: _scope.signup
+			inputData: _scope.signUpSettings
 		}, function(data){
 			$('#signUpModal').modal('hide');
 			_appConstant.currentUser.name = _email;
@@ -116,6 +115,7 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 	
 	/*Begin the google sign in*/
 	var auth2; 
+	//uncomment this
 	gapi.load('auth2', function(){
 		auth2 = gapi.auth2.init({
 			client_id: _appConstant.googleClientId + '.apps.googleusercontent.com',

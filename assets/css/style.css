@@ -7,9 +7,35 @@ body {
 	-moz-osx-font-smoothing: grayscale;
 }
 input, md-radio-button .md-label, .md-select-value>span:not(.md-select-icon) .md-text, .md-datepicker-input {
-	font-family: 'Roboto Condensed', sans-serif;
-	font-size: 18px;
+	font-family: 'Roboto', sans-serif;
+	font-size: 26px;
 	color: #2a2a2a;
+	padding-bottom: 10px !important;
+	font-weight: 300;
+}
+md-radio-button .md-label {
+	padding-bottom: 0 !important;
+}
+.md-datepicker-triangle-button.md-button.md-icon-button {
+	top: 10px;
+}
+md-input-container .md-errors-spacer {
+	display: none;
+}
+md-input-container .error-lable {
+    min-height: 24px;
+    padding-top: 35px;
+    color: red;
+	display: none;
+	-webkit-transition: all .2s;
+	-moz-transition: all .2s;
+	transition: all .2s;
+}
+md-input-container.md-input-invalid .error-lable {
+	display: block;
+	-webkit-transition: all .2s;
+	-moz-transition: all .2s;
+	transition: all .2s;
 }
 h1, h2, h3 {
 	font-weight: 500;
@@ -60,7 +86,7 @@ h6 {
 	z-index: 1000;
 }
 .banner {
-	height: 465px;
+	height: 464px;
 	background: #00897b;
 	border-top: 1px solid #00645a;
 	text-align: center;
@@ -104,9 +130,9 @@ h6 {
     width: 120px;
     margin: auto;
 }
-.top-nav li.top-search {
+/*.top-nav li.top-search {
 	margin-top: 18px;
-}
+}*/
 .top-search .glyphicon {
     margin-top: 3px;
     margin-right: 20px;
@@ -118,10 +144,11 @@ h6 {
 	display: inline-block;
 	width: 0px;
 	border-width: 0;
-	padding: 0 5px;
+	padding: 0 5px !important;
 	-webkit-transition: all .2s;
 	-moz-transition: all .2s;
 	transition: all .2s;
+	font-size: 16px;
 }
 .top-search.active .ts-search-txt {
 	display: inline-block;
@@ -147,11 +174,16 @@ h6 {
 .banner h1, .banner h3 {
 	color: #fff;
 }
+.banner h1 {
+	font-size: 72px;
+}
 .banner h3 {
-	font-weight: normal;
+	font-size: 39px;
+    font-weight: 300;
+	margin-top: 16px;
 }
 .banner .carousel-wrapper {
-	margin-top: 100px;
+	margin-top: 85px;
 }
 .banner .btn-wrp {
 	margin-top: 60px;
@@ -162,11 +194,13 @@ h6 {
 .learn-more {
 	background: transparent;
 	margin: 0 10px;
-	padding: 10px 30px;
+	padding: 16px 30px;
 	border-color: #ffffff;
 	color: #ffffff;
 	font-size: 25px;
 	font-weight: normal;
+	width: 252px;
+    height: 68px;	
 }
 .learn-more:hover {
 	background-color: #ffffff;
@@ -199,7 +233,7 @@ h6 {
 	font-size: 16px;
 }
 .pc-wrp {
-	margin-top: 60px;
+	margin-top: 86px;
 }
 .proj-wrp {
 	min-height: 600px;
@@ -406,6 +440,7 @@ h6 {
 	text-align: left;
 	background-color: #f6f6f6;
 	outline: none;
+  padding: 6px 12px !important;
 }
 .footer .payment-coneect {
 	margin-bottom: 50px;
@@ -465,7 +500,7 @@ h6 {
 .loginModal label.p-lable {
 	margin-bottom: 0;
     font-size: 20px !important;
-    font-weight: 100 !important;
+    font-weight: 300 !important;
 	color: #c5c5c5 !important;
 }
 .loginModal label.f-label {
@@ -634,7 +669,7 @@ md-input-container, md-input-container .md-input, md-input-container .md-placeho
 md-input-container .show-pwd {
     position: absolute;
     right: 2px;
-    bottom: 30px;
+    bottom: 10px;
     font-size: 16px;
 }
 ul.interest {
@@ -717,14 +752,14 @@ md-checkbox.social-cb.go-cb .md-label {
 
 .create-proj-cont {
 	background-color: #dfe8ec;
-	padding: 30px 0;
+	padding: 35px 0;
 }
 .create-proj-wrp {
-	width: 77%;
+	width: 73%;
 	min-height: 500px;
 	background-color: #fff;
 	margin: auto;
-	padding: 80px 70px;
+	padding: 80px 60px;
 	-webkit-box-shadow: 0px 1px 3px 1px rgba(132,137,140,1);
 	-moz-box-shadow: 0px 1px 3px 1px rgba(132,137,140,1);
 	box-shadow: 0px 1px 3px 1px rgba(132,137,140,1);
@@ -733,13 +768,14 @@ md-checkbox.social-cb.go-cb .md-label {
 	min-height: inherit;
 }
 .proj-title {
-	font-weight: 100;
-    font-size: 86px;
+    font-weight: 300;
+    font-size: 92px;
     margin: 0;
     text-align: center;
+    color: #000000;
 }
 .start-proj-btn {
-	padding: 50px 0;
+	padding: 80px 0 50px 0;
 	text-align: center;
 }
 .start-proj-btn .btn {
@@ -756,9 +792,12 @@ md-checkbox.social-cb.go-cb .md-label {
 	text-align: center;
 }
 .start-proj-title h2 {
-	font-weight: normal;
 	color: #6c6c6c;
-	font-weight: 100;
+    font-weight: 300;
+    font-size: 36px;
+}
+.start-proj-title span {
+	font-weight: 500;
 }
 .info-cont {
 	width: 90%;
@@ -768,7 +807,7 @@ md-checkbox.social-cb.go-cb .md-label {
 	font-size: 120px;
 	line-height: 120px;
 	color: #e7e7e7;
-	font-weight: 100;
+	font-weight: 300;
 }
 .info-wrp .desc h4 {
 	font-size: 28px;
@@ -851,6 +890,9 @@ md-checkbox.social-cb.go-cb .md-label {
 	font-size: 20px;
 	color: #c5c5c5;
 }
+.proj-steps .steps li.completed p {
+	color: #656565;
+}
 .proj-steps .steps li.active p {
 	color: #00897b;
 }
@@ -861,12 +903,12 @@ md-checkbox.social-cb.go-cb .md-label {
 	text-align: center;
 	font-size: 36px;
 	color: #6c6c6c;
-	font-weight: 100;
+	font-weight: 300;
 }
 .septs-title p{
 	font-size: 20px;
 	color: #6c6c6c;
-	font-weight: 100;
+	font-weight: 300;
 }
 .steps-content {
 	background-color: #f7f7f7;
@@ -879,6 +921,7 @@ md-checkbox.social-cb.go-cb .md-label {
     border: 1px solid #e1e1e1;
     background-color: #eeeeee;
 	padding: 21px 0;
+	cursor: pointer;
 }
 .drag-drop-box p {
 	text-align: center;
@@ -888,7 +931,7 @@ md-checkbox.social-cb.go-cb .md-label {
 
 .steps-content .poster{
 	height: 320px;
-	padding: 10px;
+	padding: 13px;
 }
 .steps-content .poster .p-img{
 	height: 120px;
@@ -921,9 +964,15 @@ md-input-container.md-input-focused label:not(.md-no-float), md-input-container.
 .steps-form label {
 	margin-bottom: 5px;
 }
+h5.f-label {
+    font-weight: 300;
+    font-size: 20px;
+    color: #6c6c6c;
+}
 .steps-form md-input-container label {
     margin-bottom: 0;
-    font-size: 24px !important;
+    font-size: 26px !important;
+	color: #c5c5c5 !important;
 }
 .steps-form md-input-container {
 	width: 100%;
@@ -931,17 +980,18 @@ md-input-container.md-input-focused label:not(.md-no-float), md-input-container.
 }
 .steps-form .input-wrp {
 	margin-bottom: 10px;
+	margin-top: 50px;
 	position: relative;
 }
 .ph-label, md-input-container:not([md-no-float]) .md-select-placeholder span:first-child {
-    font-size: 20px !important;
+    font-size: 28px !important;
     color: #c5c5c5 !important;
-    font-weight: 100 !important;
+    font-weight: 300 !important;
 }
 .steps-form label.f-label {
-	font-weight: 200;
+	font-weight: 300;
     font-size: 20px;
-	color: #6c6c6c;
+    color: #6c6c6c;
 }
 .upload-img {
 	text-align: center;
@@ -957,6 +1007,8 @@ md-input-container.md-input-focused label:not(.md-no-float), md-input-container.
 .steps-back {
 	font-size: 23px;
 	color: #fff;
+	display: inline-block;
+	cursor: pointer;
 }
 .prev .steps-back {
     display: inline-block;
@@ -978,7 +1030,7 @@ md-input-container.md-input-focused label:not(.md-no-float), md-input-container.
 	margin-left: 25px;
 }
 .proj-steps-wrp {
-	width: 65%;
+	width: 80%;
 	margin: auto;
 }
 md-input-container .fa-rupee {
@@ -996,7 +1048,7 @@ md-input-container.rupees .md-input {
 a.add-more{
 	color: #00897b;
 	font-size: 20px;
-	font-weight: 100;
+	font-weight: 300;
 }
 a.add-more:hover{
 	color: #6dc2b9;
@@ -1005,16 +1057,35 @@ md-datepicker {
 	position: relative;
     left: -17px;
 }
+.rewards-content {
+	margin-top: 50px;
+}
+a.delete-rewards {
+	font-size: 16px;
+	color: #00897b;
+	text-decoration: none;
+}
+a.delete-rewards:hover {
+	text-decoration: underline;
+}
+a.delete-rewards .fa {
+	color: #aaaaaa;
+	margin-right: 8px;
+	margin-top: 15px;
+}
 .reward-box {
 	border: 1px solid #e1e1e1;
 	background-color: #fff;
 	padding: 15px;
 	margin-top: 15px;
 }
+.reward-box .input-wrp {
+	margin-top: 0;
+}
 .reward-box .input-wrp input, .reward-box .input-wrp textarea {
 	width:100%;
 	font-size: 20px;
-	font-weight: 100;
+	font-weight: 300;
 	padding: 5px;
 	border: none;
 	background-color: #f2f2f2;
@@ -1095,7 +1166,7 @@ md-datepicker {
 	font-size: 20px;
 	color: #6c6c6c;
 	text-align: left;
-	font-weight: 100;
+	font-weight: 300;
 }
 .prod-design {
 	margin: 40px 0 10px;
@@ -1290,12 +1361,12 @@ md-datepicker {
 .support-box .s-desc{
 	color: #6c6c6c;
 	font-size: 20px;
-	font-weight: 100;
+	font-weight: 300;
 }
 .support-box .s-support-cnt{
 	color: #c5c5c5;
 	font-size: 20px;
-	font-weight: 100;
+	font-weight: 300;
 	margin: 30px 0 0 0;
 }
 .support-box.support {
@@ -1471,12 +1542,12 @@ md-datepicker {
 .checkout-cont .check-sub-title {
 	color: #6c6c6c;
 	font-size: 20px;
-	font-weight: 100;
+	font-weight: 300;
 }
 .checkout-cont .check-title {
 	color: #6c6c6c;
 	font-size: 34px;
-	font-weight: 100;
+	font-weight: 300;
 }
 .checkout-cont .donation-wrp {
 	background-color: #83fff2;
@@ -1652,12 +1723,12 @@ md-datepicker {
 }
 .my-project .proj-info h5 {
 	font-size: 28px;
-	font-weight: 100;
+	font-weight: 300;
 	color: #fff;
 }
 .my-project .proj-info p {
 	font-size: 16px;
-	font-weight: 100;
+	font-weight: 300;
 	color: #fff;
 }
 .my-project .proj-info p .fa {
@@ -1669,7 +1740,7 @@ md-datepicker {
 	font-size: 16px;
 	color: #3c3c3c;
 	margin-top: 16px;
-	font-weight: 100;
+	font-weight: 300;
 }
 .my-project .p-desc {
 	font-size: 20px;
@@ -1681,7 +1752,7 @@ md-datepicker {
 }
 .my-project .amount {
     font-size: 27px;
-    font-weight: 100;
+    font-weight: 300;
     color: #3c3c3c;
     margin-bottom: 0;
 }
