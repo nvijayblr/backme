@@ -1,0 +1,273 @@
+<section class="proj-content">
+	<div class="container projects-det">
+		<div class="row">
+			<div class="col-md-8 pd">
+				<div class="project-carousel">
+					<ng-image-gallery
+						images="images"
+						methods="methods"
+						thumbnails="true"
+						thumb-size="1"
+						inline="true"
+						bubbles="true"
+						bubble-size="80"
+						img-bubbles="true"
+						bg-close="true"
+						piracy="false"
+						img-anim="fadeup"
+						on-open=""
+						on-close=""
+						on-delete=""></ng-image-gallery>
+					<!--<img src="assets/images/project-bg.jpg">-->
+				</div>
+				<h1 class="pd-title">{{project.title}}</h1>
+				<p class="pd-desc">{{project.description}}</p>
+				<div class="prod-design">
+					<h5><i class="fa fa-tag" aria-hidden="true"></i>Product Design</h5>
+					<div class="pd-soc-wrp clearfix">
+						<ul class="clearfix pull-left soc">
+							<li class="likes"><a href="" class="li"><i class="fa fa-thumbs-up" aria-hidden="true"></i></a></li>
+							<li><a href="" class="fb"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
+							<li><a href="" class="tw"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
+							<li><a href="" class="go"><i class="fa fa-google-plus" aria-hidden="true"></i></a></li>
+							<li><a href="" class="in"><i class="fa fa-linkedin" aria-hidden="true"></i></a></li>
+						</ul>
+						<ul class="clearfix pull-right views">
+							<li><span class="cnt">269</span> Likes</li>
+							<li><span class="cnt">472</span> Views</li>
+						</ul>
+					</div>
+				</div>
+				<div class="pd-about">
+					<h4 class="btn-title">About this project</h4>
+					<p class="pd-desc">{{project.about}}</p>
+					
+					<h4 class="btn-title">How I will spend money</h4>
+					<div class="spendmoney" ng-repeat="spendmoney in project.spendmoney track by $index">
+						<p class="pd-desc">
+							<i class="fa fa-rupee" aria-hidden="true"></i>{{spendmoney.amount}}.00 - {{spendmoney.description}}
+						</p>
+					</div>
+					<p class="pd-desc" ng-if = "!project.spendmoney"> - </p>
+					
+					
+					<h4 class="btn-title">My Team</h4>
+					<div class="row team">
+						<div class="col-md-6">
+							<div class="team-wrp clearfix">
+								<img src="assets/images/team.jpg" class="team-bg">
+								<div class="name pull-left">
+									<h5>Ken Hermann</h5>
+									<p>Co-Founder</p>
+								</div>
+							</div>
+							<div class="team-wrp clearfix">
+								<img src="assets/images/team.jpg" class="team-bg">
+								<div class="name pull-left">
+									<h5>Ken Hermann</h5>
+									<p>Co-Founder</p>
+								</div>
+							</div>
+							<div class="team-wrp clearfix">
+								<img src="assets/images/team.jpg" class="team-bg">
+								<div class="name pull-left">
+									<h5>Ken Hermann</h5>
+									<p>Co-Founder</p>
+								</div>
+							</div>
+							<div class="team-wrp clearfix">
+								<img src="assets/images/team.jpg" class="team-bg">
+								<div class="name pull-left">
+									<h5>Ken Hermann</h5>
+									<p>Co-Founder</p>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="team-wrp clearfix">
+								<img src="assets/images/team.jpg" class="team-bg">
+								<div class="name pull-left">
+									<h5>Ken Hermann</h5>
+									<p>Co-Founder</p>
+								</div>
+							</div>
+							<div class="team-wrp clearfix">
+								<img src="assets/images/team.jpg" class="team-bg">
+								<div class="name pull-left">
+									<h5>Ken Hermann</h5>
+									<p>Co-Founder</p>
+								</div>
+							</div>
+							<div class="team-wrp clearfix">
+								<img src="assets/images/team.jpg" class="team-bg">
+								<div class="name pull-left">
+									<h5>Ken Hermann</h5>
+									<p>Co-Founder</p>
+								</div>
+							</div>
+							<div class="team-wrp clearfix">
+								<img src="assets/images/team.jpg" class="team-bg">
+								<div class="name pull-left">
+									<h5>Ken Hermann</h5>
+									<p>Co-Founder</p>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<h4 class="btn-title">Comments (12)</h4>
+					<div class="comments">
+						<div class="cmt-box">
+							<h4>Leave a comment (for supporters only)</h4>
+						</div>
+						<div class="cmt-wrp">
+							<div class="c-wrp clearfix">
+								<img src="assets/images/user.jpg" class="cmt-bg">
+								<div class="name">
+									<h5>Amit Das  <span class="day">2 hrs ago</span></h5>
+									<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+								</div>
+							</div>
+							<div class="c-wrp clearfix">
+								<img src="assets/images/user.jpg" class="cmt-bg">
+								<div class="name">
+									<h5>Amit Das  <span class="day">Yesterday</span></h5>
+									<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+								</div>
+							</div>
+							<div class="c-wrp clearfix">
+								<img src="assets/images/user.jpg" class="cmt-bg">
+								<div class="name">
+									<h5>Amit Das  <span class="day">21 Aug</span></h5>
+									<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-4">
+				
+				<div class="support-box support">
+					<div class="row">
+						<div class="col-md-6">
+							<h3 class="amount"><i class="fa fa-rupee" aria-hidden="true"></i>24,000</h3>
+							<h4 class="s-title">Money Raised</h4>
+							<h3 class="amount">14</h3>
+							<h4 class="s-title">People Supporting</h4>
+							<h3 class="amount">2 Days 4 Hrs</h3>
+							<h4 class="s-title">Time Remaining</h4>
+						</div>
+						<div class="col-md-6">
+							<div class="funded-wrp">
+								<div class="f-progress">
+									<div class="p-process"></div>
+									<div class="p-completed"></div>
+								</div>
+								<p class="desc">24% amount achievd of 100,000</p>
+							</div>
+							<div class="people-wrp">
+								<i class="fa fa-user" aria-hidden="true"></i>
+								<i class="fa fa-user" aria-hidden="true"></i>
+								<i class="fa fa-user" aria-hidden="true"></i>
+								<i class="fa fa-user" aria-hidden="true"></i>
+								<i class="fa fa-user" aria-hidden="true"></i>
+								<i class="fa fa-user" aria-hidden="true"></i>
+								<i class="fa fa-user" aria-hidden="true"></i>
+								<i class="fa fa-user" aria-hidden="true"></i>
+								<i class="fa fa-user" aria-hidden="true"></i>
+								<i class="fa fa-user" aria-hidden="true"></i>
+								<i class="fa fa-user" aria-hidden="true"></i>
+							</div>
+							<div class="days-wrp">
+								<div class="total-days"></div>
+								<div class="completed-days"></div>
+							</div>
+						</div>
+					</div>
+					<div class="support-me">
+						<a class="btn btn-default btn-lg btn-subscribe" ng-click="supportMe()" ng-if="showSupportMe">Support Me</a>
+						<div class="sm-group clearfix" ng-if="!showSupportMe">
+							<i class="fa fa-rupee" aria-hidden="true"></i>
+							<input type="text" class="sm-txt" placeholder="100, 500">
+							<a class="btn btn-default btn-lg btn-subscribe sm-btn" ng-click="supportMeContinue();">Continue</a>
+						</div>
+						<p class="desc">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's 	standard dummy text ever since the 1500s.</p>
+					</div>
+				</div>
+				<div class="support-box user">
+					<img src="assets/images/support-user-bg.jpg" class="support-user-bg">
+					<div class="user-info">
+						<h3 class="s-user">{{project.name}}</h3>
+						<p class="s-loc"><i class="fa fa-map-marker" aria-hidden="true"></i>{{project.location}}</p>
+						<p class="s-email"><i class="fa fa-envelope" aria-hidden="true"></i>{{project.email}}</p>
+					</div>
+				</div>
+				
+				<h4 class="s-proj-title">Support this project</h4>
+				<div ng-repeat="supportrewards in project.supportrewards track by $index">
+					<div class="support-box">
+						<h3 class="amount"><i class="fa fa-rupee" aria-hidden="true"></i>{{supportrewards.amount}}<sup>.00</sup></h3>
+						<h4 class="s-title">{{supportrewards.title}}</h4>
+						<p class="s-desc">{{supportrewards.description}}</p>
+						<p class="s-support-cnt">5 People Supporting</p>
+					</div>
+				</div>				
+				
+				<h4 class="s-proj-title">Service this project</h4>
+				<div ng-repeat="servicerewards in project.servicerewards track by $index">
+					<div class="support-box">
+						<h3 class="amount"><i class="fa fa-rupee" aria-hidden="true"></i>{{servicerewards.amount}}<sup>.00</sup></h3>
+						<h4 class="s-title">{{servicerewards.activityName}}</h4>
+						<p class="s-desc">{{servicerewards.description}}</p>
+						<p class="s-desc">{{servicerewards.availableDate}}</p>
+					</div>
+				</div>
+
+				
+				<h4 class="s-proj-title"><i class="fa fa-shield" aria-hidden="true"></i>Trustworthy Partners</h4>
+				<div class="clearfix partners">
+					<div class="p-logo"><img src="assets/images/paypal.png"/></div>
+					<div class="p-logo"><img src="assets/images/paytm.png"/></div>
+					<div class="p-logo last"><img src="assets/images/netbanking.png"/></div>
+				</div>
+
+				<div class="sim-proj-wrp">
+					<h4 class="s-proj-title">Similar Projects</h4>
+					<div class="row sim-proj">
+						<div class="col-md-5">
+							<img src="assets/images/similar-proj-bg.png"/>
+						</div>
+						<div class="col-md-7">
+							<h5 class="title">Lorem Ipsum is simply dummy text of the printing </h5>
+							<p class="desc">6479 Views</p>
+							<p class="desc">27 Days to go</p>
+						</div>
+					</div>
+					<div class="row sim-proj">
+						<div class="col-md-5">
+							<img src="assets/images/similar-proj-bg.png"/>
+						</div>
+						<div class="col-md-7">
+							<h5 class="title">Lorem Ipsum is simply dummy text of the printing </h5>
+							<p class="desc">6479 Views</p>
+							<p class="desc">27 Days to go</p>
+						</div>
+					</div>
+					<div class="row sim-proj">
+						<div class="col-md-5">
+							<img src="assets/images/similar-proj-bg.png"/>
+						</div>
+						<div class="col-md-7">
+							<h5 class="title">Lorem Ipsum is simply dummy text of the printing </h5>
+							<p class="desc">6479 Views</p>
+							<p class="desc">27 Days to go</p>
+						</div>
+					</div>
+				</div>
+				
+			</div>
+		
+		</div>
+	</div>
+</section>

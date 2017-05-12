@@ -1,0 +1,136 @@
+<section class="proj-content">
+	<div class="container projects-det">
+		<div class="row">
+			<div class="col-md-8 pd">
+				<div class="project-carousel">
+					<ng-image-gallery
+						images="images"
+						methods="methods"
+						thumbnails="true"
+						thumb-size="1"
+						inline="true"
+						bubbles="true"
+						bubble-size="80"
+						img-bubbles="true"
+						bg-close="true"
+						piracy="false"
+						img-anim="fadeup"
+						on-open=""
+						on-close=""
+						on-delete=""></ng-image-gallery>
+
+					<!--<img ng-src="{{project.videosImages ? project.videosImages : 'assets/images/img_not_available.png'}}">-->
+				</div>
+				<h1 class="pd-title">{{project.title}}</h1>
+				<p class="pd-desc">{{project.description}}</p>
+				<div class="pd-about">
+					<h4 class="btn-title">About this project</h4>
+					<p class="pd-desc">{{project.about}}</p>
+					
+					<h4 class="btn-title">How I will spend money</h4>
+					<div class="spendmoney" ng-repeat="spendmoney in project.spendmoney track by $index">
+						<p class="pd-desc">
+							<i class="fa fa-rupee" aria-hidden="true"></i>{{spendmoney.amount}}.00 - {{spendmoney.description}}
+						</p>
+					</div>
+					
+					<h4 class="btn-title">My Team</h4>
+					<div class="row team">
+						<div class="col-md-6">
+							<div class="team-wrp clearfix">
+								<img src="assets/images/team.jpg" class="team-bg">
+								<div class="name pull-left">
+									<h5>Ken Hermann</h5>
+									<p>Co-Founder</p>
+								</div>
+							</div>
+							<div class="team-wrp clearfix">
+								<img src="assets/images/team.jpg" class="team-bg">
+								<div class="name pull-left">
+									<h5>Ken Hermann</h5>
+									<p>Co-Founder</p>
+								</div>
+							</div>
+							<div class="team-wrp clearfix">
+								<img src="assets/images/team.jpg" class="team-bg">
+								<div class="name pull-left">
+									<h5>Ken Hermann</h5>
+									<p>Co-Founder</p>
+								</div>
+							</div>
+							<div class="team-wrp clearfix">
+								<img src="assets/images/team.jpg" class="team-bg">
+								<div class="name pull-left">
+									<h5>Ken Hermann</h5>
+									<p>Co-Founder</p>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="team-wrp clearfix">
+								<img src="assets/images/team.jpg" class="team-bg">
+								<div class="name pull-left">
+									<h5>Ken Hermann</h5>
+									<p>Co-Founder</p>
+								</div>
+							</div>
+							<div class="team-wrp clearfix">
+								<img src="assets/images/team.jpg" class="team-bg">
+								<div class="name pull-left">
+									<h5>Ken Hermann</h5>
+									<p>Co-Founder</p>
+								</div>
+							</div>
+							<div class="team-wrp clearfix">
+								<img src="assets/images/team.jpg" class="team-bg">
+								<div class="name pull-left">
+									<h5>Ken Hermann</h5>
+									<p>Co-Founder</p>
+								</div>
+							</div>
+							<div class="team-wrp clearfix">
+								<img src="assets/images/team.jpg" class="team-bg">
+								<div class="name pull-left">
+									<h5>Ken Hermann</h5>
+									<p>Co-Founder</p>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="support-box user">
+					<img ng-if="!project.userPhoto" src="assets/images/support-user-bg.jpg" class="support-user-bg">
+					<img ng-if="project.userPhoto" ng-src="uploads/{{project.userPhoto}}" class="support-user-bg">
+					<div class="user-info">
+						<h3 class="s-user">{{project.name}}</h3>
+						<p class="s-loc"><i class="fa fa-map-marker" aria-hidden="true"></i>{{project.location}}</p>
+						<p class="s-email"><i class="fa fa-envelope" aria-hidden="true"></i>{{project.email}}</p>
+					</div>
+				</div>
+				
+				<h4 class="s-proj-title">Support this project</h4>
+				<div ng-repeat="supportrewards in project.supportrewards track by $index">
+					<div class="support-box">
+						<h3 class="amount"><i class="fa fa-rupee" aria-hidden="true"></i>{{supportrewards.amount}}<sup>.00</sup></h3>
+						<h4 class="s-title">{{supportrewards.title}}</h4>
+						<p class="s-desc">{{supportrewards.description}}</p>
+					</div>
+				</div>
+				
+				<h4 class="s-proj-title">Service this project</h4>
+				<div ng-repeat="servicerewards in project.servicerewards track by $index">
+					<div class="support-box">
+						<h3 class="amount"><i class="fa fa-rupee" aria-hidden="true"></i>{{servicerewards.amount}}<sup>.00</sup></h3>
+						<h4 class="s-title">{{servicerewards.activityName}}</h4>
+						<p class="s-desc">{{servicerewards.description}}</p>
+						<p class="s-desc">{{servicerewards.availableDate}}</p>
+					</div>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+</section>

@@ -1,0 +1,88 @@
+<!--Banner Section-->
+<section class="banner">
+	<div class="container">
+		<div class="carousel-wrapper">
+			<h1>Welcome to BackMe.</h1>
+			<h3>Best platform for to start your project, Always.</h3>
+			<div class="btn-wrp">
+				<a href="" class="btn btn-lg btn-default learn-more">Learn More</a>
+				<a href="" class="btn btn-lg btn-default learn-more">Get Started</a>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!--Content Section-->
+<section class="content">
+	<div class="container">
+		<div class="row pc-wrp">
+			<div class="col-md-10 proj-wrp">
+				<section class="projects">
+					<div class="row btn-wrp first">
+						<h3 class="col-md-4 p-title">Trending</h3>
+						<div class="col-md-4 pull-right text-right">
+							<a href="" class="btn btn-md btn-default">See All</a>
+						</div>
+					</div>
+					<div class="row poster-wrp">
+						
+						<div class="col-md-4" ng-repeat="project in projects track by $index">
+							<div class="poster">
+								<div class="p-img">
+									<img ng-if="project.coverImage" ng-src="uploads/{{project.coverImage}}">
+									<img ng-if="!project.coverImage" src="assets/images/poster-bg.png">
+								</div>
+								<a href="#project/{{project.projectId}}" class="poster-title">
+									<h5 class="poster-title">{{project.title}}</h5>
+								</a>
+								<div class="owner clearfix">
+									<div class="owner-img"><img ng-src="uploads/{{project.userPhoto}}"></div>
+									<h5 class="owner-name pull-left">{{project.name}}</h5>
+								</div>
+								<div class="funded-wrp">
+									<div class="f-progress">
+										<div class="p-process"></div>
+										<div class="p-completed"></div>
+									</div>
+								</div>
+								<div class="row proj-statistics">
+									<div class="col-md-4 col-sm-4 col-xs-4 ps-fund">
+										<h5>70%</h5>
+										<p>Funded</p>
+									</div>
+									<div class="col-md-4 col-sm-4 col-xs-4 ps-views">
+										<h5>76887</h5>
+										<p>Views</p>
+									</div>
+									<div class="col-md-4 col-sm-4 col-xs-4 ps-days">
+										<h5>{{project.remainDays}}</h5>
+										<p>Days</p>
+									</div>
+								</div>										
+							</div>
+						</div>
+						
+						<h5 ng-if="!projects.length" class="no-project-found">No Projects Found.</h5>
+					</div>
+				</section>
+			</div>
+			<div class="col-md-2 cat-wrp">
+				<section class="search">
+					<h4 class="cat-title">Categories</h4>
+				</section>
+				<section class="proj-category">
+					<ul class="right-nav clearfix">
+						<li><a href="">Singer</a></li>
+						<li><a href="">Drama</a></li>
+						<li><a href="" class="active">Music</a></li>
+						<li><a href="">Dance</a></li>
+						<li><a href="">Prank</a></li>
+						<li><a href="">Acting</a></li>
+						<li><a href="">Sport</a></li>
+						<li><a href="">Weired</a></li>
+					</ul>
+				</section>
+			</div>
+		</div>					
+	</div>
+</section>

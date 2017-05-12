@@ -1,0 +1,122 @@
+<section class="content">
+	<div class="create-proj-cont">
+		<div class="create-proj-wrp steps-wrp">
+			<div ng-include="'templates/partials/steps.html'"></div>
+			<div class="steps-content">
+				<div class="row steps-content-basic">
+					<div class="proj-steps-wrp">
+						<h5>PROFILE INFORMATION</h5>
+						<div class="steps-form">
+							<div class="input-wrp">
+								<label class="f-label">Upload Your Photo</label>
+								<form name="myForm">
+									<div class="drag-drop-box drop-box user" 
+										 ngf-select 
+										 ngf-drop 
+										 ng-model="userImg" 
+										 name="userImg" 
+										 ngf-pattern="'image/*'"
+										 ngf-accept="'image/*'" 
+										 ngf-max-size="1MB" 
+										 ngf-multiple="false"
+										 ngf-model-invalid="errorFile">
+										<div class="upload-userphoto"></div>
+									</div>
+								</form>
+								<span ng-show="myForm.userImg.$error.maxSize">File too large {{errorFile.size/1000000|number:1}}MB: max 1MB</span>
+								<div class="user-img">
+									<img ng-if="!project.userPhoto || userImg" ngf-size="{width: 356, height: 176}" ngf-thumbnail="userImg||'assets/images/img_not_available.png'">
+									<img ng-if="project.userPhoto && !userImg" class="user-photo" ng-src="uploads/{{project.userPhoto}}">
+								</div>
+								<!--<md-input-container>
+									<label class="ph-label">Upload Your Photo</label>
+									<input type="text" ng-model="project.userPhoto">
+								</md-input-container>-->
+							</div>
+							<div class="input-wrp">
+								<label class="f-label">Name</label>
+								<md-input-container>
+									<label class="ph-label">Your name</label>
+									<input type="text" ng-model="project.name">
+								</md-input-container>
+							</div>
+							<div class="input-wrp">
+								<label class="f-label">Email</label>
+								<md-input-container>
+									<label class="ph-label">Your email</label>
+									<input type="email" ng-model="project.email">
+								</md-input-container>
+							</div>
+							<div class="input-wrp">
+								<label class="f-label">Mobile Number</label>
+								<md-input-container>
+									<label class="ph-label">Your mobile number</label>
+									<input type="text" ng-model="project.mobileNumer">
+								</md-input-container>
+							</div>
+							<div class="input-wrp">
+								<label class="f-label" style="margin-bottom:20px;">Social Media Connect</label>
+								<div class="social-connect">
+									<div class="conenect-wrp">
+									  <md-checkbox md-no-ink ng-model="project.facebook" aria-label="F" class="fb-cb social-cb">f</md-checkbox>
+									  <md-checkbox md-no-ink ng-model="project.twitter" aria-label="T" class="tw-cb social-cb">t</md-checkbox>
+									  <md-checkbox md-no-ink ng-model="project.googleplus" aria-label="G" class="go-cb social-cb">g</md-checkbox>
+									</div>
+								</div>
+							</div>
+						</div>
+						<h5>BANK ACCOUNT INFORMATION</h5>
+						<div class="steps-form">
+							<div class="input-wrp">
+								<label class="f-label">Bank Account Information</label>
+								<md-input-container>
+									<label class="ph-label">Your name</label>
+									<input type="text" ng-model="project.accountName">
+								</md-input-container>
+							</div>
+							<div class="input-wrp">
+								<label class="f-label">Bank Account Number</label>
+								<md-input-container>
+									<label class="ph-label">Account Number</label>
+									<input type="text" ng-model="project.accountNo" ng-pattern="/^[0-9]*$/">
+								</md-input-container>
+							</div>
+							<div class="input-wrp">
+								<label class="f-label">IFSC Code</label>
+								<md-input-container>
+									<label class="ph-label">IFSC Code</label>
+									<input type="text" ng-model="project.ifscCode">
+								</md-input-container>
+							</div>
+							
+							<div class="input-wrp">
+								<label class="f-label">Address</label>
+								<md-input-container>
+									<label class="ph-label">Address</label>
+									<textarea ng-model="address"></textarea>
+								</md-input-container>
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="steps-footer">
+				<div class="row">
+					<div class="col-md-6 col-sm-6  col-xs-6 prev">
+						<a href="#/create/rewards/{{projectId}}" class="steps-back">
+							<p class="cont">Back to</p>
+							<i class="fa fa-arrow-left" aria-hidden="true"></i><span>Rewards &amp; Services</span>
+						</a>
+					</div>
+					<div class="col-md-6 col-sm-6 col-xs-6 next">
+						<a ng-click="startPreview()" class="steps-back">
+							<p class="cont">Continue to</p>
+							<p><span>Preview &amp; Submit</span><i class="fa fa-arrow-right" aria-hidden="true"></i></p>
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
