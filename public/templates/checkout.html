@@ -10,7 +10,7 @@
 					<div class="clearfix steps-content-basic">
 						<div class="donation-wrp">
 							<h4>Enter your donation</h4>
-							<md-input-container class="rupees">
+							<md-input-container class="rupees donation">
 								<label class="ph-label">500.00</label>
 								<i class="fa fa-rupee"></i>
 								<input type="text">
@@ -95,7 +95,7 @@
 							</div>
 
 							<div class="support-me">
-								<a class="btn btn-default btn-lg btn-subscribe ng-scope" ng-click="supportMe()">Donate</a>
+								<button class="btn btn-default btn-lg btn-subscribe ng-scope" ng-click="makeCCAvenuePayment()">Donate</button>
 							</div>							
 							<ul class="cards-list clearfix">
 								<li><img src="assets/images/payment-options.png" width="" /></li>
@@ -122,4 +122,50 @@
 			
 		</div>
 	</div>
+	
+<div ng-bind-html='myText'></div>
+	
+	
+	<!--<script type="text/javascript">function response(){return document.getElementById("response").value;}</script>
+        <form name="frm" method="post" action="https://pguat.paytm.com/oltp-web/processTransaction">
+          <input type="text" id="response" name="responseField" value='{&quot;MID&quot;:&quot;Huroof23707312295888&quot;,&quot;ORDER_ID&quot;:&quot;4&quot;,&quot;CUST_ID&quot;:&quot;1&quot;,&quot;INDUSTRY_TYPE_ID&quot;:&quot;Retail&quot;,&quot;CHANNEL_ID&quot;:&quot;WEB&quot;,&quot;TXN_AMOUNT&quot;:&quot;1&quot;,&quot;WEBSITE&quot;:&quot;WEB_STAGING&quot;,&quot;REQUEST_TYPE&quot;:&quot;SEAMLESS&quot;,&quot;PAYMENT_DETAILS&quot;:&quot;&quot;,&quot;AUTH_MODE&quot;:&quot;3D&quot;,&quot;PAYMENT_TYPE_ID&quot;:&quot;CC&quot;,&quot;MOBILE_NO&quot;:&quot;9591191405&quot;,&quot;EMAIL&quot;:&quot;nvijay.ootygmail.com&quot;,&quot;payt_STATUS&quot;:&quot;1&quot;,&quot;IS_CHECKSUM_VALID&quot;:&quot;N&quot;}'>
+			<input type="submit" value="test">
+        </form>-->
+
+	
 </section>
+<!--
+
+"REQUEST_TYPE": "SEAMLESS",
+"MID": "Huroof23707312295888",
+"ORDER_ID": "1",
+"CUST_ID": "1",
+"TXN_AMOUNT": "1",
+"CHANNEL_ID": "WEB",
+"INDUSTRY_TYPE_ID": "Retail",
+"WEBSITE": "PaytmMktPlace",
+"PAYMENT_DETAILS": "",
+"AUTH_MODE": "3D",
+"PAYMENT_TYPE_ID": "CC",
+"CHECKSUMHASH": "",
+"MOBILE_NO": "9591191405",
+"EMAIL": "nvijay.ooty@gmail.com"
+
+-->
+
+<!--
+REQUEST_TYPE: "SEAMLESS",
+MID: "Huroof23707312295888",
+ORDER_ID: "1",
+CUST_ID: "1",
+TXN_AMOUNT: "1",
+CHANNEL_ID: "WEB",
+INDUSTRY_TYPE_ID: "Retail",
+WEBSITE: "PaytmMktPlace",
+PAYMENT_DETAILS: "",
+AUTH_MODE: "3D",
+PAYMENT_TYPE_ID: "CC",
+CHECKSUMHASH: "",
+MOBILE_NO: "9591191405",
+EMAIL: "nvijay.ooty@gmail.com"
+-->

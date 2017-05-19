@@ -1,5 +1,5 @@
 'use strict';
-var backMe = angular.module('backMe', ['ui.router', 'angular-loading-bar', 'ngMaterial', 'facebook', 'ngFileUpload', 'thatisuday.ng-image-gallery']);
+var backMe = angular.module('backMe', ['ui.router', 'angular-loading-bar', 'ngMaterial', 'ngMessages', 'facebook', 'ngFileUpload', 'thatisuday.ng-image-gallery']);
 
 backMe
 .config(['$stateProvider', '$urlRouterProvider', 'FacebookProvider', '$mdDateLocaleProvider', function(_stateProvider, _urlRouterProvider, FacebookProvider, _mdDateLocaleProvider) {

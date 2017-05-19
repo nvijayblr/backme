@@ -1,3 +1,4 @@
+<form name="profileForm" ng-submit="profileForm.$valid && startPreview();" novalidate autocomplete="off">
 <section class="content">
 	<div class="create-proj-cont">
 		<div class="create-proj-wrp steps-wrp">
@@ -9,7 +10,6 @@
 						<div class="steps-form">
 							<div class="input-wrp">
 								<label class="f-label">Upload Your Photo</label>
-								<form name="myForm">
 									<div class="drag-drop-box drop-box user" 
 										 ngf-select 
 										 ngf-drop 
@@ -20,38 +20,38 @@
 										 ngf-max-size="1MB" 
 										 ngf-multiple="false"
 										 ngf-model-invalid="errorFile">
-										<div class="upload-userphoto"></div>
+										<div class="upload-userphoto" ng-if="!project.userPhoto && !userImg"></div>
+										<div class="user-img" ng-if="userImg">
+											<img ngf-size="{width: 356, height: 176}" ngf-thumbnail="userImg">
+										</div>
+										<div class="user-img" ng-if="project.userPhoto && !userImg">
+											<img class="user-photo" ng-src="uploads/{{project.userPhoto}}">
+										</div>
 									</div>
-								</form>
-								<span ng-show="myForm.userImg.$error.maxSize">File too large {{errorFile.size/1000000|number:1}}MB: max 1MB</span>
-								<div class="user-img">
-									<img ng-if="!project.userPhoto || userImg" ngf-size="{width: 356, height: 176}" ngf-thumbnail="userImg||'assets/images/img_not_available.png'">
-									<img ng-if="project.userPhoto && !userImg" class="user-photo" ng-src="uploads/{{project.userPhoto}}">
-								</div>
-								<!--<md-input-container>
-									<label class="ph-label">Upload Your Photo</label>
-									<input type="text" ng-model="project.userPhoto">
-								</md-input-container>-->
+								<span ng-show="profileForm.userImg.$error.maxSize">File too large {{errorFile.size/1000000|number:1}}MB: max 1MB</span>
 							</div>
 							<div class="input-wrp">
 								<label class="f-label">Name</label>
 								<md-input-container>
 									<label class="ph-label">Your name</label>
-									<input type="text" ng-model="project.name">
+									<input type="text" ng-model="project.name" required>
+									<div class="error-lable">Name is required!</div>
 								</md-input-container>
 							</div>
 							<div class="input-wrp">
 								<label class="f-label">Email</label>
 								<md-input-container>
 									<label class="ph-label">Your email</label>
-									<input type="email" ng-model="project.email">
+									<input type="email" ng-model="project.email" required>
+									<div class="error-lable">Email is required!</div>
 								</md-input-container>
 							</div>
 							<div class="input-wrp">
 								<label class="f-label">Mobile Number</label>
 								<md-input-container>
 									<label class="ph-label">Your mobile number</label>
-									<input type="text" ng-model="project.mobileNumer">
+									<input type="text" ng-model="project.mobileNumer" required>
+									<div class="error-lable">Mobile number required!</div>
 								</md-input-container>
 							</div>
 							<div class="input-wrp">
@@ -68,10 +68,24 @@
 						<h5>BANK ACCOUNT INFORMATION</h5>
 						<div class="steps-form">
 							<div class="input-wrp">
-								<label class="f-label">Bank Account Information</label>
+								<label class="f-label" style="padding-top:25px;">Bank Name</label>
+								<md-input-container class="md-block" flex-gt-sm>
+									<label class="ph-label">Select Bank</label>
+									<md-select ng-model="bankName">
+										<md-option ng-repeat="bank in bankList" value="{{bank.name}}">
+											{{bank.name}}
+										</md-option>
+									</md-select>
+									<div class="error-lable select">Bank name is required!</div>
+								</md-input-container>
+							</div>
+
+							<div class="input-wrp">
+								<label class="f-label">Account Holder's Name</label>
 								<md-input-container>
 									<label class="ph-label">Your name</label>
 									<input type="text" ng-model="project.accountName">
+									<div class="error-lable">Account holder's name is required!</div>
 								</md-input-container>
 							</div>
 							<div class="input-wrp">
@@ -79,21 +93,24 @@
 								<md-input-container>
 									<label class="ph-label">Account Number</label>
 									<input type="text" ng-model="project.accountNo" ng-pattern="/^[0-9]*$/">
+									<div class="error-lable">Account number is required!</div>
 								</md-input-container>
 							</div>
 							<div class="input-wrp">
 								<label class="f-label">IFSC Code</label>
 								<md-input-container>
 									<label class="ph-label">IFSC Code</label>
-									<input type="text" ng-model="project.ifscCode">
+									<input type="text" ng-model="project.ifscCode" required>
+									<div class="error-lable">IFSC code is required!</div>
 								</md-input-container>
 							</div>
 							
 							<div class="input-wrp">
-								<label class="f-label">Address</label>
+								<label class="f-label">Bank Address</label>
 								<md-input-container>
 									<label class="ph-label">Address</label>
-									<textarea ng-model="address"></textarea>
+									<textarea ng-model="bankAddress"></textarea>
+									<div class="error-lable">Bank address is required!</div>
 								</md-input-container>
 							</div>
 
@@ -106,14 +123,14 @@
 					<div class="col-md-6 col-sm-6  col-xs-6 prev">
 						<a href="#/create/rewards/{{projectId}}" class="steps-back">
 							<p class="cont">Back to</p>
-							<i class="fa fa-arrow-left" aria-hidden="true"></i><span>Rewards &amp; Services</span>
+							<img src="assets/icons/left-arrow.svg" class="arrow-left"><span>Rewards &amp; Services</span>
 						</a>
 					</div>
 					<div class="col-md-6 col-sm-6 col-xs-6 next">
-						<a ng-click="startPreview()" class="steps-back">
+						<button class="btn btn-default btn-subscribe btn-login steps-back" ng-click="profileForm.submit()">
 							<p class="cont">Continue to</p>
-							<p><span>Preview &amp; Submit</span><i class="fa fa-arrow-right" aria-hidden="true"></i></p>
-						</a>
+							<p><span>Preview &amp; Submit</span><img src="assets/icons/right-arrow.svg" class="arrow-right"></p>
+						</button>
 					</div>
 				</div>
 			</div>

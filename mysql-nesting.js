@@ -9,9 +9,18 @@
 exports.convertToNested = function (rows, nestingOptions) {
     if (rows == null || nestingOptions == null)
         return rows;
-
+	for(var r=0; r<rows.length; r++) {
+		if(rows[r][''] && rows[r][''].remainHours) {
+			rows[r].remaindayshours = {
+				remainId: rows[r].projects.projectId,
+				projectId: rows[r].projects.projectId, 
+				totalDays: rows[r][''].totalDays, 
+				remainHours: rows[r][''].remainHours, 
+				remainDays: rows[r][''].remainDays
+			};
+		}
+	}
     var levels = nestingOptions;
-
     // put similar objects in the same bucket (by table name)
     var buckets = new Array();
 

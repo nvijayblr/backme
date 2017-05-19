@@ -1,3 +1,4 @@
+<form name="projectdetailsForm" ng-submit="projectdetailsForm.$valid && startRewards();" novalidate autocomplete="off">
 <section class="content">
 	<div class="create-proj-cont">
 		<div class="create-proj-wrp steps-wrp">
@@ -19,7 +20,7 @@
 									 ngf-max-size="10MB"
 									 ngf-max-files="8"
 									 ngf-multiple="true"
-									 ng-disabled=disableDragDrop>
+									 ng-disabled='disableDragDrop'>
 									
 									<!--<div class="upload-img">-->
 									<div class="upload-img"><span class="glyphicon glyphicon-cloud-upload"></span></div>
@@ -52,45 +53,64 @@
 								<md-input-container class="rupees">
 									<label class="ph-label">Money needed</label>
 									<i class="fa fa-rupee"></i>
-									<input type="text" ng-model="project.moneyNeeded" ng-pattern="/^[0-9]*$/">
+									<input type="text" ng-model="project.moneyNeeded" ng-pattern="/^[0-9]*$/" required>
+									<div class="error-lable">Money needed is required!</div>
 								</md-input-container>
 							</div>
 							<div class="row clearfix">
 								<label class="f-label" style="margin-left: 18px;">How I'm Going to Spend the Money</label>
-								<div ng-repeat="spend in project.spendmoney track by $index">
-									<div class="col-md-5">
+								<div class="clearfix row spend" ng-repeat="spend in project.spendmoney track by $index">
+									<div class="col-md-3">
 										<div class="input-wrp">
 											<md-input-container class="rupees">
 												<label class="ph-label">5000</label>
 												<i class="fa fa-rupee"></i>
-												<input type="text" ng-model="spend.amount" ng-pattern="/^[0-9]*$/">
+												<input type="text" ng-model="spend.amount" ng-pattern="/^[0-9]*$/" required>
+												<div class="error-lable">Amount is required!</div>
 											</md-input-container>
 										</div>
 									</div>
-									<div class="col-md-7">
+									<div class="col-md-6">
 										<div class="input-wrp">
 											<md-input-container>
 												<label class="ph-label">Description</label>
-												<input type="text" ng-model="spend.description">
+												<input type="text" ng-model="spend.description" required>
+												<div class="error-lable">Description is required!</div>
 											</md-input-container>
 										</div>
 									</div>
+									<div class="col-md-3">
+										<a href="" class="delete-rewards" ng-if="project.spendmoney.length>1" ng-click="deleteSpendMoney(project.spendmoney, $index)"><i class="fa fa-trash-o" aria-hidden="true"></i>Delete</a>
+									</div>
 								</div>
 							</div>
-							<div class="row" ng-if="project.spendmoney.length<3">
+							<div class="row" ng-if="project.spendmoney.length<5">
 								<div class="col-md-12 text-right"><a href="" class="add-more" ng-click="addSpendMoney(project.spendmoney)">+ Add More</a></div>
 							</div>
 
 							<div class="input-wrp">
 								<label class="f-label" style="margin-bottom:20px;">Funding Duration</label>
-								<md-radio-group ng-model="project.daysDate"> 
-									<md-radio-button value="Days" class="md-primary">No. of Days</md-radio-button>
-										<md-input-container>
+								<md-radio-group ng-model="project.daysDate">
+									<div style="margin-bottom:20px;">
+										<md-radio-button value="Days" class="md-primary duration-lt">No. of Days</md-radio-button>
+										<md-input-container class="duration-rt">
 											<label class="ph-label">30</label>
-											<input type="text" ng-model="project.noOfDays" ng-disabled="project.daysDate=='Date'" ng-change="changeDays(project.noOfDays)" ng-minlength="1" ng-maxlength="3" ng-pattern="/^[0-9]*$/">
+											<input type="text" ng-model="project.noOfDays" ng-disabled="project.daysDate=='Date'" ng-change="changeDays(project.noOfDays)" ng-minlength="1" ng-maxlength="3" ng-pattern="/^[0-9]*$/" ng-required="project.daysDate=='Days'">
+											<div class="error-lable">No. of days is required!</div>
 										</md-input-container>
-									<md-radio-button value="Date">End by Date</md-radio-button>
-									<md-datepicker ng-model="project.endByDate" md-min-date="projectMinDate" md-max-date="projectMaxDate" md-placeholder="" ng-disabled="project.daysDate=='Days'" ng-change="changeDate(project.endByDate)"></md-datepicker>
+									</div>
+									<div>
+										<md-radio-button value="Date" class="md-primary duration-lt">End by Date</md-radio-button>
+										<div class="date-rt">
+											<md-datepicker name="endByDate" ng-model="project.endByDate" md-min-date="projectMinDate" md-max-date="projectMaxDate" md-placeholder="" ng-disabled="project.daysDate=='Days'" ng-change="changeDate(project.endByDate)" required></md-datepicker>
+											<div class="validation-messages" ng-messages="projectdetailsForm.endByDate.$error">
+												<div ng-message="required" class="date-error-lable">This date is required!</div>
+												<div ng-message="mindate" class="date-error-lable">Date is too early!</div>
+												<div ng-message="maxdate" class="date-error-lable">Date is too late!</div>
+												<div ng-message="valid" class="date-error-lable">The entered value is not a date!</div>
+											</div>
+										</div>
+									</div>
 								</md-radio-group>
 							</div>
 						</div>
@@ -102,14 +122,15 @@
 					<div class="col-md-6 prev">
 						<a href="#create/basicinfo/{{projectId}}" class="steps-back">
 							<p class="cont">Back to</p>
-							<i class="fa fa-arrow-left" aria-hidden="true"></i><span>Basic Info</span>
+							<img src="assets/icons/left-arrow.svg" class="arrow-left"><span>Basic Info</span>
 						</a>
 					</div>
 					<div class="col-md-6 next">
-						<a ng-click="startRewards()" class="steps-back">
+						<button class="btn btn-default btn-subscribe btn-login steps-back" ng-click="projectdetailsForm.submit()" ng-disabled='disableDragDrop'>
 							<p class="cont">Continue to</p>
-							<p><span>Rewards &amp; Services</span><i class="fa fa-arrow-right" aria-hidden="true"></i></p>
-						</a>
+							<p><span>Rewards &amp; Services</span><img src="assets/icons/right-arrow.svg" class="arrow-right"></p>
+						</button>
+
 					</div>
 				</div>
 			</div>

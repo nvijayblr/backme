@@ -1,5 +1,50 @@
 'use strict';
-backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope', '$window', '$state', '$mdToast', 'appConstant', 'Facebook',  function(_scope, _services, _timeout, _rootScope, _window, _state, _mdToast, _appConstant, Facebook){
+backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope', '$window', '$state', '$mdToast', 'appConstant', 'Facebook', '$http',   function(_scope, _services, _timeout, _rootScope, _window, _state, _mdToast, _appConstant, Facebook, _http){
+	
+	/*_scope.listYoutube = function() {
+		_http.get('https://www.googleapis.com/youtube/v3/activities', {
+			params: {
+				key: 'AIzaSyCY8fbYarWo-v_cdXc2ox3uklqt35KAFWw',
+				type: 'video',
+				maxResults: '8',
+				channelId: 1,
+				part: 'id,snippet',
+				fields: 'items/id,items/snippet/title,items/snippet/description,items/snippet/thumbnails/default,items/snippet/channelTitle',
+				q: 'test'
+			}
+		})
+		.success( function (data) {
+			console.log(data);
+		})
+		.error(function (err) {
+			console.log('Search error', err);
+		});
+    }
+	_scope.listYoutube();
+	
+	_scope.uploadYoutube = function() {
+		_http.post('https://www.googleapis.com/upload/youtube/v3/videos', {
+			params: {
+			  "snippet": {
+				"title": "Summer vacation in California",
+				"description": "Had fun surfing in Santa Cruz",
+				"tags": ["surfing", "Santa Cruz"],
+				"categoryId": "22"
+			  },
+			  "status": {
+				"privacyStatus": "private"
+			  }
+			}
+		})
+		.success( function (data) {
+			console.log(data);
+		})
+		.error(function (err) {
+			console.log('Search error', err);
+		});
+    }
+	_scope.uploadYoutube();*/
+	
 	
 	_scope.appConstant = _appConstant;
 	_scope.loginSettings = {
@@ -28,13 +73,14 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 	_scope.serach = {
 		serachBox: ''
 	};
+	_scope.categoryKey = '';
 	_scope.searchProjects = function(_query) {
+		_scope.categoryKey = _query;
 		_scope.projects = {};
 		_services.http.serve({
 			method: 'GET',
 			url: _appConstant.baseUrl + 'search?q=' + _query
 		}, function(data){
-			console.log(data);
 			_scope.projects = data;
 		}, function(err) {
 			console.log(err)
@@ -60,6 +106,9 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 	//End of the Search related functions
 	
 	_scope.showLogin = function() {
+		_scope.app.loginForm.$setPristine();
+		_scope.app.loginForm.$setUntouched();
+		_scope.app.loginForm.$submitted = false;
 		_scope.loginSettings = {
 			email : '',
 			password: ''
@@ -69,6 +118,9 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 		$('#loginModal').modal('show');
 	}
 	_scope.showSignUp = function() {
+		_scope.app.signupForm.$setPristine();
+		_scope.app.signupForm.$setUntouched();
+		_scope.app.signupForm.$submitted = false;
 		_scope.signUpSettings = {
 			email : '',
 			password: ''
@@ -92,11 +144,12 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 	}
 
 	_scope.startProject = function() {
-		if(_scope.loggedIn) {
-			_state.go('create.startproject')
+		_state.go('create.startproject');
+		/*if(_scope.loggedIn) {
+			_state.go('create.startproject');
 		} else {
 			_scope.showLogin();
-		}
+		}*/
 	}
 	
 	_scope.appLogin = function(_email, _pass) {
@@ -111,7 +164,7 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 			inputData: _scope.loginSettings
 		}, function(data){
 			_appConstant.currentUser = data[0];
-			_appConstant.currentUser.name = _email;
+			_appConstant.currentUser.name = _appConstant.currentUser.name?_appConstant.currentUser.name:_email;
 			_scope.loggedUser = _appConstant.currentUser;
 			localStorage.setItem('backMeUser', JSON.stringify(_appConstant.currentUser));
 			_scope.loggedIn = true;
@@ -133,13 +186,13 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 			inputData: _scope.signUpSettings
 		}, function(res){
 			$('#signUpModal').modal('hide');
-			_appConstant.currentUser.name = _email;
+			/*_appConstant.currentUser.name = _email;
 			_appConstant.currentUser.userId = res.insertId;
 			console.log(_appConstant.currentUser)
 			_scope.loggedUser = _appConstant.currentUser;
 			localStorage.setItem('backMeUser', JSON.stringify(_appConstant.currentUser));
-			_scope.loggedIn = true;
-			_services.toast.show('Account created successfully.');
+			_scope.loggedIn = true;*/
+			_services.toast.show('<img src="../assets/icons/checked.png" class="toast-tick"/>Please verify the eamil to activate your account.');
 		}, function(err) {
 			_services.toast.show(err.data);
 		});
@@ -169,6 +222,8 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 	
 	_scope.profile = {};
 	_scope.googleLoginSuccess = function(_googleUser) {
+		_scope.accessToken = _googleUser.Zi.access_token;
+		console.log(_scope.accessToken);
 		_scope.profile = _googleUser.getBasicProfile();
 		_appConstant.currentUser.name = _scope.profile.getName();
 		_appConstant.currentUser.email = _scope.profile.getId();
@@ -189,7 +244,11 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 	}
 	
 	/*log out from app, google, fb*/
-	_scope.doLotout = function() {
+	_scope.doLogout = function() {
+		_appConstant.currentUser = {};
+		_scope.loggedUser = {};
+		_scope.loggedIn = false;
+		localStorage.removeItem('backMeUser');
 		gapi.auth2.getAuthInstance().disconnect().then(function(){
 			_appConstant.currentUser = {};
 			_scope.loggedUser = {}
@@ -200,10 +259,6 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 				_scope.loggedUser = {}
 			});
 		});
-		_appConstant.currentUser = {};
-		_scope.loggedUser = {};
-		_scope.loggedIn = false;
-		localStorage.removeItem('backMeUser');
 		_state.go('home')
 	}
 	

@@ -6,12 +6,28 @@ backMe
 		return true;
     };
 }])
-.filter('getHours', [function() {
-    return function(mins) {
-		if(mins)
-			return ''+parseInt(mins/60)+'';
+.filter('getDays', [function() {
+    return function(hours) {
+		if(hours)
+			return ''+Math.floor(hours/24)+'';
 		else
 			return '0';
     };
 
+}])
+.filter('getHours', [function() {
+    return function(hours) {
+		if(hours)
+			return ''+Math.floor(hours%24)+'';
+		else
+			return '0';
+    };
+}])
+.filter('toLocale', [function() {
+    return function(_amt) {
+		if(_amt)
+			return _amt.toLocaleString();
+		else
+			return '0';
+    };
 }]);

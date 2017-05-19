@@ -116,7 +116,7 @@ exports.projectsAPI = function(app, dbConnection, validate, multer, path, nestin
 				return;
 			}
 			var project = req.body;
-			//console.log(project);
+			//console.log(req.files);
 			if(req.files && req.files.posterImg) {
 				project.coverImage = req.files.posterImg[0].filename;
 			}
@@ -264,18 +264,20 @@ exports.projectsAPI = function(app, dbConnection, validate, multer, path, nestin
 	/*Get All projects*/
 	app.get('/projects', function (req, res) {
 		try {
-			dbConnection.query({sql: 'SELECT * FROM projects \
-								LEFT JOIN spendmoney ON projects.projectId = spendmoney.projectId \
-								LEFT JOIN projectsassets ON projects.projectId = projectsassets.projectId \
-								LEFT JOIN servicerewards ON projects.projectId = servicerewards.projectId \
-								LEFT JOIN supportrewards ON projects.projectId = supportrewards.projectId \
-								WHERE projects.STATUS = "ACTIVE" AND projects.endByDate >= CURDATE()', nestTables: true}, function (error, results, fields) {
+			dbConnection.query({sql: 'SELECT *, TIMESTAMPDIFF(HOUR,CURDATE(),endByDate) as remainHours, \
+					TIMESTAMPDIFF(DAY,CURDATE(),endByDate) as remainDays, TIMESTAMPDIFF(DAY,createdDate,endByDate) as totalDays FROM projects \
+					LEFT JOIN spendmoney ON projects.projectId = spendmoney.projectId \
+					LEFT JOIN projectsassets ON projects.projectId = projectsassets.projectId \
+					LEFT JOIN servicerewards ON projects.projectId = servicerewards.projectId \
+					LEFT JOIN supportrewards ON projects.projectId = supportrewards.projectId \
+					WHERE projects.STATUS = "ACTIVE" AND projects.endByDate >= CURDATE()', nestTables: true}, function (error, results, fields) {
 				var nestingOptions = [
-					{ tableName : 'projects', pkey: 'projectId', fkeys:[{table:'spendmoney',col:'projectId'}, {table:'projectsassets',col:'projectId'}, {table:'servicerewards',col:'projectId'}, {table:'supportrewards',col:'projectId'}]},
+					{ tableName : 'projects', pkey: 'projectId', fkeys:[{table:'spendmoney',col:'projectId'}, {table:'projectsassets',col:'projectId'}, {table:'servicerewards',col:'projectId'}, {table:'supportrewards',col:'projectId'}, {table:'remaindayshours',col:'projectId'}]},
 					{ tableName : 'spendmoney', pkey: 'spendId'},
 					{ tableName : 'projectsassets', pkey: 'assetId'},
 					{ tableName : 'servicerewards', pkey: 'serviceId'},
-					{ tableName : 'supportrewards', pkey: 'supportId'}
+					{ tableName : 'supportrewards', pkey: 'supportId'},
+					{ tableName : 'remaindayshours', pkey: 'remainId'}
 				];
 				var nestedRows = nesting.convertToNested(results, nestingOptions);
 				if (error) {
@@ -289,25 +291,25 @@ exports.projectsAPI = function(app, dbConnection, validate, multer, path, nestin
 		}
 	});
 	
-
 	/*Get Specific project details*/
 	app.get('/projects/:projectId', function (req, res) {
 		var projectId = req.params.projectId;
 		try {
 			if(projectId) {
-				dbConnection.query({sql: 'SELECT * FROM projects \
+				dbConnection.query({sql: 'SELECT *, TIMESTAMPDIFF(HOUR,CURDATE(),endByDate) as remainHours, \
+					TIMESTAMPDIFF(DAY,CURDATE(),endByDate) as remainDays, TIMESTAMPDIFF(DAY,createdDate,endByDate) as totalDays FROM projects \
 					LEFT JOIN spendmoney ON projects.projectId = spendmoney.projectId \
 					LEFT JOIN projectsassets ON projects.projectId = projectsassets.projectId \
 					LEFT JOIN servicerewards ON projects.projectId = servicerewards.projectId \
 					LEFT JOIN supportrewards ON projects.projectId = supportrewards.projectId  WHERE projects.projectId=? AND \
 					projects.STATUS = "ACTIVE" AND projects.endByDate >= CURDATE()', nestTables: true}, [projectId], function (error, results, fields) {
-
 					var nestingOptions = [
-						{ tableName : 'projects', pkey: 'projectId', fkeys:[{table:'spendmoney',col:'projectId'}, {table:'projectsassets',col:'projectId'}, {table:'servicerewards',col:'projectId'}, {table:'supportrewards',col:'projectId'}]},
+						{ tableName : 'projects', pkey: 'projectId', fkeys:[{table:'spendmoney',col:'projectId'}, {table:'projectsassets',col:'projectId'}, {table:'servicerewards',col:'projectId'}, {table:'supportrewards',col:'projectId'}, {table:'remaindayshours',col:'projectId'}]},
 						{ tableName : 'spendmoney', pkey: 'spendId'},
 						{ tableName : 'projectsassets', pkey: 'assetId'},
 						{ tableName : 'servicerewards', pkey: 'serviceId'},
-						{ tableName : 'supportrewards', pkey: 'supportId'}
+						{ tableName : 'supportrewards', pkey: 'supportId'},
+						{ tableName : 'remaindayshours', pkey: 'remainId'}
 					];
 					var nestedRows = nesting.convertToNested(results, nestingOptions);
 					if (error) {
@@ -327,17 +329,19 @@ exports.projectsAPI = function(app, dbConnection, validate, multer, path, nestin
 		var user = req.query;
 		try {
 			if(user.userId && user.status) {
-				dbConnection.query({sql: 'SELECT * FROM projects \
+				dbConnection.query({sql: 'SELECT *, TIMESTAMPDIFF(HOUR,CURDATE(),endByDate) as remainHours, \
+					TIMESTAMPDIFF(DAY,CURDATE(),endByDate) as remainDays, TIMESTAMPDIFF(DAY,createdDate,endByDate) as totalDays FROM projects \
 					LEFT JOIN spendmoney ON projects.projectId = spendmoney.projectId \
 					LEFT JOIN projectsassets ON projects.projectId = projectsassets.projectId \
 					LEFT JOIN servicerewards ON projects.projectId = servicerewards.projectId \
-					LEFT JOIN supportrewards ON projects.projectId = supportrewards.projectId  WHERE projects.userId=? AND projects.status=?', nestTables: true}, [user.userId, user.status], function (error, results, fields) {
+					LEFT JOIN supportrewards ON projects.projectId = supportrewards.projectId  WHERE projects.userId=? AND projects.status=?  AND projects.endByDate >= CURDATE()', nestTables: true}, [user.userId, user.status], function (error, results, fields) {
 					var nestingOptions = [
-						{ tableName : 'projects', pkey: 'projectId', fkeys:[{table:'spendmoney',col:'projectId'}, {table:'projectsassets',col:'projectId'}, {table:'servicerewards',col:'projectId'}, {table:'supportrewards',col:'projectId'}]},
+						{ tableName : 'projects', pkey: 'projectId', fkeys:[{table:'spendmoney',col:'projectId'}, {table:'projectsassets',col:'projectId'}, {table:'servicerewards',col:'projectId'}, {table:'supportrewards',col:'projectId'}, {table:'remaindayshours',col:'projectId'}]},
 						{ tableName : 'spendmoney', pkey: 'spendId'},
 						{ tableName : 'projectsassets', pkey: 'assetId'},
 						{ tableName : 'servicerewards', pkey: 'serviceId'},
-						{ tableName : 'supportrewards', pkey: 'supportId'}
+						{ tableName : 'supportrewards', pkey: 'supportId'},
+						{ tableName : 'remaindayshours', pkey: 'remainId'}
 					];
 					var nestedRows = nesting.convertToNested(results, nestingOptions);
 					if (error) {

@@ -27,13 +27,13 @@
 				  </li>
 				<li class="singup" ng-if="!loggedIn && !showSearch"><a href="" ng-click="showLogin()"><span class="glyphicon glyphicon-lock"></span>LOGIN/SIGNUP</a></li>
 				<li ng-if="loggedIn && !showSearch" class="login">
-					<img src="assets/images/support-user-bg.jpg" class="user-bg">
-					<!--<a href="#dashboard" class="username">{{loggedUser.name}}</a>-->
+					<div ng-if="!loggedUser.profilePicture" class="user-bg-div bg-name">{{loggedUser.name.substr(0,2)}}</div>
+					<div ng-if="loggedUser.profilePicture" style="background-image:url(uploads/{{loggedUser.profilePicture}})" class="user-bg-div"></div>
 				   <div class="dropdown username">
 						<a href="" data-toggle="dropdown" class="dropdown-toggle">{{loggedUser.name}} <b class="caret"></b></a>
 						<ul class="dropdown-menu">
 							<li><a href="#dashboard">MY ACCOUNT</a></li>
-							<li><a href="" ng-click="doLotout()">LOGOUT</a></li>
+							<li><a href="" ng-click="doLogout()">LOGOUT</a></li>
 						</ul>
 					</div>
 			   </li>

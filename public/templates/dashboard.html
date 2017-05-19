@@ -2,13 +2,18 @@
 	<div class="container dashboard">
 		<div class="db-banner">
 			<div class="db-profile-wrp">
-				<div class="db-profile-pic" style="background-image: url(assets/images/profile-img.png);"></div>
+				<div ng-if="!user.coverPicture" class="db-profile-pic" style="background-image: url(assets/images/profile-img.png);"></div>
+				<div ng-if="user.coverPicture" class="db-profile-pic" style="background-image: url(uploads/{{user.coverPicture}});"></div>
 			</div>
 			<div class="user-wrp prfile">
-				<div class="user-img"><img src="assets/images/user-img.png"/></div>
+				<div class="user-img">
+					<img ng-if="!user.profilePicture" src="assets/images/user-img.png"/>
+					<!--<img ng-if="user.profilePicture" ng-src="uploads/{{user.profilePicture}}"/>-->
+					<div class="img" style="background-image: url(uploads/{{user.profilePicture}});"></div>
+				</div>
 			</div>
-			<h4 class="db-title">Sameer Singer</h4>
-			<p class="db-loc">Delhi, India</p>
+			<h4 class="db-title">{{user.name}}</h4>
+			<p class="db-loc">{{user.city}}, {{user.country}}</p>
 		</div>
 		<div class="row" ng-init="tab=1">
 			<div class="col-md-8">
@@ -22,7 +27,54 @@
 					</div>
 					<!--Begin the My Project tab-->
 					<div class="my-proj-tab-content" ng-show="tab==1">
-						<div class="my-project">
+						<div class="my-project" ng-repeat="project in projects track by $index" ng-class="$last?'last':''">
+							<div class="row project">
+								<div class="col-md-8">
+									<div class="proj-banner-wrp">
+										<div ng-if="!project.coverImage" class="proj-banner" style="background-image: url(assets/images/my-proj-banner.png);"></div>
+										<div ng-if="project.coverImage" class="proj-banner" style="background-image: url(uploads/{{project.coverImage}});"></div>
+										
+										<div class="proj-info clearfix">
+											<div class="views">
+												<h5>264</h5>
+												<p><i class="fa fa-eye" aria-hidden="true"></i>Views</p>
+											</div>
+											<div class="comments">
+												<h5>2643</h5>
+												<p><i class="fa fa-heart" aria-hidden="true"></i>Likes</p>
+											</div>
+											<div class="likes">
+												<h5>34</h5>
+												<p><i class="fa fa-comments" aria-hidden="true"></i>Comments</p>
+											</div>
+										</div>
+									</div>
+									<p class="p-desc">{{project.title}}</p>
+									<div class="proj-btn-wrp">
+										<div class="row">
+											<div class="col-md-6">
+												<a href="" class="btn btn-default">Promote Your Project</a>
+											</div>
+											<div class="col-md-6">
+												<a href="" class="btn btn-default">Make it a Featured Project</a>
+											</div>
+										</div>
+										<a href="" class="btn btn-default">I will pay Rs. 5000 for 5 Days for Home Page promotion</a>
+									</div>
+								</div>
+								<div class="col-md-4 statistics">
+									<h3 class="amount"><i class="fa fa-rupee" aria-hidden="true"></i>{{project.moneyNeeded}}</h3>
+									<h4 class="s-title">Money Raised</h4>
+									<h3 class="amount">14</h3>
+									<h4 class="s-title">People Supporting</h4>
+									<h3 class="amount">{{project.remaindayshours[0].remainHours|getDays}} Days {{project.remaindayshours[0].remainHours|getHours}} Hrs </h3>
+									<h4 class="s-title">Time Remaining</h4>
+									<a href="" class="extend">Extend the Project</a>
+									<a href="" class="extend">Discontinue this Project</a>
+								</div>
+							</div>
+						</div>
+						<!--<div class="my-project last">
 							<div class="row project">
 								<div class="col-md-8">
 									<div class="proj-banner-wrp">
@@ -66,131 +118,79 @@
 									<a href="" class="extend">Discontinue this Project</a>
 								</div>
 							</div>
-						</div>
-						<div class="my-project">
-							<div class="row project">
-								<div class="col-md-8">
-									<div class="proj-banner-wrp">
-										<div class="proj-banner" style="background-image: url(assets/images/my-proj-banner.png);"></div>
-										<div class="proj-info clearfix">
-											<div class="views">
-												<h5>264</h5>
-												<p><i class="fa fa-eye" aria-hidden="true"></i>Views</p>
-											</div>
-											<div class="comments">
-												<h5>2643</h5>
-												<p><i class="fa fa-heart" aria-hidden="true"></i>Likes</p>
-											</div>
-											<div class="likes">
-												<h5>34</h5>
-												<p><i class="fa fa-comments" aria-hidden="true"></i>Comments</p>
-											</div>
-										</div>
-									</div>
-									<p class="p-desc">Lorem Ipsum is simply dummy text of the printing and typesetting industry</p>
-									<div class="proj-btn-wrp">
-										<div class="row">
-											<div class="col-md-6">
-												<a href="" class="btn btn-default">Promote Your Project</a>
-											</div>
-											<div class="col-md-6">
-												<a href="" class="btn btn-default">Make it a Featured Project</a>
-											</div>
-										</div>
-										<a href="" class="btn btn-default">I will pay Rs. 5000 for 5 Days for Home Page promotion</a>
-									</div>
-								</div>
-								<div class="col-md-4 statistics">
-									<h3 class="amount"><i class="fa fa-rupee" aria-hidden="true"></i>24,000</h3>
-									<h4 class="s-title">Money Raised</h4>
-									<h3 class="amount">14</h3>
-									<h4 class="s-title">People Supporting</h4>
-									<h3 class="amount">2 Days 4 Hrs</h3>
-									<h4 class="s-title">Time Remaining</h4>
-									<a href="" class="extend">Extend the Project</a>
-									<a href="" class="extend">Discontinue this Project</a>
-								</div>
-							</div>
-						</div>
-						<div class="my-project last">
-							<div class="row project">
-								<div class="col-md-8">
-									<div class="proj-banner-wrp">
-										<div class="proj-banner" style="background-image: url(assets/images/my-proj-banner.png);"></div>
-										<div class="proj-info clearfix">
-											<div class="views">
-												<h5>264</h5>
-												<p><i class="fa fa-eye" aria-hidden="true"></i>Views</p>
-											</div>
-											<div class="comments">
-												<h5>2643</h5>
-												<p><i class="fa fa-heart" aria-hidden="true"></i>Likes</p>
-											</div>
-											<div class="likes">
-												<h5>34</h5>
-												<p><i class="fa fa-comments" aria-hidden="true"></i>Comments</p>
-											</div>
-										</div>
-									</div>
-									<p class="p-desc">Lorem Ipsum is simply dummy text of the printing and typesetting industry</p>
-									<div class="proj-btn-wrp">
-										<div class="row">
-											<div class="col-md-6">
-												<a href="" class="btn btn-default">Promote Your Project</a>
-											</div>
-											<div class="col-md-6">
-												<a href="" class="btn btn-default">Make it a Featured Project</a>
-											</div>
-										</div>
-										<a href="" class="btn btn-default">I will pay Rs. 5000 for 5 Days for Home Page promotion</a>
-									</div>
-								</div>
-								<div class="col-md-4 statistics">
-									<h3 class="amount"><i class="fa fa-rupee" aria-hidden="true"></i>24,000</h3>
-									<h4 class="s-title">Money Raised</h4>
-									<h3 class="amount">14</h3>
-									<h4 class="s-title">People Supporting</h4>
-									<h3 class="amount">2 Days 4 Hrs</h3>
-									<h4 class="s-title">Time Remaining</h4>
-									<a href="" class="extend">Extend the Project</a>
-									<a href="" class="extend">Discontinue this Project</a>
-								</div>
-							</div>
-						</div>
+						</div>-->
 					</div>
 					<!--End of the My Project tab-->
 					
 					<!--Begin the Personal details tab-->
+					<form name="userProfileForm" ng-submit="updateUserProfile(user);" novalidate autocomplete="off">
 					<div class="proj-steps-wrp personal-details" ng-show="tab==2">
 						<div class="steps-form">
 							<div class="input-wrp">
+								<label class="f-label">Upload Cover Picture</label>
+								<div class="drag-drop-box drop-box user" 
+									 ngf-select 
+									 ngf-drop 
+									 ng-model="userCoverPhoto" 
+									 name="userCoverPhoto" 
+									 ngf-pattern="'image/*'"
+									 ngf-accept="'image/*'" 
+									 ngf-max-size="10MB" 
+									 ngf-multiple="false"
+									 ngf-model-invalid="errorFile">
+									<div class="upload-userphoto" ng-if="!user.coverPicture && !userCoverPhoto"></div>
+									<div class="user-img" ng-if="userCoverPhoto">
+										<img ngf-size="{width: 356, height: 176}" ngf-thumbnail="userCoverPhoto">
+									</div>
+									<div class="user-img" ng-if="user.coverPicture && !userCoverPhoto">
+										<img class="user-photo" ng-src="uploads/{{user.coverPicture}}">
+									</div>
+								</div>
+							</div>
+							<div class="input-wrp">
 								<label class="f-label">Upload Your Photo</label>
-								<md-input-container>
-									<label class="ph-label">Upload Your Photo</label>
-									<input type="text">
-								</md-input-container>
+								<div class="drag-drop-box drop-box user" 
+									 ngf-select 
+									 ngf-drop 
+									 ng-model="userProfilePhoto" 
+									 name="userProfilePhoto" 
+									 ngf-pattern="'image/*'"
+									 ngf-accept="'image/*'" 
+									 ngf-max-size="10MB" 
+									 ngf-multiple="false"
+									 ngf-model-invalid="errorFile">
+									<div class="upload-userphoto" ng-if="!user.profilePicture && !userProfilePhoto"></div>
+									<div class="user-img" ng-if="userProfilePhoto">
+										<img ngf-size="{width: 356, height: 176}" ngf-thumbnail="userProfilePhoto">
+									</div>
+									<div class="user-img" ng-if="user.profilePicture && !userProfilePhoto">
+										<img class="user-photo" ng-src="uploads/{{user.profilePicture}}">
+									</div>
+								</div>
 							</div>
 							<div class="input-wrp">
 								<label class="f-label">Name</label>
 								<md-input-container>
 									<label class="ph-label">Your name</label>
-									<input type="text">
+									<input type="text" ng-model="user.name" required>
+									<div class="error-lable">Name is required!</div>
 								</md-input-container>
 							</div>
 							<div class="input-wrp">
 								<label class="f-label">Mobile Number</label>
 								<md-input-container>
 									<label class="ph-label">Your mobile number</label>
-									<input type="text">
+									<input type="text" ng-model="user.mobileNumer" required>
+									<div class="error-lable">Mobile number is required!</div>
 								</md-input-container>
 							</div>
 							<div class="input-wrp">
 								<label class="f-label">Social Media Connect</label>
 								<div class="social-connect">
 									<div class="conenect-wrp">
-									  <md-checkbox md-no-ink ng-model="data.cb1" aria-label="F" class="fb-cb social-cb">f</md-checkbox>
-									  <md-checkbox md-no-ink ng-model="data.cb2" aria-label="T" class="tw-cb social-cb">t</md-checkbox>
-									  <md-checkbox md-no-ink ng-model="data.cb3" aria-label="G" class="go-cb social-cb">g</md-checkbox>
+									  <md-checkbox md-no-ink aria-label="F" class="fb-cb social-cb" ng-model="user.facebook">f</md-checkbox>
+									  <md-checkbox md-no-ink aria-label="T" class="tw-cb social-cb" ng-model="user.twitter">t</md-checkbox>
+									  <md-checkbox md-no-ink aria-label="G" class="go-cb social-cb" ng-model="user.googleplus">g</md-checkbox>
 									</div>
 								</div>
 							</div>
@@ -200,28 +200,32 @@
 								<label class="f-label">About Me</label>
 								<md-input-container>
 									<label class="ph-label">Describe About You</label>
-									<input type="text">
+									<input type="text" ng-model="user.aboutMe" required>
+									<div class="error-lable">About is required!</div>
 								</md-input-container>
 							</div>
 							<div class="input-wrp">
 								<label class="f-label">My Hobbies</label>
 								<md-input-container>
 									<label class="ph-label">Describe Your Hobbies</label>
-									<input type="text">
+									<input type="text" ng-model="user.myHobbies" required>
+									<div class="error-lable">Your hobbies is required!</div>
 								</md-input-container>
 							</div>
 							<div class="input-wrp">
 								<label class="f-label">My Goals</label>
 								<md-input-container>
 									<label class="ph-label">Describe Your Goals</label>
-									<input type="text">
+									<input type="text" ng-model="user.myGoals" required>
+									<div class="error-lable">Your goals is required!</div>
 								</md-input-container>
 							</div>
-							<div class="support-me">
-								<a class="btn btn-default btn-lg btn-subscribe ng-scope" ng-click="supportMe()">Update Personal Details</a>
+							<div class="support-me update-user">
+								<button class="btn btn-default btn-lg btn-subscribe ng-scope" ng-click="userProfileForm.submit()">Update Personal Details</button>
 							</div>							
 						</div>
 					</div>
+					</form>
 					<!--End the Personal details tab-->
 					
 					<!--Begin the Account details tab-->
@@ -248,7 +252,7 @@
 									<input type="password">
 								</md-input-container>
 							</div>
-							<div class="support-me">
+							<div class="support-me update-user">
 								<a class="btn btn-default btn-lg btn-subscribe ng-scope" ng-click="supportMe()">Update Account Information</a>
 							</div>							
 						</div>
@@ -265,23 +269,23 @@
 					</div>
 					<div class="user-section">
 						<h5>About Me</h5>
-						<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, 		remaining essentially unchanged. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</p>
+						<p>{{user.aboutMe}}</p>
 					</div>
 					<div class="user-section">
 						<h5>My Hobbies</h5>
-						<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard.</p>
+						<p>{{user.myHobbies}}</p>
 					</div>
 					<div class="user-section">
 						<h5>My Goals</h5>
-						<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, 		remaining essentially unchanged.</p>
+						<p>{{user.myGoals}}</p>
 					</div>
 					<div class="user-section last">
 						<h5>Social Media Connect</h5>
 						<div class="social-connect">
 							<div class="conenect-wrp">
-							  <md-checkbox md-no-ink ng-model="data.cb1" aria-label="F" class="fb-cb social-cb">f</md-checkbox>
-							  <md-checkbox md-no-ink ng-model="data.cb2" aria-label="T" class="tw-cb social-cb">t</md-checkbox>
-							  <md-checkbox md-no-ink ng-model="data.cb3" aria-label="G" class="go-cb social-cb">g</md-checkbox>
+							  <md-checkbox md-no-ink ng-model="user.facebook" aria-label="F" class="fb-cb social-cb">f</md-checkbox>
+							  <md-checkbox md-no-ink ng-model="user.twitter" aria-label="T" class="tw-cb social-cb">t</md-checkbox>
+							  <md-checkbox md-no-ink ng-model="user.googleplus" aria-label="G" class="go-cb social-cb">g</md-checkbox>
 							</div>
 						</div>
 					</div>

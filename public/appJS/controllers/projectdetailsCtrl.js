@@ -1,5 +1,5 @@
 'use strict';
-backMe.controller('projectdetailsCtrl', ['$scope', 'BaseServices', '$timeout', '$state', 'Upload', '$q', 'appConstant', 'uploadImages', function (_scope, _services, _timeout, _state, _http, _q, _appConstant, _uploadImages) {
+backMe.controller('projectdetailsCtrl', ['$scope', 'BaseServices', '$timeout', '$state', 'Upload', '$q', 'appConstant', 'uploadImages', '$rootScope', function (_scope, _services, _timeout, _state, _http, _q, _appConstant, _uploadImages, _rootScope) {
 	_scope.step = 2;
 	_scope.stepsTitle = "Enter Project Details:";
 	_scope.projectId = _state.params.projectId;
@@ -64,6 +64,7 @@ backMe.controller('projectdetailsCtrl', ['$scope', 'BaseServices', '$timeout', '
 	_scope.uploadImagesVideos = function() {
 		_scope.uploadCompleted = 0;
 		_scope.disableDragDrop = true;
+		
 		_scope.data = _scope.project;
 		if(!_scope.project.projectsassets) {
 			_scope.project.projectsassets = [];
@@ -112,6 +113,7 @@ backMe.controller('projectdetailsCtrl', ['$scope', 'BaseServices', '$timeout', '
 			_services.toast.show('Images/Video uploaded successfully.');
 			_scope.projectImages = undefined;
 			_scope.disableDragDrop = false;
+			_rootScope.images = [];
 		});
 
 		/*if(_scope.projectImages.length > 0)
@@ -173,5 +175,10 @@ backMe.controller('projectdetailsCtrl', ['$scope', 'BaseServices', '$timeout', '
 			_scope.project.noOfDays = moment(_endByDate).diff(moment(), 'days')+1;
 		} 
 	}
+	
+	_scope.deleteSpendMoney = function(_spend, _index) {
+		_spend.splice(_index, 1);
+	}
+
 
 }]);

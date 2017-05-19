@@ -1,37 +1,40 @@
 <!--Begin: Login Modal -->
-  <div class="modal fade loginModal" id="loginModal" role="dialog" data-backdrop="static" data-keyboard="false">
+  <div class="modal fade loginModal" id="loginModal" role="dialog">
 	<div class="modal-dialog">
 	  <div class="modal-content">
 		<div class="modal-header">
-		  <button type="button" class="close" data-dismiss="modal">&times;</button>
+		  <!--<button type="button" class="close" data-dismiss="modal">&times;</button>-->
 		  <h4 class="modal-title"><img src="assets/images/logo.png"></h4>
 		</div>
 		<div class="modal-body">
 			<div class="login-wrp">
-				<div class="login-section">
-					<label class="f-label">Email</label>
-					<md-input-container>
-						<label class="p-lable">Your email</label>
-						<input type="email" ng-model="loginSettings.email">
-						<div class="md-errors-spacer"></div>
-						<div class="error-lable">Please enter a valid email.</div>
-					</md-input-container>
+				<form name="app.loginForm" ng-submit="app.loginForm.$valid && appLogin(loginSettings.email, loginSettings.password);" novalidate autocomplete="off">
+					<div class="login-section">
+						<label class="f-label">Email</label>
+						<md-input-container>
+							<label class="p-lable">Your email</label>
+							<input type="email" ng-model="loginSettings.email" name="email" required>
+							<div class="error-lable">Please enter a valid email.</div>
+						</md-input-container>
 
-					<label class="f-label">Password</label>
-					<md-input-container class="pwd-wrp" ng-show="showPassword">
-						<label class="p-lable">Password</label>
-						<input ng-model="loginSettings.password" type="password">
-						<a href="" class="show-pwd" ng-click="showHidePassword();">{{showPassword?'Show Password':'Hide Password'}}</a>
-					</md-input-container>
+						<label class="f-label">Password</label>
+						<md-input-container class="pwd-wrp" ng-if="showPassword">
+							<label class="p-lable">Password</label>
+							<input ng-model="loginSettings.password" type="password" required>
+							<a href="" class="show-pwd" ng-click="showHidePassword();">{{showPassword?'Show Password':'Hide Password'}}</a>
+							<div class="error-lable">Password is required!</div>
+						</md-input-container>
 
-					<md-input-container class="pwd-wrp" ng-show="!showPassword">
-						<label class="p-lable">Password</label>
-						<input ng-model="loginSettings.password" type="text">
-						<a href="" class="show-pwd" ng-click="showHidePassword();">{{showPassword?'Show Password':'Hide Password'}}</a>
-					</md-input-container>							
-					<button class="btn btn-default btn-subscribe btn-login" ng-click="appLogin(loginSettings.email, loginSettings.password);">Login</button>
-					<div class="or-label">or</div>
-				</div>
+						<md-input-container class="pwd-wrp" ng-if="!showPassword">
+							<label class="p-lable">Password</label>
+							<input ng-model="loginSettings.password" type="text" required>
+							<a href="" class="show-pwd" ng-click="showHidePassword();">{{showPassword?'Show Password':'Hide Password'}}</a>
+							<div class="error-lable">Password is required!</div>
+						</md-input-container>							
+						<button class="btn btn-default btn-subscribe btn-login" ng-click="app.loginForm.submit()">Login</button>
+						<div class="or-label">or</div>
+					</div>
+				</form>
 			</div>
 			<div class="login-social">
 				<div class="login-section">
@@ -56,11 +59,12 @@
 <!--End: Login Modal -->
 
 <!--Begin: Signup Modal -->
-  <div class="modal fade loginModal" id="signUpModal" role="dialog" data-backdrop="static" data-keyboard="false">
+ <!--data-backdrop="static" data-keyboard="false"-->
+  <div class="modal fade loginModal" id="signUpModal" role="dialog">
 	<div class="modal-dialog">
 	  <div class="modal-content">
 		<div class="modal-header">
-		  <button type="button" class="close" data-dismiss="modal">&times;</button>
+		  <!--<button type="button" class="close" data-dismiss="modal">&times;</button>-->
 		  <h4 class="modal-title">Discover Amaging Talent!</h4>
 		</div>
 		<div class="modal-body">
@@ -76,29 +80,34 @@
 				<div class="or-label">or Sign up using</div>
 			</div>
 			<div class="login-wrp">
-				<div class="login-section sign-login-section">
-					<label class="f-label">Email</label>
-					<md-input-container>
-						<label class="p-lable">Your email</label>
-						<input type="email" ng-model="signUpSettings.email">
-					</md-input-container>
+				<form name="app.signupForm" ng-submit="app.signupForm.$valid && appSignup(signUpSettings.email, signUpSettings.password);" novalidate autocomplete="off">
+					<div class="login-section sign-login-section">
+						<label class="f-label">Email</label>
+						<md-input-container>
+							<label class="p-lable">Your email</label>
+							<input type="email" ng-model="signUpSettings.email" required>
+							<div class="error-lable">Please enter a valid email.</div>
+						</md-input-container>
 
-					<label class="f-label">Password</label>
-					<md-input-container class="pwd-wrp" ng-show="showPassword">
-						<label class="p-lable">Choose a password</label>
-						<input ng-model="signUpSettings.password" type="password">
-						<a href="" class="show-pwd" ng-click="showHidePassword();">{{showPassword?'Show Password':'Hide Password'}}</a>
-					</md-input-container>
+						<label class="f-label">Password</label>
+						<md-input-container class="pwd-wrp" ng-if="showPassword">
+							<label class="p-lable">Choose a password</label>
+							<input ng-model="signUpSettings.password" type="password" required>
+							<a href="" class="show-pwd" ng-click="showHidePassword();">{{showPassword?'Show Password':'Hide Password'}}</a>
+							<div class="error-lable">Password is required!</div>
+						</md-input-container>
 
-					<md-input-container class="pwd-wrp" ng-show="!showPassword">
-						<label>Password</label>
-						<input ng-model="signUpSettings.password" type="text">
-						<a href="" class="show-pwd" ng-click="showHidePassword();">{{showPassword?'Show Password':'Hide Password'}}</a>
-					</md-input-container>
-					<!--ng-click="showSignUpComplete();"-->
-					<button class="btn btn-default btn-subscribe btn-login" ng-click="appSignup(signUpSettings.email, signUpSettings.password);">Create Account</button>
-					<p class="create-acc-msg">Lorem Ipsum is simply dummy text of the printing and 	typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
-				</div>
+						<md-input-container class="pwd-wrp" ng-if="!showPassword">
+							<label>Password</label>
+							<input ng-model="signUpSettings.password" type="text" required>
+							<a href="" class="show-pwd" ng-click="showHidePassword();">{{showPassword?'Show Password':'Hide Password'}}</a>
+							<div class="error-lable">Password is required!</div>
+						</md-input-container>
+						<!--ng-click="showSignUpComplete();"-->
+						<button class="btn btn-default btn-subscribe btn-login" ng-click="app.signupForm.submit()">Create Account</button>
+						<p class="create-acc-msg">Lorem Ipsum is simply dummy text of the printing and 	typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+					</div>
+				</form>
 			</div>
 			<div class="sign-up-msg">
 				<p>Already have an account? <a href="" ng-click="showLogin();">Login here</a></p>

@@ -43,13 +43,18 @@
 					<p class="pd-desc">{{project.about}}</p>
 					
 					<h4 class="btn-title">How I will spend money</h4>
-					<div class="spendmoney" ng-repeat="spendmoney in project.spendmoney track by $index">
-						<p class="pd-desc">
-							<i class="fa fa-rupee" aria-hidden="true"></i>{{spendmoney.amount}}.00 - {{spendmoney.description}}
-						</p>
+					<div class="row">
+						<div class="col-md-6">
+							<div id="spendmoneyGraph"></div>
+						</div>
+						<div class="col-md-6 col-spendmoney">
+							<div class="spendmoney" ng-repeat="spendmoney in project.spendmoney track by $index">
+								<p class="pd-desc">
+									<i class="fa fa-circle" aria-hidden="true" style="color:{{pieColors[$index]}}"></i>{{spendmoney.amount}}.00 - {{spendmoney.description}}
+								</p>
+							</div>
+						</div>
 					</div>
-					<p class="pd-desc" ng-if = "!project.spendmoney"> - </p>
-					
 					
 					<h4 class="btn-title">My Team</h4>
 					<div class="row team">
@@ -151,11 +156,11 @@
 				<div class="support-box support">
 					<div class="row">
 						<div class="col-md-6">
-							<h3 class="amount"><i class="fa fa-rupee" aria-hidden="true"></i>24,000</h3>
+							<h3 class="amount"><i class="fa fa-rupee" aria-hidden="true"></i>{{project.moneyNeeded}}</h3>
 							<h4 class="s-title">Money Raised</h4>
 							<h3 class="amount">14</h3>
 							<h4 class="s-title">People Supporting</h4>
-							<h3 class="amount">2 Days 4 Hrs</h3>
+							<h3 class="amount days">{{project.remaindayshours[0].remainHours|getDays}} Days {{project.remaindayshours[0].remainHours|getHours}} Hrs </h3>
 							<h4 class="s-title">Time Remaining</h4>
 						</div>
 						<div class="col-md-6">
@@ -180,7 +185,7 @@
 								<i class="fa fa-user" aria-hidden="true"></i>
 							</div>
 							<div class="days-wrp">
-								<div class="total-days"></div>
+								<!--<div class="total-days"></div>-->
 								<div class="completed-days"></div>
 							</div>
 						</div>
@@ -249,7 +254,7 @@
 							<img src="assets/images/similar-proj-bg.png"/>
 						</div>
 						<div class="col-md-7">
-							<h5 class="title">Lorem Ipsum is simply dummy text of the printing </h5>
+							<h5 class="title">Lorem Ipsum is simply dummy text of the printing</h5>
 							<p class="desc">6479 Views</p>
 							<p class="desc">27 Days to go</p>
 						</div>

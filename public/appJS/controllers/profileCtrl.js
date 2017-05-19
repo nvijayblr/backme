@@ -21,16 +21,17 @@ backMe.controller('profileCtrl', ['$scope', 'BaseServices', '$timeout', '$state'
 			_services.toast.show('User Name/Email/Mobile Number/Photo should not be blank.');
 			return;
 		}
-		if(!_scope.project.accountName || !_scope.project.accountNo || !_scope.project.ifscCode) {
+		/*if(!_scope.project.accountName || !_scope.project.accountNo || !_scope.project.ifscCode) {
 			_services.toast.show('User Account Name/Account No/IFSC Code should not be blank.');
 			return;
-		}
+		}*/
 		_http.upload({
 			method: 'POST',
 			url: _appConstant.baseUrl + 'projects',
 			data: _scope.data
 		}).then(function (data) {
 			_services.toast.show(data.data);
+			_scope.userImg = undefined;
 			_state.go('create.preview', {'projectId': _scope.projectId});
 		}, function (err) {
 			_services.toast.show(err.data);

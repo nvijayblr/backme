@@ -1,8 +1,10 @@
 'use strict';
-backMe.controller('createprojectCtrl', ['$scope', 'BaseServices', '$timeout', '$state', 'appConstant', function(_scope, _services, _timeout, _state, _appConstant){
+backMe.controller('createprojectCtrl', ['$scope', 'BaseServices', '$timeout', '$state', 'appConstant', '$rootScope', function(_scope, _services, _timeout, _state, _appConstant, _rootScope){
 	console.log('createprojectCtrl');
-	if(!_scope.loggedIn) {
-		_state.go('home')
+	console.log(_state);
+	
+	if(!_scope.loggedIn && _state.current.url != '/startproject' && _state.current.url != '/basicinfo/:projectId') {
+		_state.go('home');
 	}
 	_scope.projectId = 'new';
 	
@@ -11,7 +13,9 @@ backMe.controller('createprojectCtrl', ['$scope', 'BaseServices', '$timeout', '$
 	_scope.projectMinDate = moment().toDate();
 	_scope.projectMaxDays = _appConstant.projectMaxDays;
 	_scope.projectMaxDate = moment().add(_appConstant.projectMaxDays,'days').toDate();
-
+	
+	console.log(_appConstant.currentUser.email);
+	
 	_scope.project = {
 		"title": "",
 		"category": "",
@@ -25,7 +29,7 @@ backMe.controller('createprojectCtrl', ['$scope', 'BaseServices', '$timeout', '$
 		"userId": _scope.userId,
 		"name": "",
 		"userPhoto": "",
-		"email": "",
+		"email": _appConstant.currentUser.email,
 		"mobileNumer": "",
 		"accountName": "",
 		"accountNo": "",
@@ -48,9 +52,15 @@ backMe.controller('createprojectCtrl', ['$scope', 'BaseServices', '$timeout', '$
 		  {'name': 'Signer'},
 		  {'name': 'Drama'},
 		  {'name': 'Music'},
-		  {'name': 'Test'}
+		  {'name': 'Dance'}
 	];
-	_scope.images = [];
+	_scope.bankList = [
+		  {'name': 'ICICI'},
+		  {'name': 'HDFC'},
+		  {'name': 'SBI'},
+		  {'name': 'CITI'}
+	];
+	_rootScope.images = [];
 	_scope.getProjectByUser = function() {
 		_services.http.serve({
 			method: 'GET',
@@ -64,10 +74,11 @@ backMe.controller('createprojectCtrl', ['$scope', 'BaseServices', '$timeout', '$
 				_scope.project.facebook = Boolean(_scope.project.facebook);
 				_scope.project.twitter = Boolean(_scope.project.twitter);
 				_scope.project.googleplus = Boolean(_scope.project.googleplus);
+				_scope.project.email = _scope.project.email ? _scope.project.email : _appConstant.currentUser.email;
 				_scope.addRewardsSpendFields(_scope.projectId);			
 			}
 			angular.forEach(_scope.project.projectsassets, function(_obj, _index){
-				_scope.images.push({
+				_rootScope.images.push({
 					id : _index+1,
 					thumbUrl : 'uploads/'+_obj.location,
 					url : 'uploads/'+_obj.location,
