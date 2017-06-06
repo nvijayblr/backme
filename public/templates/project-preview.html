@@ -17,9 +17,8 @@
 						img-anim="fadeup"
 						on-open=""
 						on-close=""
+						on-video-click="playVideo(img)"
 						on-delete=""></ng-image-gallery>
-
-					<!--<img ng-src="{{project.videosImages ? project.videosImages : 'assets/images/img_not_available.png'}}">-->
 				</div>
 				<h1 class="pd-title">{{project.title}}</h1>
 				<p class="pd-desc">{{project.description}}</p>
@@ -28,76 +27,37 @@
 					<p class="pd-desc">{{project.about}}</p>
 					
 					<h4 class="btn-title">How I will spend money</h4>
-					<div class="spendmoney" ng-repeat="spendmoney in project.spendmoney track by $index">
+					<div class="row">
+						<div class="col-md-6">
+							<div id="spendmoneyGraph"></div>
+						</div>
+						<div class="col-md-6 col-spendmoney">
+							<div class="spendmoney" ng-repeat="spendmoney in project.spendmoney track by $index">
+								<p class="pd-desc">
+									<i class="fa fa-circle" aria-hidden="true" style="color:{{pieColors[$index]}}"></i>{{spendmoney.amount|toLocale}}.00 - {{spendmoney.description}}
+								</p>
+							</div>
+						</div>
+					</div>
+					
+					<!--<div class="spendmoney" ng-repeat="spendmoney in project.spendmoney track by $index">
 						<p class="pd-desc">
 							<i class="fa fa-rupee" aria-hidden="true"></i>{{spendmoney.amount}}.00 - {{spendmoney.description}}
 						</p>
-					</div>
+					</div>-->
 					
 					<h4 class="btn-title">My Team</h4>
 					<div class="row team">
-						<div class="col-md-6">
+						<div class="col-md-6" ng-repeat="team in project.team track by $index">
 							<div class="team-wrp clearfix">
-								<img src="assets/images/team.jpg" class="team-bg">
+								<div style="background-image:url(uploads/{{team.picture}})" class="team-bg"></div>
 								<div class="name pull-left">
-									<h5>Ken Hermann</h5>
-									<p>Co-Founder</p>
-								</div>
-							</div>
-							<div class="team-wrp clearfix">
-								<img src="assets/images/team.jpg" class="team-bg">
-								<div class="name pull-left">
-									<h5>Ken Hermann</h5>
-									<p>Co-Founder</p>
-								</div>
-							</div>
-							<div class="team-wrp clearfix">
-								<img src="assets/images/team.jpg" class="team-bg">
-								<div class="name pull-left">
-									<h5>Ken Hermann</h5>
-									<p>Co-Founder</p>
-								</div>
-							</div>
-							<div class="team-wrp clearfix">
-								<img src="assets/images/team.jpg" class="team-bg">
-								<div class="name pull-left">
-									<h5>Ken Hermann</h5>
-									<p>Co-Founder</p>
-								</div>
-							</div>
-						</div>
-						<div class="col-md-6">
-							<div class="team-wrp clearfix">
-								<img src="assets/images/team.jpg" class="team-bg">
-								<div class="name pull-left">
-									<h5>Ken Hermann</h5>
-									<p>Co-Founder</p>
-								</div>
-							</div>
-							<div class="team-wrp clearfix">
-								<img src="assets/images/team.jpg" class="team-bg">
-								<div class="name pull-left">
-									<h5>Ken Hermann</h5>
-									<p>Co-Founder</p>
-								</div>
-							</div>
-							<div class="team-wrp clearfix">
-								<img src="assets/images/team.jpg" class="team-bg">
-								<div class="name pull-left">
-									<h5>Ken Hermann</h5>
-									<p>Co-Founder</p>
-								</div>
-							</div>
-							<div class="team-wrp clearfix">
-								<img src="assets/images/team.jpg" class="team-bg">
-								<div class="name pull-left">
-									<h5>Ken Hermann</h5>
-									<p>Co-Founder</p>
+									<h5>{{team.name}}</h5>
+									<p>{{team.designation}}</p>
 								</div>
 							</div>
 						</div>
 					</div>
-					
 				</div>
 			</div>
 			<div class="col-md-4">
@@ -106,7 +66,7 @@
 					<img ng-if="project.userPhoto" ng-src="uploads/{{project.userPhoto}}" class="support-user-bg">
 					<div class="user-info">
 						<h3 class="s-user">{{project.name}}</h3>
-						<p class="s-loc"><i class="fa fa-map-marker" aria-hidden="true"></i>{{project.location}}</p>
+						<p class="s-loc"><i class="fa fa-map-marker" aria-hidden="true"></i>{{project.location.display?project.location.display:project.location}}</p>
 						<p class="s-email"><i class="fa fa-envelope" aria-hidden="true"></i>{{project.email}}</p>
 					</div>
 				</div>

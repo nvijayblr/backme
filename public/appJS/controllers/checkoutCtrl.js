@@ -1,57 +1,52 @@
 'use strict';
-backMe.controller('checkoutCtrl', ['$scope', 'BaseServices', '$timeout', '$state', '$sce', function(_scope, _services, _timeout, _state, _sce){
+backMe.controller('checkoutCtrl', ['$scope', 'BaseServices', '$timeout', '$state', '$sce', 'appConstant', function(_scope, _services, _timeout, _state, _sce, _appConstant){
 
-	console.log('checkoutCtrl', _scope.loggedIn);
+	_scope.projectId = _state.params.projectId;
+
 	_scope.ccAvenue = {
 		merchant_id: '86540',
 		access_code: 'AVKE63CL31CH33EKHC',
 		working_key: '0B66015989C8CD68B53219345F8C8484'
 	};
-	_scope.makeCCAvenuePayment = function() {
-		console.log('_scope.makeCCAvenuePayment');
-		/*_services.http.serve({
-			method: 'GET',
-			url: 'http://localhost:3001/make-payment'
-		}, function(data){
-			console.log(data);
-			_scope.myText = _sce.trustAsHtml(data);
+	
+	_scope.checkout = {
+		projectId: _scope.projectId,
+		userId: '',
+		TXN_AMOUNT: '1',
+		firstName: '',
+		lastName: '',
+		email: '',
+		mobileNumber: ''
+	};
+    _scope.checkout.TXN_AMOUNT = _state.params.amount;
+    
+	_scope.project = {};
 
+	_scope.init = function() {
+		_services.http.serve({
+			method: 'GET',
+			url: _appConstant.baseUrl + 'projects/' + _scope.projectId
+		}, function(data){
+			_scope.project = data;
+			if(_scope.project.length == 0) {
+				_state.go('home');
+			} else {
+				_scope.checkout.userId = _scope.project.userId;
+			}
 		}, function(err) {
 			console.log(err)
-		});*/
-		
+		});
+	}
+	_scope.init();
+	
+	_scope.makeCCAvenuePayment = function() {
+		//Paytm Integration
 		_services.http.serve({
 			method: 'POST',
-			url: 'http://localhost:3001/generate_checksum',
-			inputData: {
-				"REQUEST_TYPE": "SEAMLESS",
-				"MID": "Huroof23707312295888",
-				"ORDER_ID": '7',
-				"CUST_ID": "1",
-				"TXN_AMOUNT": "1",
-				"CHANNEL_ID": "WEB",
-				"INDUSTRY_TYPE_ID": "Retail",
-				"WEBSITE": "WEB_STAGING",
-				"PAYMENT_DETAILS": "",
-				"AUTH_MODE": "3D",
-				"PAYMENT_TYPE_ID": "CC",
-				"CHECKSUMHASH": "",
-				"CALLBACK_URL": "http://localhost:3001/#/home",
-				"MOBILE_NO": "9591191405",
-				"EMAIL": "nvijay.ooty@gmail.com"
-			}
+			url: _appConstant.baseUrl + 'pay-paytm',
+			inputData: _scope.checkout
 		}, function(data){
-			console.log(data);
-			_services.http.serve({
-				method: 'POST',
-				url: 'http://localhost:3001/verify_checksum',
-				inputData: data
-				}, function(data){
-					console.log(data);
-					_scope.myText = _sce.trustAsHtml(data);
-				}, function(err) {
-					console.log(err)
-				});
+			_scope.checkoutFrm = _sce.trustAsHtml(data);
 		}, function(err) {
 			console.log(err)
 		});

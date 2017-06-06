@@ -20,15 +20,32 @@
 				<li><a href="#about">ABOUT US</a></li>
 			  </ul>
 			  <ul class="nav navbar-nav navbar-right top-nav">
-				<li class="top-search" ng-class="showSearch?'active':''">
+				<!--<li class="top-search" ng-class="showSearch?'active':''">
 					<a href="" class="ts-search-icon" ng-click="startSearch()"><i class="fa fa-search" aria-hidden="true"></i></a>
 				  	<input type="text" class="ts-search-txt" ng-model="serach.serachBox" placeholder="Try searching locations & campaigns"  ng-keypress="searchKeyPress($event, serach.serachBox)"/>
-					<i class="fa fa-times close-search" aria-hidden="true" ng-click="closeSearch()"></i>
-				  </li>
+					<button ng-show="serach.serachBox.length>2" href="" class="btn btn-md btn-default btn-search" ng-click="startSearch()">Search</button>
+					<i ng-show="serach.serachBox.length<3" class="fa fa-times close-search" aria-hidden="true" ng-click="closeSearch()"></i>
+			    </li>-->
+			  <li class="top-search">
+				  <a href="" class="ts-search-icon" ng-click="showSearchBar()"><i class="fa fa-search" aria-hidden="true"></i></a>
+			  </li>
+				<li class="top-search active" ng-class="showSearch?'show':''">
+					<div class="serch-wrp">
+						<a href="" class="ts-search-icon" ng-click="startSearch()"><i class="fa fa-search" aria-hidden="true"></i></a>
+						<md-chips ng-model="searchKeywords" name="serchkey" readonly="false" md-removable="true" md-max-chips="5" placeholder="Search" class="ts-search-txt" ng-keypress="searchKeyPress($event)">
+							<md-chip-template>
+								<strong>{{$chip}}</strong>
+							</md-chip-template>
+						</md-chips>
+						<button ng-show="searchKeywords.length" class="btn btn-md btn-default btn-search" ng-click="startSearch()">Search</button>
+						<i ng-show="!searchKeywords.length" class="fa fa-times close-search" aria-hidden="true" ng-click="closeSearch()"></i>
+					</div>
+			    </li>
 				<li class="singup" ng-if="!loggedIn && !showSearch"><a href="" ng-click="showLogin()"><span class="glyphicon glyphicon-lock"></span>LOGIN/SIGNUP</a></li>
 				<li ng-if="loggedIn && !showSearch" class="login">
 					<div ng-if="!loggedUser.profilePicture" class="user-bg-div bg-name">{{loggedUser.name.substr(0,2)}}</div>
-					<div ng-if="loggedUser.profilePicture" style="background-image:url(uploads/{{loggedUser.profilePicture}})" class="user-bg-div"></div>
+					<div ng-if="loggedUser.profilePicture && loggedUser.loginType=='CUSTOM'" style="background-image:url(uploads/{{loggedUser.profilePicture}})" class="user-bg-div"></div>
+					<div ng-if="loggedUser.profilePicture && loggedUser.loginType=='GOOGLE'" style="background-image:url({{loggedUser.profilePicture}})" class="user-bg-div"></div>
 				   <div class="dropdown username">
 						<a href="" data-toggle="dropdown" class="dropdown-toggle">{{loggedUser.name}} <b class="caret"></b></a>
 						<ul class="dropdown-menu">

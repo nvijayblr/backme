@@ -14,7 +14,9 @@ backMe.controller('rewardsCtrl', ['$scope', 'BaseServices', '$timeout', '$state'
 		_scope.data = _scope.project;
 		_scope.supportrewards = true;
 		_scope.servicerewards = true;
+		_scope.totAmt = 0;
 		angular.forEach(_scope.project.supportrewards, function(_obj){
+			_scope.totAmt = _scope.totAmt + parseInt(_obj.amount);
 			if(!_obj.title || !_obj.amount || !_obj.description) {
 				_services.toast.show('Support Rewards Title/Amount/Description should not be blank.');
 				_scope.supportrewards = false;
@@ -22,22 +24,33 @@ backMe.controller('rewardsCtrl', ['$scope', 'BaseServices', '$timeout', '$state'
 			}
 		});
 		if(!_scope.supportrewards) return;
+		if(_scope.totAmt > _scope.project.moneyNeeded) {
+			_services.toast.show('Total of the support rewards amount should not be greater than Money needed.');
+			return false; 
+		}
 		
-		angular.forEach(_scope.project.servicerewards, function(_obj){
+		/*angular.forEach(_scope.project.servicerewards, function(_obj){
 			if(!_obj.activityName || !_obj.amount || !_obj.description || !_obj.availableDate) {
 				_services.toast.show('Service Rewards Title/Amount/Description should not be blank.');
 				_scope.servicerewards = false;
 				return;
 			}
 		});
-		if(!_scope.servicerewards) return;
-		
+		if(!_scope.servicerewards) return;*/
+		_scope.totAmt = 0;
+		angular.forEach(_scope.project.servicerewards, function(_obj){
+			_scope.totAmt = _scope.totAmt + parseInt(_obj.amount);
+		});
+		if(_scope.totAmt > _scope.project.moneyNeeded) {
+			_services.toast.show('Total of the service rewards amount should not be greater than Money needed.');
+			return false; 
+		}
 		_http.upload({
 			method: 'POST',
 			url: _appConstant.baseUrl + 'projects',
 			data: _scope.data
 		}).then(function (data) {
-			_services.toast.show(data.data);
+			_services.toast.showProject('Project details upated successfully !!');
 			_state.go('create.profile', {'projectId': _scope.projectId});
 		}, function (err) {
 			_services.toast.show(err.data);

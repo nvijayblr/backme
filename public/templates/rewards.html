@@ -11,7 +11,7 @@
 							<div class="reward-box">
 								<div class="input-wrp">
 									<md-input-container>
-										<i class="fa fa-rupee"></i><label class="ph-label"><span class="txt-amout">500</span></label>
+										<i class="fa fa-rupee"></i><label class="ph-label-amt"><span class="txt-amout">500</span></label>
 										<input type="text" class="txt-amout" ng-model="support.amount" name="amount" ng-pattern="/^[0-9]*$/" required>
 										<div class="error-lable">Amount is required!</div>
 									</md-input-container>
@@ -41,21 +41,21 @@
 					</div>
 				</div>
 				<div class="row steps-content-basic rewards-content">
-					<h5 style="margin-left:17px;">SERVICE REWARDS</h5>
+					<h5 style="margin-left:17px;">SERVICE REWARDS<label class="f-label optional-label">(Optional)</label></h5>
 					<div ng-repeat="service in project.servicerewards track by $index">
 						<div class="col-md-4 steps-form">
 							<div class="reward-box">
 								<div class="input-wrp">
 									<md-input-container>
-										<i class="fa fa-rupee"></i><label class="ph-label"><span class="txt-amout">500</span></label>
-										<input type="text" class="txt-amout" ng-model="service.amount" name="amount" ng-pattern="/^[0-9]*$/" required>
+										<i class="fa fa-rupee"></i><label class="ph-label-amt"><span class="txt-amout">500</span></label>
+										<input type="text" class="txt-amout" ng-model="service.amount" name="amount" ng-pattern="/^[0-9]*$/" >
 										<div class="error-lable">Amount is required!</div>
 									</md-input-container>
 								</div>								
 								<div class="input-wrp title">
 									<md-input-container>
 										<label class="ph-label"><span class="txt-title">Activity Name</span></label>
-										<input type="text" class="txt-title" ng-model="service.activityName" name="activity" required>
+										<input type="text" class="txt-title" ng-model="service.activityName" name="activity">
 										<div class="error-lable">Activity name is required!</div>
 									</md-input-container>
 								</div>								
@@ -63,17 +63,17 @@
 								<div class="input-wrp">
 									<md-input-container class="md-block md-time-to-avail" flex-gt-sm>
 										<label class="ph-label">Time to avail service</label>
-										<md-select ng-model="service.availableDate" required class="md-time-to-avail">
+										<md-select ng-model="service.availableDate" class="md-time-to-avail">
 											<md-option value="3 Months">3 Months</md-option>
-											<md-option value="3 Months">6 Months</md-option>
+											<md-option value="6 Months">6 Months</md-option>
 										</md-select>
-										<div class="error-lable select">Your city is required!</div>
+										<div class="error-lable select">Time to avail service is required!</div>
 									</md-input-container>
 								</div>
 								<div class="input-wrp title">
 									<md-input-container>
 										<label class="ph-label"><span class="txt-title">Description</span></label>
-										<textarea  cols="5" class=" txt-title" ng-model="service.description" required></textarea>
+										<textarea  cols="5" class=" txt-title" ng-model="service.description"></textarea>
 										<div class="error-lable">Description is required!</div>
 									</md-input-container>
 								</div>								

@@ -1,4 +1,4 @@
-<form name="profileForm" ng-submit="profileForm.$valid && startPreview();" novalidate autocomplete="off">
+<form name="profileForm" ng-submit="profileForm.$valid && uploadTeam(project);" novalidate autocomplete="off">
 <section class="content">
 	<div class="create-proj-cont">
 		<div class="create-proj-wrp steps-wrp">
@@ -42,16 +42,23 @@
 								<label class="f-label">Email</label>
 								<md-input-container>
 									<label class="ph-label">Your email</label>
-									<input type="email" ng-model="project.email" required>
-									<div class="error-lable">Email is required!</div>
+									<input type="email" ng-model="project.email" name="email" required ng-pattern='/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/'>
+									<div ng-messages="profileForm.email.$error" ng-show="profileForm.email.$touched">
+										<div ng-message="required">Email is required!</div>
+										<div ng-message="email">Your email address is invalid.</div>
+									</div>
 								</md-input-container>
 							</div>
 							<div class="input-wrp">
 								<label class="f-label">Mobile Number</label>
 								<md-input-container>
 									<label class="ph-label">Your mobile number</label>
-									<input type="text" ng-model="project.mobileNumer" required>
-									<div class="error-lable">Mobile number required!</div>
+									<input type="text" name="mobile" ng-model="project.mobileNumer" required ng-pattern="/^[0-9]{10}$/">
+									<!--<div class="error-lable">Mobile number required!</div>-->
+									<div ng-messages="profileForm.mobile.$error" ng-show="profileForm.mobile.$touched">
+										<div ng-message="required">Mobile number is required!</div>
+										<div ng-message="pattern">Incorrect format of mobile number.</div>
+									</div>
 								</md-input-container>
 							</div>
 							<div class="input-wrp">
@@ -65,13 +72,13 @@
 								</div>
 							</div>
 						</div>
-						<h5>BANK ACCOUNT INFORMATION</h5>
+						<h5 style="padding-top:25px;">BANK ACCOUNT INFORMATION<label class="f-label optional-label">(Optional)</label></h5>
 						<div class="steps-form">
 							<div class="input-wrp">
-								<label class="f-label" style="padding-top:25px;">Bank Name</label>
+								<label class="f-label">Bank Name</label>
 								<md-input-container class="md-block" flex-gt-sm>
 									<label class="ph-label">Select Bank</label>
-									<md-select ng-model="bankName">
+									<md-select ng-model="project.bankName">
 										<md-option ng-repeat="bank in bankList" value="{{bank.name}}">
 											{{bank.name}}
 										</md-option>
@@ -93,15 +100,18 @@
 								<md-input-container>
 									<label class="ph-label">Account Number</label>
 									<input type="text" ng-model="project.accountNo" ng-pattern="/^[0-9]*$/">
-									<div class="error-lable">Account number is required!</div>
+									<div class="error-lable">Incorrect format of IFSC code.</div>
 								</md-input-container>
 							</div>
 							<div class="input-wrp">
 								<label class="f-label">IFSC Code</label>
 								<md-input-container>
 									<label class="ph-label">IFSC Code</label>
-									<input type="text" ng-model="project.ifscCode" required>
-									<div class="error-lable">IFSC code is required!</div>
+									<input type="text" ng-model="project.ifscCode" name="ifsc" ng-pattern="/^[A-Za-z]{4}\d{7}$/">
+									<div ng-messages="profileForm.ifsc.$error" ng-show="profileForm.ifsc.$touched">
+										<div ng-message="required">IFSC code is required!</div>
+										<div ng-message="pattern">Incorrect format of IFSC code.</div>
+									</div>
 								</md-input-container>
 							</div>
 							
@@ -109,12 +119,70 @@
 								<label class="f-label">Bank Address</label>
 								<md-input-container>
 									<label class="ph-label">Address</label>
-									<textarea ng-model="bankAddress"></textarea>
+									<textarea ng-model="project.bankAddress"></textarea>
 									<div class="error-lable">Bank address is required!</div>
 								</md-input-container>
 							</div>
-
 						</div>
+						
+						<div class="row steps-content-basic rewards-content">
+							<h5 style="margin-left:17px;">TEAM INFORMATION</h5>
+							<div ng-repeat="tm in project.team track by $index">
+								<div class="col-md-6 steps-form">
+									<div class="reward-box team-box">
+										<div class="input-wrp">
+											<div class="drag-drop-box drop-box user" 
+												 ngf-select 
+												 ngf-drop 
+												 ng-model="tm.picture" 
+												 name="tm.picture" 
+												 ngf-pattern="'image/*'"
+												 ngf-accept="'image/*'" 
+												 ngf-max-size="1MB" 
+												 ngf-multiple="false"
+												 ngf-model-invalid="errorFile">
+												<div class="upload-teamphoto" ng-if="!tm.picture"></div>
+												<div class="team-img" ng-if="tm.picture.name">
+													<img ngf-size="{width: 100, height: 100}" ngf-thumbnail="tm.picture">
+												</div>
+												<div class="team-img" ng-if="tm.picture && !tm.picture.name">
+													<div class="team-photo" style="background-image:url(uploads/{{tm.picture}})"></div>
+												</div>
+											</div>
+											<span ng-show="profileForm.tm.picture.$error.maxSize">File too large {{errorFile.size/1000000|number:1}}MB: max 1MB</span>
+										</div>
+										<div class="input-wrp title">
+											<md-input-container>
+												<label class="ph-label"><span class="txt-title">Name</span></label>
+												<input type="text" class="txt-title" ng-model="tm.name" name="name" required>
+												<div class="error-lable">Name is required!</div>
+											</md-input-container>
+										</div>								
+										<div class="input-wrp title">
+											<md-input-container>
+												<label class="ph-label"><span class="txt-title">Designation</span></label>
+												<input type="text" class="txt-title" ng-model="tm.designation" name="designation" required>
+												<div class="error-lable">Designation is required!</div>
+											</md-input-container>
+										</div>								
+										<div class="input-wrp title">
+											<md-input-container>
+												<label class="ph-label"><span class="txt-title">Profile Link(FB, Linkedin, TW)</span></label>
+												<input type="text" class="txt-title" ng-model="tm.profileLink" name="profile">
+												<div class="error-lable">Profile link is required!</div>
+											</md-input-container>
+										</div>								
+									</div>
+									<a href="" class="delete-rewards" ng-if="project.team.length>1" ng-click="deleteTeam(project.team, $index)"><i class="fa fa-trash-o" aria-hidden="true"></i>Delete</a>
+								</div>
+							</div>
+							<div class="col-md-6 steps-form" ng-if="project.team.length<5">
+								<div class="reward-box-add team-box-add">
+									<a href="" class="add-box" ng-click="addTeam(project.team)">+</a>
+								</div>
+							</div>
+						</div>
+						
 					</div>
 				</div>
 			</div>

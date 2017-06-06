@@ -8,8 +8,8 @@
 			<div class="user-wrp prfile">
 				<div class="user-img">
 					<img ng-if="!user.profilePicture" src="assets/images/user-img.png"/>
-					<!--<img ng-if="user.profilePicture" ng-src="uploads/{{user.profilePicture}}"/>-->
-					<div class="img" style="background-image: url(uploads/{{user.profilePicture}});"></div>
+					<div ng-if="user.profilePicture && user.loginType=='CUSTOM'" class="img" style="background-image: url(uploads/{{user.profilePicture}});"></div>
+					<div ng-if="user.profilePicture && user.loginType=='GOOGLE'" class="img" style="background-image: url({{user.profilePicture}});"></div>
 				</div>
 			</div>
 			<h4 class="db-title">{{user.name}}</h4>
@@ -36,20 +36,20 @@
 										
 										<div class="proj-info clearfix">
 											<div class="views">
-												<h5>264</h5>
+												<h5>{{project.remaindayshours[0].viewsCount}}</h5>
 												<p><i class="fa fa-eye" aria-hidden="true"></i>Views</p>
 											</div>
 											<div class="comments">
-												<h5>2643</h5>
+												<h5>{{project.remaindayshours[0].likesCount}}</h5>
 												<p><i class="fa fa-heart" aria-hidden="true"></i>Likes</p>
 											</div>
 											<div class="likes">
-												<h5>34</h5>
+												<h5>{{project.remaindayshours[0].commentsCount}}</h5>
 												<p><i class="fa fa-comments" aria-hidden="true"></i>Comments</p>
 											</div>
 										</div>
 									</div>
-									<p class="p-desc">{{project.title}}</p>
+                                    <p class="p-desc"><a href="#project/{{project.projectId}}" class="poster-title">{{project.title}}</a></p>
 									<div class="proj-btn-wrp">
 										<div class="row">
 											<div class="col-md-6">
@@ -65,7 +65,7 @@
 								<div class="col-md-4 statistics">
 									<h3 class="amount"><i class="fa fa-rupee" aria-hidden="true"></i>{{project.moneyNeeded}}</h3>
 									<h4 class="s-title">Money Raised</h4>
-									<h3 class="amount">14</h3>
+									<h3 class="amount">{{project.remaindayshours[0].supportersCount}}</h3>
 									<h4 class="s-title">People Supporting</h4>
 									<h3 class="amount">{{project.remaindayshours[0].remainHours|getDays}} Days {{project.remaindayshours[0].remainHours|getHours}} Hrs </h3>
 									<h4 class="s-title">Time Remaining</h4>
@@ -164,7 +164,8 @@
 										<img ngf-size="{width: 356, height: 176}" ngf-thumbnail="userProfilePhoto">
 									</div>
 									<div class="user-img" ng-if="user.profilePicture && !userProfilePhoto">
-										<img class="user-photo" ng-src="uploads/{{user.profilePicture}}">
+										<img class="user-photo" ng-if="user.loginType=='CUSTOM'" ng-src="uploads/{{user.profilePicture}}">
+										<img class="user-photo" ng-if="user.loginType=='GOOGLE'" ng-src="{{user.profilePicture}}" style="width:100%;">
 									</div>
 								</div>
 							</div>

@@ -188,6 +188,7 @@
 
 				onOpen 			: 	'&?',		// function
 				onClose 		: 	'&?',		// function,
+				onVideoClick 	: 	'&',		// function,
 				onDelete		: 	'&?'
 			},
 			template : 	'<div class="ng-image-gallery img-move-dir-{{_imgMoveDirection}}" ng-class="{inline:inline}" ng-hide="images.length == 0">'+
@@ -237,7 +238,9 @@
 
 										// Images container
 										'<div class="galleria-images img-anim-{{imgAnim}} img-move-dir-{{_imgMoveDirection}}">'+
-											'<img class="galleria-image" ng-right-click ng-repeat="image in images track by image.id" ng-if="_activeImg == image" ng-src="{{image.url}}" ondragstart="return false;" ng-attr-alt="{{image.alt || undefined}}"/>'+
+											'<div ng-repeat="image in images track by image.id">'+
+												'<div class="galleria-image" ng-right-click ng-if="_activeImg == image" style="background-image:url({{image.url}})" ondragstart="return false;" ng-attr-alt="{{image.alt || undefined}}"><div ng-if="image.type==\'Video\'" class="play-videos" ng-click="onVideoClick({img: image})"><iframe width="100%" height="380" ng-src="{{image.videoUrl|trustAsResourceUrl}}" frameborder="0" allowfullscreen="1" id="youtube"></iframe></div></div>'+
+											'</div>'+
 										'</div>'+
 
 										// Image description container
@@ -418,6 +421,7 @@
 					scope.onOpen 	 = 	(scope.onOpen 	!= undefined) ? scope.onOpen 	 : 	angular.noop;
 					scope.onClose 	 = 	(scope.onClose 	!= undefined) ? scope.onClose 	 : 	angular.noop;
 					scope.onDelete 	 = 	(scope.onDelete != undefined) ? scope.onDelete 	 : 	angular.noop;
+					scope.onVideoClick=	(scope.onVideoClick != undefined) ? scope.onVideoClick 	 : 	angular.noop;
 
 					// If images populate dynamically, reset gallery
 					var imagesFirstWatch = true;

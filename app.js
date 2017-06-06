@@ -9,38 +9,71 @@ var bodyParser = require('body-parser');
 var moment = require('node-moment');
 var ccavenue = require('ccavenue');
 var nodemailer = require('nodemailer');
+var ejs = require('ejs');
 
 var app = express();
 
-var validate = require('./validation');
-var projects = require('./projects');
-var _temp = require('./_temp');
-var nesting = require('./mysql-nesting');
+var validate = require('./modules/validation');
+var projects = require('./modules/projects');
+var social = require('./modules/social');
+var youtube = require('./modules/youtube-upload');
+var nesting = require('./modules/mysql-nesting');
 
 var dbConnection = mysql.createConnection({
-	host: 'localhost',
+	/*host: 'localhost',
 	user: 'root',
 	password: '',
-	database: 'backme'
-  	/*host: 'localhost',
+	database: 'backme'*/
+  	host: 'localhost',
 	user: 'root',
 	password: 'Xcz?2oAffm',
 	database: 'backme',
 	port: 3306,
-	debug: true*/
+	debug: true
 });
-var server = app.listen(3001, function (request, response) {
+
+var host = 80;
+
+/*
+backme.talent@gmail.com
+Support@123
+*/
+//Local Server
+/*var oAuthCredentials = {
+	client_id: '47668821926-88cp2nt18qdvh525lm6gf509ug38c92d.apps.googleusercontent.com',
+	client_secret: 'aEmqEAy8x4m8J3W70N0Vo1Ip',
+	redirect_url: 'http://localhost:3001/auth'
+};*/
+
+
+/*
+https://accounts.google.com/o/oauth2/auth?access_type=offline&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.me%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fyoutube.upload&approval_prompt=force&response_type=code&client_id=1022772628270-hbpvh5ooeub8h0bdfu4nsf895vtuifp1.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Fsupportmytalent.in%2Fauth
+*/
+
+//Live server
+var oAuthCredentials = {
+	client_id: '1022772628270-hbpvh5ooeub8h0bdfu4nsf895vtuifp1.apps.googleusercontent.com',
+	client_secret: '7KvmTlj8s-ribzsuplXbYzjH',
+	redirect_url: 'http://supportmytalent.in/auth'
+};
+
+var server = app.listen(host, function (request, response) {
     var host = server.address().address,
         port = server.address().port;
     console.log("Backme Server listening at http://%s:%s", host, port);
 });
 //http.createServer(onRequest).listen(8888);
 app.use(express.static('public'));
+app.set('views', __dirname + '/modules/views');
+app.set('view engine', 'ejs');
+
 app.use(cors());
 app
 	.use(bodyParser.urlencoded({ extended: false }))
 	.use(bodyParser.json());
 
+//var upload = multer(); 
+//app.use(upload.array()); // for parsing multipart/form-data
 
 var connectDB = function() {
 	dbConnection.connect(function (err) {
@@ -53,14 +86,36 @@ var connectDB = function() {
 connectDB();
 
 
-//_temp.callGet(app, dbConnection);
+/* Email Settings */
+// create reusable transporter object using the default SMTP transport
+var transporter = nodemailer.createTransport({
+	service: 'gmail',
+	auth: {
+		user: 'backme.talent@gmail.com',
+		pass: 'Support@123'
+	}
+});
+var emails = require('./modules/emails');
+
+emails.testMail(app, dbConnection, validate, multer, path, nesting, async, moment, transporter, ejs);
+
+/*emails.sendEmails(app, transporter, 'user-register.ejs', 'nvijay.blr@gmail.com', 'Test Subject', function(info) {
+	console.log(info);
+});*/
+
+/*Youtube related API*/
+youtube.youtubeAPI(app, dbConnection, validate, multer, path, nesting, async, moment, request, oAuthCredentials);
 
 /*Projects related API*/
-projects.projectsAPI(app, dbConnection, validate, multer, path, nesting, async, moment);
+projects.projectsAPI(app, dbConnection, validate, multer, path, nesting, async, moment, transporter, emails);
+
+/*Social related API*/
+social.socialAPI(app, dbConnection, validate, multer, path, nesting, async, moment, transporter, emails);
+
 
 /*Paytm Integration*/
-var router = require('./router');
-router.route(app, dbConnection, validate, multer, path, nesting, async, moment);
+var paytm = require('./modules/paytm');
+paytm.route(app, dbConnection, validate, multer, path, nesting, async, moment, transporter, emails);
 
 const MAX_USERS_FILE_SIZE = 10*1024*1024;
 
@@ -69,7 +124,7 @@ const MAX_USERS_FILE_SIZE = 10*1024*1024;
 ccavenue.setMerchant("86540");
 ccavenue.setWorkingKey("0B66015989C8CD68B53219345F8C8484");
 ccavenue.setOrderId("1");
-ccavenue.setRedirectUrl("http://localhost:3001/checkout");
+ccavenue.setRedirectUrl("http://bhoomiventures.com/checkoutFinal");
 ccavenue.setOrderAmount("1");
  
 //Optional
@@ -85,43 +140,27 @@ app.get('/make-payment', function(req, res) {
 
 });
 
-
-/* Email Settings */
-// create reusable transporter object using the default SMTP transport
-var transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: 'nvijay.ooty@gmail.com',
-        pass: 'Windows98*'
-    }
+app.post('/checkoutFinal', function response(req, res) {
+  var data = ccavenue.paymentRedirect(req); //It will get response from ccavenue payment. 
+ 
+  if(data.isCheckSumValid == true && data.AuthDesc == 'Y') {
+      console.log('success', data);
+  } else if(data.isCheckSumValid == true && data.AuthDesc == 'N') {
+      console.log('Unuccessful', data);
+      // Unuccessful 
+      // Your code 
+  } else if(data.isCheckSumValid == true && data.AuthDesc == 'B') {
+      console.log('Batch processing', data);
+      // Batch processing mode 
+      // Your code 
+  } else {
+      console.log('Illegal access', data);
+      // Illegal access 
+      // Your code 
+  }
 });
 
-app.get('/sendMail', function response(req, res) {
-	sendVerificationMail('nvijay.ooty@gmail.com, vijay.n@altiux.com', '1', function(info) {
-		res.status(200).send(info);
-	});
-});
 
-function sendVerificationMail(_email, _link, _callback) {
-	var mailOptions = {
-		from: '"BACKME" <nvijay.ooty@gmail.com>', 
-		to: _email, 
-		subject: 'Backme Account Verification',
-		text: '', // plain text body
-		html: '<b>Please click the below link to verify your account.<b><br><br><h3><a href="'+_link+'" target="_blank">Verify</a></h3>'
-	};
-
-	transporter.sendMail(mailOptions, (error, info) => {
-		if (error) {
-			if(_callback)
-				_callback(error);
-			return console.log(error);
-		}
-		if(_callback)
-			_callback(info);
-		console.log('Message %s sent: %s', info.messageId, info.response);
-	});
-}
 
 
 // Server url should be as redirect url (which you are passing as Redirect Url).
@@ -240,7 +279,7 @@ app.post('/signup', function (req, res) {
 		res.status(400).send("Invalid Email.");
 		return;
 	}
-	user.status = 'PENDING';
+	user.status = 'ACTIVE';
 	if(!user.loginType) {
 		user.loginType = 'CUSTOM';
 	}
@@ -250,7 +289,63 @@ app.post('/signup', function (req, res) {
 				res.status(500).send(error.code=='ER_DUP_ENTRY'?'Email already found.':error.code);
 				return;
 			}
-			sendVerificationMail(user.email, host+'/verifyAccount/'+results.insertId);
+			//sendVerificationMail(user.email, host+'/verifyAccount/'+results.insertId);
+			
+			emails.sendEmails(app, transporter, 'user-register.ejs', user.email, 'Welcome to Back Me!', function(info) {
+				console.log(info);
+			});
+			res.status(200).send(results);
+		});
+	} catch(e) {
+		res.status(500).send("Internal Server Error.");
+	}
+});
+
+app.post('/loginsocial', function (req, res) {
+	var user = req.body;
+	if(!user.email || !user.loginType) {
+		res.status(400).send("Bad Request. Email/loginType should not be empty.");
+		return;
+	};
+	try {
+		dbConnection.query('SELECT * FROM users WHERE email=? AND loginType=? AND status="ACTIVE"', [user.email, user.loginType], function (error, results, fields) {
+			if (error) {
+				res.status(500).send("Internal Server Error.");
+				return;
+			}
+			if(results.length)
+				res.status(200).send(results);
+			else
+				res.status(404).send('Invalid userId/passowrd.');
+		});
+	} catch(e) {
+    console.log(e);
+		res.status(500).send("Internal Server Error.", e);
+	}
+});
+
+/*singup user from social (google)*/
+app.post('/signupsocial', function (req, res) {
+	var user = req.body;
+	var host = req.protocol + '://' + req.get('host');
+	if(!user.email) {
+		res.status(400).send("Bad Request. Email not found.");
+		return;
+	};
+	user.status = 'ACTIVE';
+	if(!user.loginType) {
+		user.loginType = 'GOOGLE';
+	}
+	try {
+		dbConnection.query('INSERT INTO users SET ?', user, function (error, results, fields) {
+			if (error) {
+				res.status(500).send(error.code=='ER_DUP_ENTRY'?'ER_DUP_ENTRY':error.code);
+				return;
+			}
+			
+			emails.sendEmails(app, transporter, 'user-register.ejs', user.email, 'Welcome to Back Me!', function(info) {
+				console.log(info);
+			});
 			res.status(200).send(results);
 		});
 	} catch(e) {

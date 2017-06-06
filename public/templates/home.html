@@ -1,5 +1,5 @@
 <!--Banner Section-->
-<section class="banner">
+<section class="banner" ng-class="isSerchPage ? 'search-page':''">
 	<div class="container">
 		<div class="carousel-wrapper">
 			<h1>Welcome to BackMe.</h1>
@@ -15,43 +15,41 @@
 <!--Content Section-->
 <section class="content">
 	<div class="container">
-		<div class="row pc-wrp">
+		<div class="row">
 			<div class="col-md-10 proj-wrp">
-				<section class="projects">
+				
+				<section class="projects pc-wrp" ng-if="isSerchPage">
 					<div class="row btn-wrp first">
-						<h3 class="col-md-4 p-title">Trending</h3>
-						<div class="col-md-4 pull-right text-right">
-							<a href="" class="btn btn-md btn-default">See All</a>
-						</div>
+						<h3 class="col-md-12 p-title">Search results for {{searchKeywordsList}}</h3>
 					</div>
 					<div class="row poster-wrp">
 						
 						<div class="col-md-4" ng-repeat="project in projects track by $index">
 							<div class="poster">
-								<div class="p-img">
-									<img ng-if="project.coverImage" ng-src="uploads/{{project.coverImage}}">
-									<img ng-if="!project.coverImage" src="assets/images/poster-bg.png">
-								</div>
 								<a href="#project/{{project.projectId}}" class="poster-title">
+									<div class="p-img">
+										<img ng-if="project.coverImage" style="background-image:url(uploads/{{project.coverImage}})">
+										<img ng-if="!project.coverImage" src="assets/images/poster-bg.png">
+									</div>
 									<h5 class="poster-title">{{project.title}}</h5>
 								</a>
 								<div class="owner clearfix">
-									<div class="owner-img"><img ng-src="uploads/{{project.userPhoto}}"></div>
+									<div class="owner-img"><img style="background-image:url(uploads/{{project.userPhoto}})"></div>
 									<h5 class="owner-name pull-left">{{project.name}}</h5>
 								</div>
 								<div class="funded-wrp">
 									<div class="f-progress">
 										<div class="p-process"></div>
-										<div class="p-completed"></div>
+										<div class="p-completed" style="width:{{project.achivedPercent | toAchivedPercent :project.funded:project.moneyNeeded}}%"></div>
 									</div>
 								</div>
 								<div class="row proj-statistics">
 									<div class="col-md-4 col-sm-4 col-xs-4 ps-fund">
-										<h5>70%</h5>
+										<h5>{{project.achivedPercent | toAchivedPercent :project.funded:project.moneyNeeded}}%</h5>
 										<p>Funded</p>
 									</div>
 									<div class="col-md-4 col-sm-4 col-xs-4 ps-views">
-										<h5>76887</h5>
+										<h5>{{project.viewsCount}}</h5>
 										<p>Views</p>
 									</div>
 									<div class="col-md-4 col-sm-4 col-xs-4 ps-days">
@@ -65,22 +63,68 @@
 						<h5 ng-if="!projects.length" class="no-project-found">No Projects Found.</h5>
 					</div>
 				</section>
+				
+				<section class="projects" ng-if="!isSerchPage">
+					<div class="pc-wrp" ng-repeat="(key, projects) in homeProjects track by $index" ng-class="$first?'first':''">
+					<div class="row btn-wrp first">
+						<h3 class="col-md-12 p-title">{{title[key]}}</h3>
+					</div>
+					<div class="row poster-wrp">
+						
+						<div class="col-md-4" ng-repeat="project in projects track by $index">
+							<div class="poster">
+								<a href="#project/{{project.projectId}}" class="poster-title">
+									<div class="p-img">
+										<img ng-if="project.coverImage" style="background-image:url(uploads/{{project.coverImage}})">
+										<img ng-if="!project.coverImage" src="assets/images/poster-bg.png">
+									</div>
+									<h5 class="poster-title">{{project.title}}</h5>
+								</a>
+								<div class="owner clearfix">
+									<div class="owner-img"><img style="background-image:url(uploads/{{project.userPhoto}})"></div>
+									<h5 class="owner-name pull-left">{{project.name}}</h5>
+								</div>
+								<div class="funded-wrp">
+									<div class="f-progress">
+										<div class="p-process"></div>
+										<div class="p-completed" style="width:{{project.achivedPercent | toAchivedPercent :project.funded:project.moneyNeeded}}%"></div>
+									</div>
+								</div>
+								<div class="row proj-statistics">
+									<div class="col-md-4 col-sm-4 col-xs-4 ps-fund">
+										<h5>{{project.achivedPercent | toAchivedPercent :project.funded:project.moneyNeeded}}%</h5>
+										<p>Funded</p>
+									</div>
+									<div class="col-md-4 col-sm-4 col-xs-4 ps-views">
+										<h5>{{project.viewsCount}}</h5>
+										<p>Views</p>
+									</div>
+									<div class="col-md-4 col-sm-4 col-xs-4 ps-days">
+										<h5>{{project.remainDays}}</h5>
+										<p>Days</p>
+									</div>
+								</div>										
+							</div>
+						</div>
+						
+						<h5 ng-if="!projects.length" class="no-project-found">No Projects Found.</h5>
+					</div>
+					</div>
+				</section>				
+				
+				
 			</div>
-			<div class="col-md-2 cat-wrp">
+			<div class="col-md-2 cat-wrp pc-wrp">
 				<section class="search">
-					<h4 class="cat-title">Categories</h4>
+					<h4 class="cat-title" ng-click="init('')">Categories</h4>
 				</section>
 				<section class="proj-category">
 					<ul class="right-nav clearfix">
-						<li><a href="" ng-class="categoryKey=='Singer'?'active':''" ng-click="searchProjects('Singer')">Singer</a></li>
-						<li><a href="" ng-class="categoryKey=='Drama'?'active':''" ng-click="searchProjects('Drama')">Drama</a></li>
-						<li><a href="" ng-class="categoryKey=='Music'?'active':''" ng-click="searchProjects('Music')">Music</a></li>
-						<li><a href="" ng-class="categoryKey=='Dance'?'active':''" ng-click="searchProjects('Dance')">Dance</a></li>
-						<li><a href="" ng-class="categoryKey=='Prank'?'active':''" ng-click="searchProjects('Prank')">Prank</a></li>
-						<li><a href="" ng-class="categoryKey=='Acting'?'active':''" ng-click="searchProjects('Acting')">Acting</a></li>
-						<li><a href="" ng-class="categoryKey=='Sport'?'active':''" ng-click="searchProjects('Sport')">Sport</a></li>
-						<li><a href="" ng-class="categoryKey=='Weired'?'active':''" ng-click="searchProjects('Weired')">Weired</a></li>
+						<li ng-repeat="category in categoryList"> 
+							<a href="" ng-class="categoryKey==category.name?'active':''" ng-click="init(category.name)">{{category.name}}</a>
+						</li>
 					</ul>
+
 				</section>
 			</div>
 		</div>					

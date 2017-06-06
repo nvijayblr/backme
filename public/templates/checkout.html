@@ -2,8 +2,8 @@
 	<div class="create-proj-cont">
 		<div class="checkout-cont row">
 			<div class="title-wrp">
-				<h6 class="check-sub-title">You're contributing to Sameer's</h6>
-				<h4 class="check-title">Lorem ipsum dolor sit amet, consectetuer adipiscing elit</h4>
+				<h6 class="check-sub-title">You're contributing to {{project.name}}'s</h6>
+				<h4 class="check-title">{{project.title}}</h4>
 			</div>
 			<div class="col-md-9">
 				<div class="checkout-wrp">
@@ -13,101 +13,115 @@
 							<md-input-container class="rupees donation">
 								<label class="ph-label">500.00</label>
 								<i class="fa fa-rupee"></i>
-								<input type="text">
+								<input type="text" ng-model="checkout.TXN_AMOUNT" required>
+								<div class="error-lable">Amount is required.</div>
 							</md-input-container>
 
 						</div>
-						<div class="steps-form">
-							<div class="row">
-								<div class="col-md-6">
-									<div class="input-wrp">
-										<label class="f-label">First Name</label>
-										<md-input-container>
-											<label class="ph-label">Your First Name</label>
-											<input type="text">
-										</md-input-container>
+						<form name="checkoutForm" ng-submit="checkoutForm.$valid && makeCCAvenuePayment();" novalidate autocomplete="off">
+							<div class="steps-form">
+								<div class="row">
+									<div class="col-md-6">
+										<div class="input-wrp">
+											<label class="f-label">First Name</label>
+											<md-input-container>
+												<label class="ph-label">Your First Name</label>
+												<input type="text" ng-model="checkout.firstName" required>
+												<div class="error-lable">First Name is required.</div>
+											</md-input-container>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="input-wrp">
+											<label class="f-label">Last Name</label>
+											<md-input-container>
+												<label class="ph-label">Your Last Name</label>
+												<input type="text" ng-model="checkout.lastName">
+											</md-input-container>
+										</div>
 									</div>
 								</div>
-								<div class="col-md-6">
-									<div class="input-wrp">
-										<label class="f-label">Last Name</label>
-										<md-input-container>
-											<label class="ph-label">Your Last Name</label>
-											<input type="text">
-										</md-input-container>
+
+								<div class="input-wrp">
+									<label class="f-label">Email</label>
+									<md-input-container>
+										<label class="ph-label">Your Email</label>
+										<input type="email" ng-model="checkout.email" required ng-pattern='/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/'>
+										<div class="error-lable">Email is required.</div>
+									</md-input-container>
+								</div>
+
+								<div class="input-wrp">
+									<label class="f-label">Mobile Number</label>
+									<md-input-container>
+										<label class="ph-label">Your Mobile Number</label>
+										<input type="text" ng-model="checkout.mobileNumber" required ng-pattern="/^[0-9]{10}$/">
+										<div class="error-lable">Mobile Number is required.</div>
+									</md-input-container>
+								</div>
+
+								<h4 class="credit-title">Credit Card Details</h4>
+
+								<div class="input-wrp">
+									<label class="f-label">Name on Card</label>
+									<md-input-container>
+										<label class="ph-label">Enter Name</label>
+										<input type="text">
+									</md-input-container>
+								</div>
+
+								<div class="input-wrp">
+									<label class="f-label">Credit Card Number</label>
+									<md-input-container>
+										<label class="ph-label">Enter 16 digit card number</label>
+										<input type="text">
+									</md-input-container>
+								</div>
+
+								<div class="row">
+									<div class="col-md-6">
+										<div class="input-wrp">
+											<label class="f-label">Expiration</label>
+											<md-input-container>
+												<label class="ph-label">MM-YYYY</label>
+												<input type="text">
+											</md-input-container>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="input-wrp">
+											<label class="f-label">CVV</label>
+											<md-input-container>
+												<label class="ph-label">Enter CVV number</label>
+												<input type="text">
+											</md-input-container>
+										</div>
 									</div>
 								</div>
-							</div>
 
-							<div class="input-wrp">
-								<label class="f-label">Email</label>
-								<md-input-container>
-									<label class="ph-label">Your Email</label>
-									<input type="email">
-								</md-input-container>
-							</div>
-
-							<h4 class="credit-title">Credit Card Details</h4>
-
-							<div class="input-wrp">
-								<label class="f-label">Name on Card</label>
-								<md-input-container>
-									<label class="ph-label">Enter Name</label>
-									<input type="email">
-								</md-input-container>
-							</div>
-
-							<div class="input-wrp">
-								<label class="f-label">Credit Card Number</label>
-								<md-input-container>
-									<label class="ph-label">Enter 16 digit card number</label>
-									<input type="email">
-								</md-input-container>
-							</div>
-
-							<div class="row">
-								<div class="col-md-6">
-									<div class="input-wrp">
-										<label class="f-label">Expiration</label>
-										<md-input-container>
-											<label class="ph-label">MM-YYYY</label>
-											<input type="text">
-										</md-input-container>
-									</div>
+								<div class="input-wrp">
+									<label class="f-label">Zip Code</label>
+									<md-input-container>
+										<label class="ph-label">Enter zip code</label>
+										<input type="email">
+									</md-input-container>
 								</div>
-								<div class="col-md-6">
-									<div class="input-wrp">
-										<label class="f-label">CVV</label>
-										<md-input-container>
-											<label class="ph-label">Enter CVV number</label>
-											<input type="text">
-										</md-input-container>
-									</div>
-								</div>
+
+								<div class="support-me">
+									<button class="btn btn-default btn-lg btn-subscribe" ng-click="checkoutForm.submit()">Donate</button>
+								</div>							
+								<ul class="cards-list clearfix">
+									<li><img src="assets/images/payment-options.png" width="" /></li>
+								</ul>
 							</div>
-
-							<div class="input-wrp">
-								<label class="f-label">Zip Code</label>
-								<md-input-container>
-									<label class="ph-label">Enter zip code</label>
-									<input type="email">
-								</md-input-container>
-							</div>
-
-							<div class="support-me">
-								<button class="btn btn-default btn-lg btn-subscribe ng-scope" ng-click="makeCCAvenuePayment()">Donate</button>
-							</div>							
-							<ul class="cards-list clearfix">
-								<li><img src="assets/images/payment-options.png" width="" /></li>
-							</ul>
-						</div>
-
+						</form>
+					
 					</div>
 				</div>
 			</div>
 			<div class="checkout-wrp-right support-me col-md-3">
 				<div class="user-wrp prfile">
-					<h4 class="uname">Support Sameer</h4>
+					<h4 class="uname">Support {{project.name}}</h4>
 					<div class="user-img"><img src="assets/images/user-img.png"/></div>
 					<h3 class="amount"><i class="fa fa-rupee" aria-hidden="true"></i>24,000<sup>.00</sup></h3>
 					<div class="funded-wrp">
@@ -116,56 +130,11 @@
 							<div class="p-completed"></div>
 						</div>
 					</div>
-					<p class="fund">24% amount achievd of 100,000</p>
+					<p class="fund">24% amount achievd of {{project.moneyNeeded}}.00</p>
 				</div>
 			</div>
 			
 		</div>
 	</div>
-	
-<div ng-bind-html='myText'></div>
-	
-	
-	<!--<script type="text/javascript">function response(){return document.getElementById("response").value;}</script>
-        <form name="frm" method="post" action="https://pguat.paytm.com/oltp-web/processTransaction">
-          <input type="text" id="response" name="responseField" value='{&quot;MID&quot;:&quot;Huroof23707312295888&quot;,&quot;ORDER_ID&quot;:&quot;4&quot;,&quot;CUST_ID&quot;:&quot;1&quot;,&quot;INDUSTRY_TYPE_ID&quot;:&quot;Retail&quot;,&quot;CHANNEL_ID&quot;:&quot;WEB&quot;,&quot;TXN_AMOUNT&quot;:&quot;1&quot;,&quot;WEBSITE&quot;:&quot;WEB_STAGING&quot;,&quot;REQUEST_TYPE&quot;:&quot;SEAMLESS&quot;,&quot;PAYMENT_DETAILS&quot;:&quot;&quot;,&quot;AUTH_MODE&quot;:&quot;3D&quot;,&quot;PAYMENT_TYPE_ID&quot;:&quot;CC&quot;,&quot;MOBILE_NO&quot;:&quot;9591191405&quot;,&quot;EMAIL&quot;:&quot;nvijay.ootygmail.com&quot;,&quot;payt_STATUS&quot;:&quot;1&quot;,&quot;IS_CHECKSUM_VALID&quot;:&quot;N&quot;}'>
-			<input type="submit" value="test">
-        </form>-->
-
-	
 </section>
-<!--
-
-"REQUEST_TYPE": "SEAMLESS",
-"MID": "Huroof23707312295888",
-"ORDER_ID": "1",
-"CUST_ID": "1",
-"TXN_AMOUNT": "1",
-"CHANNEL_ID": "WEB",
-"INDUSTRY_TYPE_ID": "Retail",
-"WEBSITE": "PaytmMktPlace",
-"PAYMENT_DETAILS": "",
-"AUTH_MODE": "3D",
-"PAYMENT_TYPE_ID": "CC",
-"CHECKSUMHASH": "",
-"MOBILE_NO": "9591191405",
-"EMAIL": "nvijay.ooty@gmail.com"
-
--->
-
-<!--
-REQUEST_TYPE: "SEAMLESS",
-MID: "Huroof23707312295888",
-ORDER_ID: "1",
-CUST_ID: "1",
-TXN_AMOUNT: "1",
-CHANNEL_ID: "WEB",
-INDUSTRY_TYPE_ID: "Retail",
-WEBSITE: "PaytmMktPlace",
-PAYMENT_DETAILS: "",
-AUTH_MODE: "3D",
-PAYMENT_TYPE_ID: "CC",
-CHECKSUMHASH: "",
-MOBILE_NO: "9591191405",
-EMAIL: "nvijay.ooty@gmail.com"
--->
+<div ng-bind-html='checkoutFrm'></div>

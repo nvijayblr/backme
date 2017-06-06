@@ -2,7 +2,7 @@
 	<div class="container projects-det">
 		<div class="row">
 			<div class="col-md-8 pd">
-				<div class="project-carousel">
+				<div class="project-carousel" ng-class="images.length==1?'single':''">
 					<ng-image-gallery
 						images="images"
 						methods="methods"
@@ -26,15 +26,30 @@
 					<h5><i class="fa fa-tag" aria-hidden="true"></i>Product Design</h5>
 					<div class="pd-soc-wrp clearfix">
 						<ul class="clearfix pull-left soc">
-							<li class="likes"><a href="" class="li"><i class="fa fa-thumbs-up" aria-hidden="true"></i></a></li>
+							<li class="likes">
+                                <a ng-if="loggedUserId && !project.remaindayshours[0].alreadyLiked" href="" class="li" ng-click="addLike(project)">
+                                    <i class="fa fa-thumbs-up" aria-hidden="true"></i>
+                                </a>
+                                <a ng-if="loggedUserId && project.remaindayshours[0].alreadyLiked" href="" class="li liked">
+                                    <i class="fa fa-thumbs-up" aria-hidden="true"></i>
+                                </a>
+                            </li>
+							<li><a href=""
+								socialshare
+								socialshare-provider="google"
+								socialshare-text="{{project.title}}"
+								socialshare-hashtags="backme, {{project.title}}"
+								socialshare-url="http://supportmytalent.in/#/project/3">
+								Twitter Share me
+								</a></li>
 							<li><a href="" class="fb"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
 							<li><a href="" class="tw"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
 							<li><a href="" class="go"><i class="fa fa-google-plus" aria-hidden="true"></i></a></li>
 							<li><a href="" class="in"><i class="fa fa-linkedin" aria-hidden="true"></i></a></li>
 						</ul>
 						<ul class="clearfix pull-right views">
-							<li><span class="cnt">269</span> Likes</li>
-							<li><span class="cnt">472</span> Views</li>
+							<li><span class="cnt">{{project.remaindayshours[0].likesCount}}</span> Likes</li>
+							<li><span class="cnt">{{project.remaindayshours[0].viewsCount}}</span> Views</li>
 						</ul>
 					</div>
 				</div>
@@ -58,93 +73,36 @@
 					
 					<h4 class="btn-title">My Team</h4>
 					<div class="row team">
-						<div class="col-md-6">
+						<div class="col-md-6" ng-repeat="team in project.team track by $index">
 							<div class="team-wrp clearfix">
-								<img src="assets/images/team.jpg" class="team-bg">
+								<div style="background-image:url(uploads/{{team.picture}})" class="team-bg"></div>
 								<div class="name pull-left">
-									<h5>Ken Hermann</h5>
-									<p>Co-Founder</p>
-								</div>
-							</div>
-							<div class="team-wrp clearfix">
-								<img src="assets/images/team.jpg" class="team-bg">
-								<div class="name pull-left">
-									<h5>Ken Hermann</h5>
-									<p>Co-Founder</p>
-								</div>
-							</div>
-							<div class="team-wrp clearfix">
-								<img src="assets/images/team.jpg" class="team-bg">
-								<div class="name pull-left">
-									<h5>Ken Hermann</h5>
-									<p>Co-Founder</p>
-								</div>
-							</div>
-							<div class="team-wrp clearfix">
-								<img src="assets/images/team.jpg" class="team-bg">
-								<div class="name pull-left">
-									<h5>Ken Hermann</h5>
-									<p>Co-Founder</p>
-								</div>
-							</div>
-						</div>
-						<div class="col-md-6">
-							<div class="team-wrp clearfix">
-								<img src="assets/images/team.jpg" class="team-bg">
-								<div class="name pull-left">
-									<h5>Ken Hermann</h5>
-									<p>Co-Founder</p>
-								</div>
-							</div>
-							<div class="team-wrp clearfix">
-								<img src="assets/images/team.jpg" class="team-bg">
-								<div class="name pull-left">
-									<h5>Ken Hermann</h5>
-									<p>Co-Founder</p>
-								</div>
-							</div>
-							<div class="team-wrp clearfix">
-								<img src="assets/images/team.jpg" class="team-bg">
-								<div class="name pull-left">
-									<h5>Ken Hermann</h5>
-									<p>Co-Founder</p>
-								</div>
-							</div>
-							<div class="team-wrp clearfix">
-								<img src="assets/images/team.jpg" class="team-bg">
-								<div class="name pull-left">
-									<h5>Ken Hermann</h5>
-									<p>Co-Founder</p>
+									<h5>{{team.name}}</h5>
+									<p>{{team.designation}}</p>
 								</div>
 							</div>
 						</div>
 					</div>
 					
-					<h4 class="btn-title">Comments (12)</h4>
+					<h4 class="btn-title">Comments ({{comments.length}})</h4>
 					<div class="comments">
-						<div class="cmt-box">
-							<h4>Leave a comment (for supporters only)</h4>
+						<div class="cmt-box" ng-if="loggedUserId">
+                            <md-input-container>
+                                <label class="ph-label">Comments here</label>
+                                <textarea ng-model="comment.commentInput" required class="comment-txt"></textarea>
+                                <div style="text-align:right">
+                                    <button class="btn btn-default btn-lg btn-subscribe sm-btn add-comment" ng-click="addComment(comment.commentInput, project.projectId);" ng-disabled="!comment.commentInput.length">POST</button>
+                                </div>
+                            </md-input-container>
 						</div>
 						<div class="cmt-wrp">
-							<div class="c-wrp clearfix">
-								<img src="assets/images/user.jpg" class="cmt-bg">
+							<div class="c-wrp clearfix" ng-repeat="c in comments track by $index">
+								<img ng-if="c.users.loginType=='CUSTOM' && c.users.profilePicture" ng-src="uploads/{{c.users.profilePicture}}" class="cmt-bg">
+								<div ng-if="c.users.loginType=='CUSTOM' && !c.users.profilePicture" class="cmt-bg user-bg-div">V</div>
+								<img ng-if="c.users.loginType!='CUSTOM'" ng-src="{{c.users.profilePicture}}" class="cmt-bg">
 								<div class="name">
-									<h5>Amit Das  <span class="day">2 hrs ago</span></h5>
-									<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
-								</div>
-							</div>
-							<div class="c-wrp clearfix">
-								<img src="assets/images/user.jpg" class="cmt-bg">
-								<div class="name">
-									<h5>Amit Das  <span class="day">Yesterday</span></h5>
-									<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
-								</div>
-							</div>
-							<div class="c-wrp clearfix">
-								<img src="assets/images/user.jpg" class="cmt-bg">
-								<div class="name">
-									<h5>Amit Das  <span class="day">21 Aug</span></h5>
-									<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+									<h5>{{c.users.name}}<span class="day">{{c.comments.commentedOn|toDayMonth}}</span></h5>
+									<p>{{c.comments.comment}}</p>
 								</div>
 							</div>
 						</div>
@@ -152,13 +110,14 @@
 				</div>
 			</div>
 			<div class="col-md-4">
-				
 				<div class="support-box support">
 					<div class="row">
 						<div class="col-md-6">
-							<h3 class="amount"><i class="fa fa-rupee" aria-hidden="true"></i>{{project.moneyNeeded}}</h3>
+							<h3 class="amount">
+								<i class="fa fa-rupee" aria-hidden="true"></i>{{project.payments[0].amount|toLocale}}<sup class="needed">.00</sup>
+							</h3>
 							<h4 class="s-title">Money Raised</h4>
-							<h3 class="amount">14</h3>
+							<h3 class="amount">{{project.payments[0].count|toLocale}}</h3>
 							<h4 class="s-title">People Supporting</h4>
 							<h3 class="amount days">{{project.remaindayshours[0].remainHours|getDays}} Days {{project.remaindayshours[0].remainHours|getHours}} Hrs </h3>
 							<h4 class="s-title">Time Remaining</h4>
@@ -167,22 +126,18 @@
 							<div class="funded-wrp">
 								<div class="f-progress">
 									<div class="p-process"></div>
-									<div class="p-completed"></div>
+									<div class="p-completed" style="width:{{project.achivedPercent | toAchivedPercent :project.payments[0].amount:project.moneyNeeded}}%;"></div>
 								</div>
-								<p class="desc">24% amount achievd of 100,000</p>
+								
+								<p class="desc">
+									{{project.achivedPercent | toAchivedPercent :project.payments[0].amount:project.moneyNeeded}}% 
+									amount achievd of <br>
+									<i class="fa fa-rupee" aria-hidden="true"></i> {{project.moneyNeeded|toLocale}}
+								</p>
 							</div>
 							<div class="people-wrp">
-								<i class="fa fa-user" aria-hidden="true"></i>
-								<i class="fa fa-user" aria-hidden="true"></i>
-								<i class="fa fa-user" aria-hidden="true"></i>
-								<i class="fa fa-user" aria-hidden="true"></i>
-								<i class="fa fa-user" aria-hidden="true"></i>
-								<i class="fa fa-user" aria-hidden="true"></i>
-								<i class="fa fa-user" aria-hidden="true"></i>
-								<i class="fa fa-user" aria-hidden="true"></i>
-								<i class="fa fa-user" aria-hidden="true"></i>
-								<i class="fa fa-user" aria-hidden="true"></i>
-								<i class="fa fa-user" aria-hidden="true"></i>
+								<i class="fa fa-user" aria-hidden="true" ng-repeat="i in project.payments[0].count|numberToArray track by $index"></i>
+								<i class="fa fa-plus people-plus" aria-hidden="true" ng-if="(project.payments[0].count|numberToArray).length>25"></i>
 							</div>
 							<div class="days-wrp">
 								<!--<div class="total-days"></div>-->
@@ -194,14 +149,14 @@
 						<a class="btn btn-default btn-lg btn-subscribe" ng-click="supportMe()" ng-if="showSupportMe">Support Me</a>
 						<div class="sm-group clearfix" ng-if="!showSupportMe">
 							<i class="fa fa-rupee" aria-hidden="true"></i>
-							<input type="text" class="sm-txt" placeholder="100, 500">
-							<a class="btn btn-default btn-lg btn-subscribe sm-btn" ng-click="supportMeContinue();">Continue</a>
+							<input type="text" class="sm-txt" placeholder="100, 500" ng-model="support.amount">
+							<a class="btn btn-default btn-lg btn-subscribe sm-btn" ng-click="supportMeContinue(support.amount);">Continue</a>
 						</div>
 						<p class="desc">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's 	standard dummy text ever since the 1500s.</p>
 					</div>
 				</div>
 				<div class="support-box user">
-					<img src="assets/images/support-user-bg.jpg" class="support-user-bg">
+					<div style="background-image:url(uploads/{{project.userPhoto}})" class="support-user-bg"></div>
 					<div class="user-info">
 						<h3 class="s-user">{{project.name}}</h3>
 						<p class="s-loc"><i class="fa fa-map-marker" aria-hidden="true"></i>{{project.location}}</p>
@@ -212,7 +167,7 @@
 				<h4 class="s-proj-title">Support this project</h4>
 				<div ng-repeat="supportrewards in project.supportrewards track by $index">
 					<div class="support-box">
-						<h3 class="amount"><i class="fa fa-rupee" aria-hidden="true"></i>{{supportrewards.amount}}<sup>.00</sup></h3>
+						<h3 class="amount"><i class="fa fa-rupee" aria-hidden="true"></i>{{supportrewards.amount|toLocale}}<sup>.00</sup></h3>
 						<h4 class="s-title">{{supportrewards.title}}</h4>
 						<p class="s-desc">{{supportrewards.description}}</p>
 						<p class="s-support-cnt">5 People Supporting</p>
@@ -222,7 +177,7 @@
 				<h4 class="s-proj-title">Service this project</h4>
 				<div ng-repeat="servicerewards in project.servicerewards track by $index">
 					<div class="support-box">
-						<h3 class="amount"><i class="fa fa-rupee" aria-hidden="true"></i>{{servicerewards.amount}}<sup>.00</sup></h3>
+						<h3 class="amount"><i class="fa fa-rupee" aria-hidden="true"></i>{{servicerewards.amount|toLocale}}<sup>.00</sup></h3>
 						<h4 class="s-title">{{servicerewards.activityName}}</h4>
 						<p class="s-desc">{{servicerewards.description}}</p>
 						<p class="s-desc">{{servicerewards.availableDate}}</p>
@@ -236,39 +191,27 @@
 					<div class="p-logo"><img src="assets/images/paytm.png"/></div>
 					<div class="p-logo last"><img src="assets/images/netbanking.png"/></div>
 				</div>
-
+                
 				<div class="sim-proj-wrp">
 					<h4 class="s-proj-title">Similar Projects</h4>
-					<div class="row sim-proj">
-						<div class="col-md-5">
-							<img src="assets/images/similar-proj-bg.png"/>
-						</div>
-						<div class="col-md-7">
-							<h5 class="title">Lorem Ipsum is simply dummy text of the printing </h5>
-							<p class="desc">6479 Views</p>
-							<p class="desc">27 Days to go</p>
-						</div>
-					</div>
-					<div class="row sim-proj">
-						<div class="col-md-5">
-							<img src="assets/images/similar-proj-bg.png"/>
-						</div>
-						<div class="col-md-7">
-							<h5 class="title">Lorem Ipsum is simply dummy text of the printing</h5>
-							<p class="desc">6479 Views</p>
-							<p class="desc">27 Days to go</p>
+					<h4 class="s-proj-title" style="text-transform:initial;" ng-if="similarProjects.length<2">Similar projects not found.</h4>
+
+					<div class="row sim-proj" ng-repeat="sp in similarProjects track by $index">
+						<div ng-if="sp.projectId != projectId">
+							<a href="#project/{{sp.projectId}}" class="poster-title">
+								<div class="col-md-5">
+									<img ng-if="sp.coverImage" style="background-image:url(uploads/{{sp.coverImage}})">
+									<img ng-if="!sp.coverImage" src="assets/images/poster-bg.png">
+								</div>
+							</a>
+							<div class="col-md-7">
+								<h5 class="title">{{sp.title}}</h5>
+								<p class="desc">{{sp.viewsCount}} Views</p>
+								<p class="desc">{{sp.remainDays}} Days to go</p>
+							</div>
 						</div>
 					</div>
-					<div class="row sim-proj">
-						<div class="col-md-5">
-							<img src="assets/images/similar-proj-bg.png"/>
-						</div>
-						<div class="col-md-7">
-							<h5 class="title">Lorem Ipsum is simply dummy text of the printing </h5>
-							<p class="desc">6479 Views</p>
-							<p class="desc">27 Days to go</p>
-						</div>
-					</div>
+
 				</div>
 				
 			</div>

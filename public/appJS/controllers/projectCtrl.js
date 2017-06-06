@@ -7,29 +7,39 @@ backMe.controller('projectCtrl', ['$scope', 'BaseServices', '$timeout', '$state'
 	}*/
 	
 	_scope.projectId = _state.params.projectId;
+    _scope.loggedUserId = _appConstant.currentUser.userId;
 	_scope.project = {};
+    _scope.support = {
+        amount: ''
+    }
 	_scope.images = [];
+    _scope.comment = {
+        commentInput: ''
+    };
 	_scope.pieColors = ["#4d9839", "#db4d0d", "#f18b17", "#ecca34", "#01779a"];
 
 	_scope.init = function() {
 		_scope.images = [];
 		_services.http.serve({
 			method: 'GET',
-			url: _appConstant.baseUrl + 'projects/' + _scope.projectId
+			url: _appConstant.baseUrl + 'projects/' + _scope.projectId +'?userId='+_scope.loggedUserId
 		}, function(data){
 			_scope.project = data;
+            _scope.loadSimilarProjects(_scope.project.category);
 			angular.forEach(_scope.project.projectsassets, function(_obj, _index){
 				_scope.images.push({
 					id : _index+1,
-					thumbUrl : 'uploads/'+_obj.location,
-					url : 'uploads/'+_obj.location,
-					extUrl : ''
+					thumbUrl : _obj.type=='Video' ? _obj.location : 'uploads/'+_obj.location,
+					url : _obj.type=='Video' ? _obj.location : 'uploads/'+_obj.location,
+					extUrl : '',
+					type: _obj.type=='Video'? 'Video' : 'Image',
+					videoId: _obj.videoId,
+					videoUrl: 'http://www.youtube.com/embed/'+_obj.videoId+'?autoplay=0&showinfo=0&rel=0&loop=1'
 				});
 			});
 			generateRemainDaysGraph(_scope.project.remaindayshours[0].totalDays, _scope.project.remaindayshours[0].remainDays);
 			_scope.spendData = [];
 			angular.forEach(_scope.project.spendmoney, function(obj, index){
-				console.log(obj);
 				_scope.spendData.push({
 					label: obj.description,
 					value: obj.amount,
@@ -47,15 +57,84 @@ backMe.controller('projectCtrl', ['$scope', 'BaseServices', '$timeout', '$state'
 	}
 	
 	_scope.init();
+    
+    _scope.similarProjects = {};
+    _scope.loadSimilarProjects = function(_query) {
+		_scope.similarProjects = {};
+		_services.http.serve({
+			method: 'GET',
+			url: _appConstant.baseUrl + 'search?q=' + _query
+		}, function(data){
+			_scope.similarProjects = data;
+		}, function(err) {
+			console.log(err)
+		});
+	}
+	//_scope.searchProjects('');
 
+
+    _scope.addViews = function(_projectId, _userId) {
+		_services.http.serve({
+			method: 'PUT',
+			url: _appConstant.baseUrl + 'views',
+            inputData: {projectId: _projectId, userId: _userId}
+		}, function(data){
+		}, function(err) {
+		});
+    }
+    _scope.addViews(_scope.projectId, _scope.loggedUserId);
+
+    _scope.addLike = function(_project) {
+        if(!_appConstant.currentUser.userId)
+            return;
+		_services.http.serve({
+			method: 'PUT',
+			url: _appConstant.baseUrl + 'likes',
+            inputData: {projectId: _project.projectId, userId: _scope.loggedUserId}
+		}, function(data){
+            _project.remaindayshours[0].likesCount = _project.remaindayshours[0].likesCount + 1;
+            _project.remaindayshours[0].alreadyLiked = 1;
+		}, function(err) {
+		});
+    }
+    _scope.comments = {};
+    _scope.getComments = function(_comment, _projectId) {
+		_services.http.serve({
+			method: 'GET',
+			url: _appConstant.baseUrl + 'comments/'+_scope.projectId
+		}, function(data){
+           _scope.comments = data;
+		}, function(err) {
+		});
+    }
+    _scope.getComments();
+    
+    _scope.addComment = function(_comment, _projectId) {
+        if(!_scope.loggedUserId)
+            return;
+		_services.http.serve({
+			method: 'PUT',
+			url: _appConstant.baseUrl + 'comments',
+            inputData: {projectId: _projectId, userId: _scope.loggedUserId, comment: _comment}
+		}, function(data){
+           _services.toast.show('Comment added successfully.');
+            _scope.comments.unshift({comments:{comment:_comment, commentedOn: new Date()}, 
+                                     users:{name:_appConstant.currentUser.name, profilePicture:_appConstant.currentUser.profilePicture}});
+            _scope.comment.commentInput = "";
+		}, function(err) {
+		});
+    }
+    console.log('_scope.loggedUserId', _scope.loggedUserId);
+    
+    
 	_scope.showSupportMe = true;
 	
 	_scope.supportMe = function() {
 		_scope.showSupportMe = false;
 	}
 
-	_scope.supportMeContinue = function() {
-		_state.go('checkout');
+	_scope.supportMeContinue = function(_amt) {
+		_state.go('checkout', {projectId: _scope.projectId, amount: _amt});
 	}
 	
 	function generateRemainDaysGraph(totaldays, remaindays) {

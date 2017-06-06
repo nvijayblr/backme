@@ -43,7 +43,6 @@
 	}
 
 	function getPercent(d){
-		console.log(d)
 		return (d.endAngle-d.startAngle > 0.2 ? Math.round(1000*(d.endAngle-d.startAngle)/(Math.PI*2))/10+'%' : '');
 	}	
 	

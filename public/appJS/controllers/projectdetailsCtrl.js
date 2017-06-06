@@ -7,6 +7,7 @@ backMe.controller('projectdetailsCtrl', ['$scope', 'BaseServices', '$timeout', '
 	_scope.posterImg = null;
 	_scope.uploadCompleted = 0;
 	
+	
 	_scope.addRewardsSpendFields(_scope.projectId);
 	_scope.startRewards = function () {
 		if(_scope.disableDragDrop) {
@@ -21,6 +22,10 @@ backMe.controller('projectdetailsCtrl', ['$scope', 'BaseServices', '$timeout', '
 		if(!_scope.project.projectsassets) {
 			_scope.project.projectsassets = [];
 		}	
+		
+		if(!_scope.validateSpendMoney(_scope.project.spendmoney, _scope.project.moneyNeeded, 'Submit')) {
+			return;
+		}
 
 		if(!_scope.project.moneyNeeded || !_scope.project.spendmoney[0].amount || !_scope.project.spendmoney[0].description) {
 			_services.toast.show('Money Needed/Spend Money should not be blank.');
@@ -45,15 +50,13 @@ backMe.controller('projectdetailsCtrl', ['$scope', 'BaseServices', '$timeout', '
 			delete _scope.inputData.projectImages;
 			delete _scope.inputData.projectsassets;
 		}
-		
-		//_scope.uploadImagesVideos();
-		
+				
 		_http.upload({
 			method: 'POST',
 			url: _appConstant.baseUrl + 'projects',
 			data: _scope.inputData
 		}).then(function (data) {
-			_services.toast.show(data.data);
+			_services.toast.showProject('Project details upated successfully !!');
 			_state.go('create.rewards', {'projectId': _scope.projectId});
 		}, function (err) {
 			console.log(err);
@@ -75,12 +78,15 @@ backMe.controller('projectdetailsCtrl', ['$scope', 'BaseServices', '$timeout', '
 			var ob = {
 				projectImages: _obj,
 				userId: _scope.project.userId,
-				projectId: _scope.project.projectId
+				projectId: _scope.project.projectId,
+				title: _scope.project.title,
+				url:  _obj.type.indexOf('video/')==0 ? 'uploadVideo' : 'projectImages'
 			};
-			let deferred = _q.defer();
+			console.log(ob);
+			var deferred = _q.defer();
 			_http.upload({
 				method: 'POST',
-				url: _appConstant.baseUrl + 'projectImages',
+				url: _appConstant.baseUrl + ob.url,
 				data: ob
 			}).then(function (res) {
 				_scope.assets = res.data[0];
@@ -90,7 +96,10 @@ backMe.controller('projectdetailsCtrl', ['$scope', 'BaseServices', '$timeout', '
 						projectId: _scope.assets[0],
 						userId: _scope.assets[1],
 						type: _scope.assets[2],
-						location: _scope.assets[3]
+						location: _scope.assets[3],
+						videoId: _scope.assets[5] ? _scope.assets[5] : '',
+						title: _scope.assets[6] ? _scope.assets[6] : '',
+						description: _scope.assets[7] ? _scope.assets[7] : ''
 					});
 				}
 				deferred.resolve(res);
@@ -104,62 +113,73 @@ backMe.controller('projectdetailsCtrl', ['$scope', 'BaseServices', '$timeout', '
 			return deferred.promise;
 		}
 
-		let promises = [];
+		var promises = [];
+		console.log(_scope.projectImages)
 		angular.forEach(_scope.projectImages, function(_obj, index) {
 			promises.push(uploadFiles(_obj));
 		});
 		
 		_q.all(promises).then(function(values) {
-			_services.toast.show('Images/Video uploaded successfully.');
-			_scope.projectImages = undefined;
-			_scope.disableDragDrop = false;
-			_rootScope.images = [];
+			if(promises.length) {
+				_services.toast.show('Images/Video uploaded successfully.');
+				_scope.projectImages = undefined;
+				_scope.disableDragDrop = false;
+				_rootScope.images = [];
+			} else {
+				_services.toast.show('Selected Invalid Video format.');
+				_scope.disableDragDrop = false;
+			}
 		});
 
-		/*if(_scope.projectImages.length > 0)
-			uploadFiles(_scope.projectImages[0], 0);
-		function _callBack(index){
-			if(_scope.projectImages.length > index+1)
-				uploadFiles(_scope.projectImages[index+1], index+1);
-			else
-				_services.toast.show('Everything is donre');
-		};
-		function uploadFiles(_obj, index){
-			_scope.data.projectImages = _obj;
-			_http.upload({
-				method: 'POST',
-				url: _appConstant.baseUrl + 'projectImages',
-				data: _scope.data
-			}).then(function (res) {
-				_scope.assets = res.data[0];
-				if(_scope.data.projectsassets) {
-					_scope.data.projectsassets.push({
-						assetId: _scope.assets[4],
-						projectId: _scope.assets[0],
-						userId: _scope.assets[1],
-						type: _scope.assets[2],
-						location: _scope.assets[3]
-					});
-				}
-			}, function (err) {
-				console.log(err);
-				_services.toast.show(err.data);
-			}, function (evt) {
-				console.log(evt);
-				var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
-				console.log('progress: ' + progressPercentage + '% ' + evt.config.data.projectImages.name);
-			}).finally(function(){
-				_callBack(index);
-			});
-		};*/
-		
 	}
 
-	_scope.addSpendMoney = function (_spendmoney) {
+	_scope.validateSpendMoney = function(_spendmoney, moneyNeeded, type) {
+		_scope.totAmt = 0, _scope.showError=false;
+		if((!_spendmoney[0].amount && !_spendmoney[0].description) && type=='Submit') {
+			_spendmoney[0].amount = moneyNeeded;
+			_spendmoney[0].description = 'Others';
+			return true;
+		}
+		for(var i=0; i<_spendmoney.length; i++) {
+			_scope.totAmt = _scope.totAmt + parseInt(_spendmoney[i].amount);
+			_spendmoney[i].showAmtError = false;
+			_spendmoney[i].showDescError = false;
+			if(!_spendmoney[i].amount) {
+				_spendmoney[i].showAmtError = true;
+				_scope.showError=true;
+			}
+			if(!_spendmoney[i].description) {
+				_spendmoney[i].showDescError = true;
+				_scope.showError=true;
+			}
+		}
+		if(_scope.totAmt > moneyNeeded) {
+			_services.toast.show('Total of the spend amount should not be greater than Money needed.');
+			return false; 
+		}
+		console.log(_scope.totAmt, moneyNeeded )
+		if((_scope.totAmt >= moneyNeeded && type=='AddSpend') || _scope.showError) {
+			return false; 
+		}
+		_scope.amt = moneyNeeded - _scope.totAmt;
+		if(_scope.totAmt < moneyNeeded && type=='Submit') {
+			_spendmoney.push({
+				projectId: _scope.projectId,
+				userId: _scope.userId,
+				amount: _scope.amt,
+				description: 'Others'
+			});
+		}
+		return true;
+	}
+	
+	_scope.addSpendMoney = function (_spendmoney, moneyNeeded) {
+		if(!_scope.validateSpendMoney(_spendmoney, moneyNeeded, 'AddSpend'))
+			return;
 		_spendmoney.push({
 			projectId: _scope.projectId,
 			userId: _scope.userId,
-			amount: '',
+			amount: _scope.amt,
 			description: ''
 		});
 	}

@@ -1,6 +1,6 @@
 'use strict';
 backMe.factory('uploadImages', ['BaseServices', '$timeout', '$state', 'Upload', '$q', 'appConstant', function (_services, _timeout, _state, _http, _q, _appConstant) {
-	let deferred = _q.defer();
+	var deferred = _q.defer();
 	return {
         getUnitData : function(_inputData){
         return _http.upload({

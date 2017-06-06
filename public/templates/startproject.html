@@ -50,6 +50,11 @@
 					</div>
 				</div>
 			</div>
+			<div class="start-proj-btn">
+				<a class="btn btn-default btn-lg btn-subscribe" href="#/create/basicinfo/{{projectId}}" ng-if="!disableStartProject">Start a Project</a>
+				<a class="btn btn-default btn-lg btn-subscribe disabled" href="" ng-if="disableStartProject">Start a Project</a>
+			</div>
+			
 		</div>
 	</div>
 </section>

@@ -10,6 +10,8 @@ backMe.controller('createprojectCtrl', ['$scope', 'BaseServices', '$timeout', '$
 	
 	_scope.userId = _appConstant.currentUser.userId;
 	
+	_scope.pieColors = ["#4d9839", "#db4d0d", "#f18b17", "#ecca34", "#01779a"];
+
 	_scope.projectMinDate = moment().toDate();
 	_scope.projectMaxDays = _appConstant.projectMaxDays;
 	_scope.projectMaxDate = moment().add(_appConstant.projectMaxDays,'days').toDate();
@@ -42,24 +44,14 @@ backMe.controller('createprojectCtrl', ['$scope', 'BaseServices', '$timeout', '$
 		"daysDate": "Days"
 	  };
 	_scope.disableStartProject = true;
-	_scope.cityList = [
-		  {'state': 'KA', 'city': 'Banglore',},
-		  {'state': 'KA', 'city': 'Mysore',},
-		  {'state': 'TN', 'city': 'Chennai',},
-		  {'state': 'TN', 'city': 'Coimbatore',}
-	];
-	_scope.categoryList = [
-		  {'name': 'Signer'},
-		  {'name': 'Drama'},
-		  {'name': 'Music'},
-		  {'name': 'Dance'}
-	];
 	_scope.bankList = [
 		  {'name': 'ICICI'},
 		  {'name': 'HDFC'},
 		  {'name': 'SBI'},
 		  {'name': 'CITI'}
 	];
+	
+	
 	_rootScope.images = [];
 	_scope.getProjectByUser = function() {
 		_services.http.serve({
@@ -69,22 +61,45 @@ backMe.controller('createprojectCtrl', ['$scope', 'BaseServices', '$timeout', '$
 			if(data.length) {
 				_scope.projectId = data[0].projectId;
 				_scope.project = data[0];
+				if(_scope.project.category.substr(0,7) == 'Others|') {
+					_scope.project.otherCategory = _scope.project.category.substr(7, _scope.project.category.length);
+					_scope.project.category = 'Others';
+				}
+				_scope.project.location = {
+					value: _scope.project.location.toLowerCase(),
+					display: _scope.project.location
+				}
 				_scope.project.endByDate = _scope.project.endByDate ? moment(_scope.project.endByDate).toDate() : moment().toDate();
 				_scope.project.endByDate = _scope.project.endByDate=='Invalid Date' ? moment().toDate() : _scope.project.endByDate;
 				_scope.project.facebook = Boolean(_scope.project.facebook);
 				_scope.project.twitter = Boolean(_scope.project.twitter);
 				_scope.project.googleplus = Boolean(_scope.project.googleplus);
 				_scope.project.email = _scope.project.email ? _scope.project.email : _appConstant.currentUser.email;
+				_scope.project.name = _scope.project.name ? _scope.project.name : _appConstant.currentUser.name;
 				_scope.addRewardsSpendFields(_scope.projectId);			
 			}
 			angular.forEach(_scope.project.projectsassets, function(_obj, _index){
 				_rootScope.images.push({
 					id : _index+1,
-					thumbUrl : 'uploads/'+_obj.location,
-					url : 'uploads/'+_obj.location,
-					extUrl : ''
+					thumbUrl : _obj.type=='Video' ? _obj.location : 'uploads/'+_obj.location,
+					url : _obj.type=='Video' ? _obj.location : 'uploads/'+_obj.location,
+					extUrl : '',
+					type: _obj.type=='Video'? 'Video' : 'Image',
+					videoId: _obj.videoId,
+					videoUrl: 'http://www.youtube.com/embed/'+_obj.videoId+'?autoplay=0&showinfo=0&rel=0&loop=1'
 				});
-			});			
+			});
+			
+			_scope.spendData = [];
+			angular.forEach(_scope.project.spendmoney, function(obj, index){
+				_scope.spendData.push({
+					label: obj.description,
+					value: obj.amount,
+					color: _scope.pieColors[index]
+				});
+			});
+			generateSpendMoneyGraph(_scope.spendData);
+			
 			_scope.disableStartProject = false;
 		}, function(err) {
 			console.log(err)
@@ -126,11 +141,28 @@ backMe.controller('createprojectCtrl', ['$scope', 'BaseServices', '$timeout', '$
 				userId: _appConstant.currentUser.userId
 			});
 		}	
+		if(!_scope.project.team) {
+			_scope.project.team = [];
+			_scope.project.team.push({
+				picture: null,
+				name: '',
+				designation : '',
+				profileLink : '',
+				projectId : _projectId,
+				userId: _appConstant.currentUser.userId
+			});
+		}	
 		/*if(!_scope.project.projectsassets) {
 			_scope.project.projectsassets = [];
 		}*/	
 	}
 	
+	function generateSpendMoneyGraph(spendData) {
+		var svg = d3.select("#spendmoneyGraph").append("svg").attr("width",300).attr("height",300);
+		svg.append("g").attr("id","spendmoney");
+		Donut3D.draw("spendmoney", spendData, 150, 150, 130, 100, 30, 0.4);
+	}
+
 }]);
 
  /* {
