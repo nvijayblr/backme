@@ -1,4 +1,4 @@
-<form name="basicInfoForm" ng-submit="basicInfoForm.$valid && startProjectDetails();" novalidate autocomplete="off">
+<form name="basicInfoForm" ng-submit="startProjectDetails(basicInfoForm.$valid);" novalidate autocomplete="off">
 <section class="content">
 	<div class="create-proj-cont">
 		<div class="create-proj-wrp steps-wrp">
@@ -9,7 +9,7 @@
 						<h5 class="f-label">Upload Cover Image</h5>
 						 <!--ngf-min-height="100"
 						 ngf-resize="{width: 100, height: 100}"-->
-						<div class="drag-drop-box drop-box" ng-show="!posterOriginalImg"
+						<div class="drag-drop-box drop-box basic-info" ng-show="!posterOriginalImg"
 							 ngf-select
 							 ngf-drop
 							 ng-model="posterOriginalImg" 
@@ -24,7 +24,7 @@
 							<h4>DRAG &amp; DROP</h4>
 							<p>OR</p>
 							<h5>Browse</h5>
-							<p>Supported files: JPEG, PNG <br>Size upto 30MB</p>
+							<p>Supported files: JPEG, PNG <br>Size upto 15MB</p>
 						</div>
 					
 						<div ngf-drop ng-model="posterOriginalImg" ngf-pattern="image/*" class="cropArea" ng-show="posterOriginalImg">
@@ -73,14 +73,14 @@
 										<span md-highlight-text="searchText">{{item.display}}</span>
 									</md-item-template>
 									<div ng-messages="basicInfoForm.autocompleteField.$error" ng-if="basicInfoForm.autocompleteField.$touched">
-										<div ng-message="required">You must have to select a city.</div>
+										<div ng-message="required">Location text field empty.</div>
 										<div ng-message="md-require-match">Please select an existing city.</div>
 										<div ng-message="minlength">Your entry is not long enough.</div>
 										<div ng-message="maxlength">Your entry is too long.</div>
 									</div>
 									<span class="md-raised md-primary question-info" aria-label="Play">
 										<md-tooltip md-direction="left">
-											<p>Test tooltip description.</p>
+											<p>Enter your city &amp; state.</p>
 										</md-tooltip>
 									  <i class="fa fa-question-circle" aria-hidden="true"></i>
 									</span>
@@ -91,7 +91,7 @@
 
 							<div class="input-wrp">
 								<label class="f-label">Project Cateogy</label>
-								<md-input-container class="md-block" flex-gt-sm>
+								<md-input-container class="md-block select" flex-gt-sm>
 									<label class="ph-label">Select Any</label>
 									<md-select ng-model="project.category" required>
 										<md-option ng-repeat="category in categoryList" value="{{category.name}}">
@@ -99,10 +99,10 @@
 										</md-option>
 										<md-option value="Others">Others</md-option>
 									</md-select>
-									<div class="error-lable select">Project category is required!</div>
+									<div class="error-lable required select">Project Category dropdown field empty.</div>
 									<span class="md-raised md-primary question-info" aria-label="Play">
 										<md-tooltip md-direction="left">
-											<p>Test tooltip description.</p>
+											<p>Select your project category. If you do not find your prefered category above then create a new category.</p>
 										</md-tooltip>
 									  <i class="fa fa-question-circle" aria-hidden="true"></i>
 									</span>
@@ -111,7 +111,7 @@
 								<md-input-container ng-if="project.category=='Others'" class="others">
 									<label class="ph-label">Suggest a Category</label>
 									<input type="text" ng-model="project.otherCategory" required>
-									<div class="error-lable">Project category is required!</div>
+									<div class="error-lable required">Project category is required!</div>
 								</md-input-container>
 							</div>
 
@@ -120,10 +120,10 @@
 								<md-input-container>
 									<label class="ph-label">Give a title</label>
 									<input type="text" ng-model="project.title" required>
-									<div class="error-lable">Project title is required!</div>
+									<div class="error-lable required">Project title text field empty.</div>
 									<span class="md-raised md-primary question-info" aria-label="Play">
 										<md-tooltip md-direction="left">
-											<p>Test tooltip description.</p>
+											<p>Project Name which short,meaningful and represent the actual project</p>
 										</md-tooltip>
 									  <i class="fa fa-question-circle" aria-hidden="true"></i>
 									</span>
@@ -137,10 +137,10 @@
 								<md-input-container class="textarea">
 									<label class="ph-label">Describe here</label>
 									<textarea ng-model="project.description" required></textarea>
-									<div class="error-lable">Project description is required!</div>
+									<div class="error-lable required">Project description text field empty.</div>
 									<span class="md-raised md-primary question-info" aria-label="Play">
 										<md-tooltip md-direction="left">
-											<p>Test tooltip description.</p>
+											<p>Short paragraph about your project mentioning your plan and goals.</p>
 										</md-tooltip>
 									  <i class="fa fa-question-circle" aria-hidden="true"></i>
 									</span>
@@ -153,10 +153,10 @@
 								<md-input-container class="textarea">
 									<label class="ph-label">My one-liner about project</label>
 									<textarea ng-model="project.about" required></textarea>
-									<div class="error-lable">About the project is required!</div>
+									<div class="error-lable required">About text field empty.</div>
 									<span class="md-raised md-primary question-info" aria-label="Play">
 										<md-tooltip md-direction="left">
-											<p>Test tooltip description.</p>
+											<p>Short profile about yourself, team and achievements.</p>
 										</md-tooltip>
 									  <i class="fa fa-question-circle" aria-hidden="true"></i>
 									</span>
@@ -167,19 +167,19 @@
 					</div>
 					<div class="col-md-4">
 						<h5 class="f-label">Preview</h5>
+						<span class="error-lable" ng-show="basicInfoForm.posterOriginalImg.$error.maxSize">Large size image(more than 15MB).</span>
 						<div class="poster">
-							<span ng-show="basicInfoForm.posterOriginalImg.$error.maxSize">File too large {{errorFile.size/1000000|number:1}}MB: max 1MB</span>
 							<div class="p-img">
 								<img ng-if="!project.coverImage || posterOriginalImg" ng-src="{{myCroppedImage}}" width="{{myCroppedImageW}}"  height="{{myCroppedImageH}}"  />
 								<!--<img ng-if="!project.coverImage || posterOriginalImg" ngf-size="{width: 200, height: 120}" ngf-thumbnail="posterOriginalImg||'assets/images/img_not_available.png'">-->
 								<img ng-if="project.coverImage && !posterOriginalImg" ng-src="uploads/{{project.coverImage}}">
 							</div>
-							<h5 class="poster-title">{{project.title}}</h5>
+							<h5 class="poster-title">{{project.title?project.title:'Project title'}}</h5>
 							<div class="owner clearfix">
 								<div class="owner-img"><img src="assets/images/owner-bg.png"></div>
 								<h5 class="owner-name pull-left">Project Owner Name</h5>
 							</div>
-							<p class="s-loc"><i class="fa fa-map-marker" aria-hidden="true"></i>{{project.location.display?project.location.display:project.location}}</p>
+							<p class="s-loc"><i class="fa fa-map-marker" aria-hidden="true"></i>{{project.location.display?project.location.display:project.location?project.location:'Location'}}</p>
 							<div class="funded-wrp">
 								<div class="f-progress">
 									<div class="p-process"></div>
@@ -199,7 +199,7 @@
 									<p>Days</p>
 								</div>
 							</div>										
-						</div>						
+						</div>
 					</div>
 				</div>
 			</div>
@@ -211,7 +211,7 @@
 						</a>
 					</div>
 					<div class="col-md-6 next">
-						<button class="btn btn-default btn-subscribe btn-login steps-back" ng-click="basicInfoForm.submit()">
+						<button class="btn btn-default btn-subscribe btn-login steps-back" id="basicNext" ng-click="basicInfoForm.submit()">
 							<p class="cont">Continue to</p>
 							<p><span>Project Details</span>
 								<img src="assets/icons/right-arrow.svg" class="arrow-right">

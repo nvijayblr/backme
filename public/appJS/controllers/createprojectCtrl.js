@@ -21,18 +21,18 @@ backMe.controller('createprojectCtrl', ['$scope', 'BaseServices', '$timeout', '$
 	_scope.project = {
 		"title": "",
 		"category": "",
-		"location": "",
+		"location": _appConstant.currentUser.city,
 		"coverImage": "",
 		"about": "",
 		"description": "",
 		"videosImages": "",
 		"moneyNeeded": "",
-		"endByDate": moment().toDate(),
+		"endByDate": moment().add(30, 'days').toDate(),
 		"userId": _scope.userId,
-		"name": "",
+		"name": _appConstant.currentUser.name,
 		"userPhoto": "",
 		"email": _appConstant.currentUser.email,
-		"mobileNumer": "",
+		"mobileNumber": _appConstant.currentUser.mobileNumber,
 		"accountName": "",
 		"accountNo": "",
 		"ifscCode": "",
@@ -41,16 +41,10 @@ backMe.controller('createprojectCtrl', ['$scope', 'BaseServices', '$timeout', '$
 		"googleplus": "",
 		"status": "DRAFT",
 		"noOfDays": "",
-		"daysDate": "Days"
+		"daysDate": "Days",
+		"stepsCompleted": 0
 	  };
 	_scope.disableStartProject = true;
-	_scope.bankList = [
-		  {'name': 'ICICI'},
-		  {'name': 'HDFC'},
-		  {'name': 'SBI'},
-		  {'name': 'CITI'}
-	];
-	
 	
 	_rootScope.images = [];
 	_scope.getProjectByUser = function() {
@@ -66,8 +60,8 @@ backMe.controller('createprojectCtrl', ['$scope', 'BaseServices', '$timeout', '$
 					_scope.project.category = 'Others';
 				}
 				_scope.project.location = {
-					value: _scope.project.location.toLowerCase(),
-					display: _scope.project.location
+					value: _scope.project.location ?_scope.project.location.toLowerCase() : _appConstant.currentUser.city.toLowerCase(),
+					display: _scope.project.location ?_scope.project.location : _appConstant.currentUser.city
 				}
 				_scope.project.endByDate = _scope.project.endByDate ? moment(_scope.project.endByDate).toDate() : moment().toDate();
 				_scope.project.endByDate = _scope.project.endByDate=='Invalid Date' ? moment().toDate() : _scope.project.endByDate;
@@ -76,20 +70,31 @@ backMe.controller('createprojectCtrl', ['$scope', 'BaseServices', '$timeout', '$
 				_scope.project.googleplus = Boolean(_scope.project.googleplus);
 				_scope.project.email = _scope.project.email ? _scope.project.email : _appConstant.currentUser.email;
 				_scope.project.name = _scope.project.name ? _scope.project.name : _appConstant.currentUser.name;
+				_scope.project.name = _scope.project.mobileNumber ? _scope.project.name : _appConstant.currentUser.mobileNumber;
 				_scope.addRewardsSpendFields(_scope.projectId);			
-			}
-			angular.forEach(_scope.project.projectsassets, function(_obj, _index){
-				_rootScope.images.push({
-					id : _index+1,
-					thumbUrl : _obj.type=='Video' ? _obj.location : 'uploads/'+_obj.location,
-					url : _obj.type=='Video' ? _obj.location : 'uploads/'+_obj.location,
-					extUrl : '',
-					type: _obj.type=='Video'? 'Video' : 'Image',
-					videoId: _obj.videoId,
-					videoUrl: 'http://www.youtube.com/embed/'+_obj.videoId+'?autoplay=0&showinfo=0&rel=0&loop=1'
+
+				angular.forEach(_scope.project.projectsassets, function(_obj, _index){
+					_rootScope.images.push({
+						id : _index+1,
+						thumbUrl : _obj.type=='Video' ? _obj.location : 'uploads/'+_obj.location,
+						url : _obj.type=='Video' ? _obj.location : 'uploads/'+_obj.location,
+						extUrl : '',
+						type: _obj.type=='Video'? 'Video' : 'Image',
+						videoId: _obj.videoId,
+						videoUrl: 'http://www.youtube.com/embed/'+_obj.videoId+'?autoplay=0&showinfo=0&rel=0&loop=1'
+					});
 				});
-			});
-			
+				_rootScope.images.unshift({
+					id : 0,
+					thumbUrl : 'uploads/'+_scope.project.coverImage,
+					url : 'uploads/'+_scope.project.coverImage,
+					extUrl : '',
+					type: 'Image',
+					videoId: '',
+					videoUrl: ''
+				});
+			}
+
 			_scope.spendData = [];
 			angular.forEach(_scope.project.spendmoney, function(obj, index){
 				_scope.spendData.push({
@@ -98,7 +103,22 @@ backMe.controller('createprojectCtrl', ['$scope', 'BaseServices', '$timeout', '$
 					color: _scope.pieColors[index]
 				});
 			});
+			if(_scope.project.projectsassets) {
+				angular.copy(_scope.project.projectsassets, _scope.tempAssets);
+			}
 			generateSpendMoneyGraph(_scope.spendData);
+			//get user profile details
+			_services.http.serve({
+				method: 'GET',
+				url: _appConstant.baseUrl + 'users/'+_scope.userId
+			}, function(data){
+				if(data.length) {
+					_scope.project.name = data[0].name;
+					_scope.project.userPhoto = data[0].profilePicture;
+				}
+			}, function(error) {
+				console.log(error);
+			});
 			
 			_scope.disableStartProject = false;
 		}, function(err) {
@@ -123,14 +143,14 @@ backMe.controller('createprojectCtrl', ['$scope', 'BaseServices', '$timeout', '$
 		}
 		if(!_scope.project.servicerewards) {
 			_scope.project.servicerewards = [];
-			_scope.project.servicerewards.push({
+			/*_scope.project.servicerewards.push({
 				amount: '',
 				activityName: '',
 				availableDate: '',
 				description: '',
 				projectId : _projectId,
 				userId: _appConstant.currentUser.userId
-			});
+			});*/
 		}
 		if(!_scope.project.spendmoney) {
 			_scope.project.spendmoney = [];
@@ -143,21 +163,31 @@ backMe.controller('createprojectCtrl', ['$scope', 'BaseServices', '$timeout', '$
 		}	
 		if(!_scope.project.team) {
 			_scope.project.team = [];
-			_scope.project.team.push({
+			/*_scope.project.team.push({
 				picture: null,
 				name: '',
 				designation : '',
 				profileLink : '',
 				projectId : _projectId,
 				userId: _appConstant.currentUser.userId
+			});*/
+		}	
+		if(!_scope.tempAssets) {
+			_scope.tempAssets = [];
+			_scope.tempAssets.push({
+				type: '',
+				location: '',
+				videoId : '',
+				title : '',
+				description : '',
+				projectId : _projectId,
+				userId: _appConstant.currentUser.userId
 			});
 		}	
-		/*if(!_scope.project.projectsassets) {
-			_scope.project.projectsassets = [];
-		}*/	
 	}
 	
 	function generateSpendMoneyGraph(spendData) {
+		$('#spendmoneyGraph').html('');
 		var svg = d3.select("#spendmoneyGraph").append("svg").attr("width",300).attr("height",300);
 		svg.append("g").attr("id","spendmoney");
 		Donut3D.draw("spendmoney", spendData, 150, 150, 130, 100, 30, 0.4);
@@ -181,7 +211,7 @@ backMe.controller('createprojectCtrl', ['$scope', 'BaseServices', '$timeout', '$
     "name": "Vijay",
     "userPhoto": "",
     "email": "vijay@gmail.com",
-    "mobileNumer": "234234234",
+    "mobileNumber": "234234234",
     "accountName": "VIJAY",
     "accountNo": "",
     "ifscCode": "",

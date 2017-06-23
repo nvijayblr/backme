@@ -37,7 +37,15 @@ var host = 80;
 /*
 backme.talent@gmail.com
 Support@123
+
+Reference:
+
+https://www.twilio.com/blog/2015/02/building-your-own-personal-assistant-with-twilio-and-google-calendar.html
+
 */
+
+//Youtube config
+
 //Local Server
 /*var oAuthCredentials = {
 	client_id: '47668821926-88cp2nt18qdvh525lm6gf509ug38c92d.apps.googleusercontent.com',
@@ -66,6 +74,8 @@ var server = app.listen(host, function (request, response) {
 app.use(express.static('public'));
 app.set('views', __dirname + '/modules/views');
 app.set('view engine', 'ejs');
+app.set('port', process.env.PORT || 8080);
+
 
 app.use(cors());
 app
@@ -260,7 +270,7 @@ app.post('/login', function (req, res) {
 				res.status(404).send('Invalid userId/passowrd.');
 		});
 	} catch(e) {
-    console.log(e);
+		console.log(e);
 		res.status(500).send("Internal Server Error.", e);
 	}
 });
@@ -307,12 +317,14 @@ app.post('/loginsocial', function (req, res) {
 		res.status(400).send("Bad Request. Email/loginType should not be empty.");
 		return;
 	};
+	console.log(user);
 	try {
 		dbConnection.query('SELECT * FROM users WHERE email=? AND loginType=? AND status="ACTIVE"', [user.email, user.loginType], function (error, results, fields) {
 			if (error) {
 				res.status(500).send("Internal Server Error.");
 				return;
 			}
+			console.log(results);
 			if(results.length)
 				res.status(200).send(results);
 			else
@@ -418,6 +430,33 @@ app.post('/users', function (req, res) {
 			res.status(500).send("Internal Server Error.");
 		}
 	});	
+});
+
+/*update users when create project profile*/
+app.post('/profile', function (req, res) {
+	var user = req.body;
+	if(!user.userId) {
+		res.status(400).send("Bad Request. User ID should not be blank.");
+		return;
+	};
+	if(user.email && !validate.validateEmail(user.email)) {
+		res.status(400).send("Invalid Email.");
+		return;
+	}
+	try {
+		dbConnection.query('UPDATE users SET ? WHERE userId=?', [user, user.userId], function (error, results, fields) {
+			if (error) {
+				console.log(error);
+				res.status(500).send(error.code);
+				return;
+			}
+			results.user = user;
+			res.status(200).send(results);
+		});
+	} catch(e) {
+		console.log(e);
+		res.status(500).send("Internal Server Error.");
+	}
 });
 
 /*Get All users*/

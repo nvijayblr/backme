@@ -3,10 +3,10 @@
 	<div class="container">
 		<div class="carousel-wrapper">
 			<h1>Welcome to BackMe.</h1>
-			<h3>Best platform for to start your project, Always.</h3>
+			<h3>Best platform for you to start your project, Always.</h3>
 			<div class="btn-wrp">
 				<a href="" class="btn btn-lg btn-default learn-more">Learn More</a>
-				<a href="" class="btn btn-lg btn-default learn-more">Get Started</a>
+				<a href="" class="btn btn-lg btn-default learn-more" ng-click="startProject();">Get Started</a>
 			</div>
 		</div>
 	</div>
@@ -20,21 +20,22 @@
 				
 				<section class="projects pc-wrp" ng-if="isSerchPage">
 					<div class="row btn-wrp first">
-						<h3 class="col-md-12 p-title">Search results for {{searchKeywordsList}}</h3>
+						<h3 class="col-md-12 p-title" ng-if="!isSeeAll">Search results for {{searchKeywordsList}}</h3>
+						<h3 class="col-md-12 p-title" ng-if="isSeeAll">{{title[type]}}</h3>
 					</div>
 					<div class="row poster-wrp">
 						
-						<div class="col-md-4" ng-repeat="project in projects track by $index">
+						<div class="col-md-4" ng-repeat="project in projects | paginationFilters_startFrom:currentPage*pageSize | limitTo:pageSize track by $index">
 							<div class="poster">
 								<a href="#project/{{project.projectId}}" class="poster-title">
 									<div class="p-img">
-										<img ng-if="project.coverImage" style="background-image:url(uploads/{{project.coverImage}})">
-										<img ng-if="!project.coverImage" src="assets/images/poster-bg.png">
+										<div class="img" ng-if="project.coverImage" style="background-image:url(/uploads/{{project.coverImage}})"></div>
+										<div class="img" ng-if="!project.coverImage" style="background-image:url(assets/images/poster-bg.png)"></div>
 									</div>
 									<h5 class="poster-title">{{project.title}}</h5>
 								</a>
 								<div class="owner clearfix">
-									<div class="owner-img"><img style="background-image:url(uploads/{{project.userPhoto}})"></div>
+									<div class="owner-img"><div class="img" style="background-image:url(/uploads/{{project.userPhoto}})"></div></div>
 									<h5 class="owner-name pull-left">{{project.name}}</h5>
 								</div>
 								<div class="funded-wrp">
@@ -59,15 +60,18 @@
 								</div>										
 							</div>
 						</div>
-						
 						<h5 ng-if="!projects.length" class="no-project-found">No Projects Found.</h5>
 					</div>
+					<div class="pagination-wrapper" pagination-directive></div>
 				</section>
 				
 				<section class="projects" ng-if="!isSerchPage">
 					<div class="pc-wrp" ng-repeat="(key, projects) in homeProjects track by $index" ng-class="$first?'first':''">
 					<div class="row btn-wrp first">
-						<h3 class="col-md-12 p-title">{{title[key]}}</h3>
+						<h3 class="col-md-6 p-title">{{title[key]}}</h3>
+						<div class="col-md-6 p-title right">
+							<a href="" class="btn btn-default btn-secondary" ng-if="projects.length>=6" ng-click="seeAll(key)">See All</a>
+						</div>
 					</div>
 					<div class="row poster-wrp">
 						
@@ -75,13 +79,13 @@
 							<div class="poster">
 								<a href="#project/{{project.projectId}}" class="poster-title">
 									<div class="p-img">
-										<img ng-if="project.coverImage" style="background-image:url(uploads/{{project.coverImage}})">
-										<img ng-if="!project.coverImage" src="assets/images/poster-bg.png">
+										<div class="img" ng-if="project.coverImage" style="background-image:url(/uploads/{{project.coverImage}})"></div>
+										<div class="img" ng-if="!project.coverImage" style="background-image:url(assets/images/poster-bg.png)"></div>
 									</div>
 									<h5 class="poster-title">{{project.title}}</h5>
 								</a>
 								<div class="owner clearfix">
-									<div class="owner-img"><img style="background-image:url(uploads/{{project.userPhoto}})"></div>
+									<div class="owner-img"><div class="img" style="background-image:url(/uploads/{{project.userPhoto}})"></div></div>
 									<h5 class="owner-name pull-left">{{project.name}}</h5>
 								</div>
 								<div class="funded-wrp">

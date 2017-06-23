@@ -33,6 +33,7 @@ exports.projectsAPI = function(app, dbConnection, validate, multer, path, nestin
 			if(req.file) {
 				project.coverImage = req.file.filename;
 			}
+			console.log(project);
 			if(!project.title || !project.category || !project.location || !project.description || !project.userId) {
 				res.status(400).send("Bad Request. PosterImage/Title/Category/Location/Description/UserId should not be empty.");
 				return;
@@ -152,6 +153,34 @@ exports.projectsAPI = function(app, dbConnection, validate, multer, path, nestin
 		});
 	});
 	
+	/* delete project Images */
+	app.delete('/deleteAssets', function (req, res) {
+		var asset = req.body;
+		if(!asset.length) {
+			res.status(400).send("Bad Request. Asset ID should not be blank.");
+			return;
+		};
+		//DELETE FROM projectsassets WHERE assetId = 512 OR assetId=503
+		var sql = "DELETE FROM projectsassets WHERE"
+		for(var i=0; i<asset.length; i++) {
+			sql = sql + " assetId="+asset[i]+" OR";
+		}
+		sql = sql.substring(0, sql.length-3);
+		try {
+			dbConnection.query(sql, function (error, results, fields) {
+				if (error) {
+					res.status(500).send(error);
+					return;
+				}
+				res.status(200).send(asset);
+				return;
+			});
+		} catch(e) {
+			console.log(e);
+			res.status(500).send("Internal Server Error.");
+		}
+	});
+	
 
 	/*Update project*/
 	app.post('/projects', function (req, res) {
@@ -256,7 +285,12 @@ exports.projectsAPI = function(app, dbConnection, validate, multer, path, nestin
 								});
 							});
 						} else {
-							wCB();
+							dbConnection.query('DELETE FROM team WHERE projectId=?', project.projectId, function (error, results, fields) {
+								if (error) {
+									return wCB(error);
+								}
+								wCB();
+							});
 						}
 					},
 					function (wCB) {
@@ -305,6 +339,7 @@ exports.projectsAPI = function(app, dbConnection, validate, multer, path, nestin
 						if(servicerewards) {
 							var servicerewardsData = [];
 							for(i in servicerewards) {
+								if(servicerewards[i].amount == 'NaN') servicerewards[i].amount = '0';
 								servicerewardsData.push([servicerewards[i].projectId, servicerewards[i].userId, servicerewards[i].amount, servicerewards[i].activityName, servicerewards[i].availableDate, servicerewards[i].description]);
 							}
 							dbConnection.query('DELETE FROM servicerewards WHERE projectId=?', project.projectId, function (error, results, fields) {
@@ -494,29 +529,15 @@ exports.projectsAPI = function(app, dbConnection, validate, multer, path, nestin
 		var limit = req.query.limit || '6';
 		var category = req.query.category || '';
 		var projects = {
-			trending: '',
 			latest: '',
-			hot: '',
+			trending: '',
 			popular: '',
 			topfunded: '',
+			hot: '',
 			recommended: '',
 			currentlywatched: ''
 		}
 		async.waterfall([
-			function (wCB) {
-				if(q=='all' || q=='' || q=='trending') {
-					var sql = "SELECT p.projectId, p.title, p.category, p.coverImage, p.moneyNeeded, p.endByDate, p.createdDate, p.userId, p.name, p.userPhoto, TIMESTAMPDIFF(DAY,CURDATE(),p.endByDate) as remainDays, (SELECT COUNT(*) from likes l where l.projectId=p.projectId) AS likesCount, (SELECT COUNT(*) from views v where v.projectId=p.projectId) AS viewsCount, (SELECT COUNT(*) from shares s where s.projectId=p.projectId) AS sharesCount, (SELECT COALESCE(SUM(amount),0) from payments pay where pay.projectId=p.projectId AND txnStatus='TXN_SUCCESS') AS funded, (SELECT count(amount) from payments paycount where paycount.projectId=p.projectId AND txnStatus='TXN_SUCCESS') AS fundedCount, (SELECT SUM(likesCount+viewsCount)) AS socialCount FROM projects p WHERE p.STATUS = 'ACTIVE' AND p.endByDate >= CURDATE() AND DATE(p.createdDate)<=DATE(NOW() - INTERVAL 15 DAY) AND category LIKE '%"+category+"' HAVING socialCount>0 ORDER BY socialCount DESC LIMIT 0, " + limit;
-					dbConnection.query(sql, function (error, results, fields) {
-						if (error) {
-							return wCB(error);
-						}
-						projects.trending = results;
-						wCB();
-					});
-				} else {
-					wCB();
-				}
-			},
 			function (wCB) {
 				if(q=='all' || q=='' || q=='latest') {
 					var sql = "SELECT p.projectId, p.title, p.category, p.coverImage, p.moneyNeeded, p.endByDate, p.createdDate, p.userId, p.name, p.userPhoto, TIMESTAMPDIFF(DAY,CURDATE(),p.endByDate) as remainDays, (SELECT COUNT(*) from likes l where l.projectId=p.projectId) AS likesCount, (SELECT COUNT(*) from views v where v.projectId=p.projectId) AS viewsCount, (SELECT COUNT(*) from shares s where s.projectId=p.projectId) AS sharesCount, (SELECT COALESCE(SUM(amount),0) from payments pay where pay.projectId=p.projectId AND txnStatus='TXN_SUCCESS') AS funded FROM projects p WHERE p.STATUS = 'ACTIVE' AND p.endByDate >= CURDATE() AND category LIKE '%"+category+"' ORDER BY p.projectId DESC LIMIT 0, " + limit;
@@ -532,13 +553,13 @@ exports.projectsAPI = function(app, dbConnection, validate, multer, path, nestin
 				}
 			},
 			function (wCB) {
-				if(q=='all' || q=='' || q=='hot') {
-					var sql = "SELECT p.projectId, p.title, p.category, p.coverImage, p.moneyNeeded, p.endByDate, p.createdDate, p.userId, p.name, p.userPhoto, TIMESTAMPDIFF(DAY,CURDATE(),p.endByDate) as remainDays, (SELECT COUNT(*) from likes l where l.projectId=p.projectId) AS likesCount, (SELECT COUNT(*) from views v where v.projectId=p.projectId) AS viewsCount, (SELECT COUNT(*) from shares s where s.projectId=p.projectId) AS sharesCount, (SELECT COALESCE(SUM(amount),0) from payments pay where pay.projectId=p.projectId AND txnStatus='TXN_SUCCESS') AS funded FROM projects p WHERE p.STATUS = 'ACTIVE' AND p.endByDate >= CURDATE() AND category LIKE '%"+category+"' HAVING likesCount>0 ORDER BY likesCount DESC LIMIT 0, " + limit;
+				if(q=='all' || q=='' || q=='trending') {
+					var sql = "SELECT p.projectId, p.title, p.category, p.coverImage, p.moneyNeeded, p.endByDate, p.createdDate, p.userId, p.name, p.userPhoto, TIMESTAMPDIFF(DAY,CURDATE(),p.endByDate) as remainDays, (SELECT COUNT(*) from likes l where l.projectId=p.projectId) AS likesCount, (SELECT COUNT(*) from views v where v.projectId=p.projectId) AS viewsCount, (SELECT COUNT(*) from shares s where s.projectId=p.projectId) AS sharesCount, (SELECT COALESCE(SUM(amount),0) from payments pay where pay.projectId=p.projectId AND txnStatus='TXN_SUCCESS') AS funded, (SELECT count(amount) from payments paycount where paycount.projectId=p.projectId AND txnStatus='TXN_SUCCESS') AS fundedCount, (SELECT SUM(likesCount+viewsCount)) AS socialCount FROM projects p WHERE p.STATUS = 'ACTIVE' AND p.endByDate >= CURDATE() AND DATE(p.createdDate)<=DATE(NOW() - INTERVAL 15 DAY) AND category LIKE '%"+category+"' HAVING socialCount>0 ORDER BY socialCount DESC LIMIT 0, " + limit;
 					dbConnection.query(sql, function (error, results, fields) {
 						if (error) {
 							return wCB(error);
 						}
-						projects.hot = results;
+						projects.trending = results;
 						wCB();
 					});
 				} else {
@@ -567,6 +588,20 @@ exports.projectsAPI = function(app, dbConnection, validate, multer, path, nestin
 							return wCB(error);
 						}
 						projects.topfunded = results;
+						wCB();
+					});
+				} else {
+					wCB();
+				}
+			},
+			function (wCB) {
+				if(q=='all' || q=='' || q=='hot') {
+					var sql = "SELECT p.projectId, p.title, p.category, p.coverImage, p.moneyNeeded, p.endByDate, p.createdDate, p.userId, p.name, p.userPhoto, TIMESTAMPDIFF(DAY,CURDATE(),p.endByDate) as remainDays, (SELECT COUNT(*) from likes l where l.projectId=p.projectId) AS likesCount, (SELECT COUNT(*) from views v where v.projectId=p.projectId) AS viewsCount, (SELECT COUNT(*) from shares s where s.projectId=p.projectId) AS sharesCount, (SELECT COALESCE(SUM(amount),0) from payments pay where pay.projectId=p.projectId AND txnStatus='TXN_SUCCESS') AS funded FROM projects p WHERE p.STATUS = 'ACTIVE' AND p.endByDate >= CURDATE() AND category LIKE '%"+category+"' HAVING likesCount>0 ORDER BY likesCount DESC LIMIT 0, " + limit;
+					dbConnection.query(sql, function (error, results, fields) {
+						if (error) {
+							return wCB(error);
+						}
+						projects.hot = results;
 						wCB();
 					});
 				} else {
@@ -609,6 +644,57 @@ exports.projectsAPI = function(app, dbConnection, validate, multer, path, nestin
 			res.status(500).send(err);
 		});
 		
+	});
+
+	/* update project status */
+	app.put('/update', function (req, res) {
+		var project = req.body;
+		if(!project.projectId || !project.userId) {
+			res.status(500).send("ProjectId/userId/status should not be blank.");
+			return;
+		}
+		if(project.endByDate) {
+			project.endByDate = moment(project.endByDate).format('YYYY-MM-DD HH:mm:ss');
+		}
+		if(project.reason) {
+			delete project.reason;
+		}
+		try {
+			dbConnection.query("UPDATE projects SET ? WHERE projectId=? AND userId=?", [project, project.projectId, project.userId], function (error, results, fields) {
+				if (error) {
+					console.log(error);
+					res.status(500).send(error);
+					return;
+				}
+				res.status(200).send(results);
+			});
+		} catch(e) {
+			console.log(e);
+			res.status(500).send("Internal Server Error.");
+		}
+	});
+
+	/*Get payment details*/
+	app.get('/payments/:paymentId', function (req, res) {
+		var orderId = req.params.paymentId;
+		var userId = 0;
+		if(!orderId) {
+			res.status(500).send("OrderId should not be blank.");
+		}
+			
+		try {
+			dbConnection.query("SELECT * FROM payments WHERE OrderId = ?", [orderId], function (error, results, fields) {
+				if (error) {
+					console.log(error);
+					res.status(500).send(error);
+					return;
+				}
+				res.status(200).send(results);
+			});
+		} catch(e) {
+			console.log(e);
+			res.status(500).send("Internal Server Error.");
+		}
 	});
 
 }

@@ -1,5 +1,5 @@
 'use strict';
-var backMe = angular.module('backMe', ['ui.router', 'angular-loading-bar', 'ngMaterial', 'ngMessages', 'facebook', 'ngFileUpload', 'thatisuday.ng-image-gallery', '720kb.socialshare', 'ngImgCrop']);
+var backMe = angular.module('backMe', ['ui.router', 'angular-loading-bar', 'ngMaterial', 'ngMessages', 'facebook', 'ngFileUpload', 'thatisuday.ng-image-gallery', '720kb.socialshare', 'ngImgCrop', 'vtex.ngCurrencyMask']);
 
 backMe
 .config(['$stateProvider', '$urlRouterProvider', 'FacebookProvider', '$mdDateLocaleProvider', function(_stateProvider, _urlRouterProvider, FacebookProvider, _mdDateLocaleProvider) {
@@ -62,6 +62,11 @@ backMe
 				url: '/project/:projectId',
 				templateUrl: 'templates/project.html',
 				controller: 'projectCtrl'
+		})
+		.state('payment', {
+				url: '/payment/:paymentId',
+				templateUrl: 'templates/payment.html',
+				controller: 'paymentCtrl'
 		})
 		.state('checkout', {
 				url: '/checkout/:projectId/:amount',

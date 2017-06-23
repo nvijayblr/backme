@@ -28,6 +28,7 @@ backMe.controller('checkoutCtrl', ['$scope', 'BaseServices', '$timeout', '$state
 			url: _appConstant.baseUrl + 'projects/' + _scope.projectId
 		}, function(data){
 			_scope.project = data;
+			console.log(_scope.project);
 			if(_scope.project.length == 0) {
 				_state.go('home');
 			} else {
@@ -39,7 +40,11 @@ backMe.controller('checkoutCtrl', ['$scope', 'BaseServices', '$timeout', '$state
 	}
 	_scope.init();
 	
-	_scope.makeCCAvenuePayment = function() {
+	_scope.makePaytmPayment = function(isValidForm) {
+		if(!isValidForm) {
+			angular.element('md-input-container .ng-invalid').first().focus();
+			return;
+		}
 		//Paytm Integration
 		_services.http.serve({
 			method: 'POST',

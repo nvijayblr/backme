@@ -2,36 +2,56 @@
 	<div class="steps-toast">Project details upated successfully !!</div>
 	<div class="steps-bar"></div>
 	<ul class="steps clearfix">
-		<li ng-class="step==1?'active':1<step?'completed':''">
-			<a href="" class="step">
+		<li ng-class="step==1?'active':1<=project.stepsCompleted?'completed':''">
+			<a ng-if="1<=project.stepsCompleted" href="#/create/basicinfo/{{projectId}}" class="step">
+				<span>1</span>
+				<span class="tickicon"></span>
+			</a>
+			<a ng-if="1>project.stepsCompleted" href="" class="step">
 				<span>1</span>
 				<span class="tickicon"></span>
 			</a>
 			<p>Basic Info</p>
 		</li>
-		<li ng-class="step==2?'active':2<step?'completed':''">
-			<a href="" class="step">
+		<li ng-class="step==2?'active':2<=project.stepsCompleted?'completed':''">
+			<a ng-if="2<=(project.stepsCompleted+1)" href="#/create/projectdetails/{{projectId}}" class="step">
+				<span>2</span>
+				<span class="tickicon"></span>
+			</a>
+			<a ng-if="2>(project.stepsCompleted+1)" href="" class="step">
 				<span>2</span>
 				<span class="tickicon"></span>
 			</a>
 			<p>Project Details</p>
 		</li>
-		<li ng-class="step==3?'active':3<step?'completed':''">
-			<a href="" class="step">
+		<li ng-class="step==3?'active':3<=project.stepsCompleted?'completed':''">
+			<a ng-if="3<=(project.stepsCompleted+1)" href="#/create/rewards/{{projectId}}" class="step">
+				<span>3</span>
+				<span class="tickicon"></span>
+			</a>
+			<a ng-if="3>(project.stepsCompleted+1)" href="" class="step">
 				<span>3</span>
 				<span class="tickicon"></span>
 			</a>
 			<p>Rewards &amp; Services</p>
 		</li>
-		<li ng-class="step==4?'active':4<step?'completed':''">
-			<a href="" class="step">
+		<li ng-class="step==4?'active':4<=project.stepsCompleted?'completed':''">
+			<a ng-if="4<=(project.stepsCompleted+1)" href="#/create/profile/{{projectId}}" class="step">
+				<span>4</span>
+				<span class="tickicon"></span>
+			</a>
+			<a ng-if="4>(project.stepsCompleted+1)" href="" class="step">
 				<span>4</span>
 				<span class="tickicon"></span>
 			</a>
 			<p>Profile &amp; Account</p>
 		</li>
-		<li ng-class="step==5?'active':5<step?'completed':''">
-			<a href="" class="step">
+		<li ng-class="step==5?'active':5<=project.stepsCompleted?'completed':''">
+			<a ng-if="5<=(project.stepsCompleted+1)" href="#/create/preview/{{projectId}}" class="step">
+				<span>5</span>
+				<span class="tickicon"></span>
+			</a>
+			<a ng-if="5>(project.stepsCompleted+1)" href="" class="step">
 				<span>5</span>
 				<span class="tickicon"></span>
 			</a>

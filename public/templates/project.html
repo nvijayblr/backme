@@ -27,25 +27,56 @@
 					<div class="pd-soc-wrp clearfix">
 						<ul class="clearfix pull-left soc">
 							<li class="likes">
-                                <a ng-if="loggedUserId && !project.remaindayshours[0].alreadyLiked" href="" class="li" ng-click="addLike(project)">
+                                <a ng-if="loggedUserId && !project.remaindayshours[0].alreadyLiked" href="" class="li" ng-click="addLike(project)" alt="Like" title="Like">
                                     <i class="fa fa-thumbs-up" aria-hidden="true"></i>
                                 </a>
-                                <a ng-if="loggedUserId && project.remaindayshours[0].alreadyLiked" href="" class="li liked">
+                                <a ng-if="loggedUserId && project.remaindayshours[0].alreadyLiked" href="" class="li liked" alt="Liked" title="Liked">
                                     <i class="fa fa-thumbs-up" aria-hidden="true"></i>
                                 </a>
                             </li>
-							<li><a href=""
+							<li>
+								<a href="" class="tw" alt="Facebook" title="Facebook"
+								socialshare
+								socialshare-provider="facebook"
+								socialshare-text="{{project.title}}"
+								socialshare-title="{{project.title}}"
+								socialshare-type="send"
+								socialshare-hashtags="{{project.title}}"
+								socialshare-url="http://supportmytalent.in/#/project/{{project.projectId}}">
+								<i class="fa fa-facebook" aria-hidden="true"></i>
+								</a>
+							</li>
+							<li>
+								<a href="" class="tw" alt="Twitter" title="Twitter"
+								socialshare
+								socialshare-provider="twitter"
+								socialshare-text="{{project.title}}"
+								socialshare-hashtags="{{project.title}}"
+								socialshare-url="http://supportmytalent.in/#/project/{{project.projectId}}">
+								<i class="fa fa-twitter" aria-hidden="true"></i>
+								</a>
+							</li>
+							<li>
+								<a href="" class="go" alt="Google" title="Google"
 								socialshare
 								socialshare-provider="google"
 								socialshare-text="{{project.title}}"
-								socialshare-hashtags="backme, {{project.title}}"
-								socialshare-url="http://supportmytalent.in/#/project/3">
-								Twitter Share me
-								</a></li>
-							<li><a href="" class="fb"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
-							<li><a href="" class="tw"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
-							<li><a href="" class="go"><i class="fa fa-google-plus" aria-hidden="true"></i></a></li>
-							<li><a href="" class="in"><i class="fa fa-linkedin" aria-hidden="true"></i></a></li>
+								socialshare-hashtags="{{project.title}}"
+								socialshare-url="http://supportmytalent.in/#/project/{{project.projectId}}">
+								<i class="fa fa-google-plus" aria-hidden="true"></i>
+								</a>
+							</li>
+							<li>
+								<a href="" class="go" alt="Linkedin" title="Linkedin"
+								socialshare
+								socialshare-provider="linkedin"
+								socialshare-text="{{project.title}}"
+								socialshare-description="{{project.title}}"
+								socialshare-hashtags="{{project.title}}"
+								socialshare-url="http://supportmytalent.in/#/project/{{project.projectId}}">
+								<i class="fa fa-linkedin" aria-hidden="true"></i>
+								</a>
+							</li>
 						</ul>
 						<ul class="clearfix pull-right views">
 							<li><span class="cnt">{{project.remaindayshours[0].likesCount}}</span> Likes</li>
@@ -55,7 +86,7 @@
 				</div>
 				<div class="pd-about">
 					<h4 class="btn-title">About this project</h4>
-					<p class="pd-desc">{{project.about}}</p>
+					<p class="pd-desc">{{project.description}}</p>
 					
 					<h4 class="btn-title">How I will spend money</h4>
 					<div class="row">
@@ -85,20 +116,21 @@
 					</div>
 					
 					<h4 class="btn-title">Comments ({{comments.length}})</h4>
+					<h3 style="font-size:20px;" ng-if="!loggedUserId">Please login to add a comment.</h3>
 					<div class="comments">
 						<div class="cmt-box" ng-if="loggedUserId">
                             <md-input-container>
-                                <label class="ph-label">Comments here</label>
+                                <label class="ph-label cmt-label">Comments here</label>
                                 <textarea ng-model="comment.commentInput" required class="comment-txt"></textarea>
                                 <div style="text-align:right">
-                                    <button class="btn btn-default btn-lg btn-subscribe sm-btn add-comment" ng-click="addComment(comment.commentInput, project.projectId);" ng-disabled="!comment.commentInput.length">POST</button>
+                                    <button class="btn btn-default btn-lg btn-alternate sm-btn add-comment" ng-click="addComment(comment.commentInput, projectId);" ng-disabled="!comment.commentInput.length">POST</button>
                                 </div>
                             </md-input-container>
 						</div>
 						<div class="cmt-wrp">
 							<div class="c-wrp clearfix" ng-repeat="c in comments track by $index">
 								<img ng-if="c.users.loginType=='CUSTOM' && c.users.profilePicture" ng-src="uploads/{{c.users.profilePicture}}" class="cmt-bg">
-								<div ng-if="c.users.loginType=='CUSTOM' && !c.users.profilePicture" class="cmt-bg user-bg-div">V</div>
+								<div ng-if="c.users.loginType=='CUSTOM' && !c.users.profilePicture" class="cmt-bg user-bg-div">{{c.users.name.substring(0,1)}}</div>
 								<img ng-if="c.users.loginType!='CUSTOM'" ng-src="{{c.users.profilePicture}}" class="cmt-bg">
 								<div class="name">
 									<h5>{{c.users.name}}<span class="day">{{c.comments.commentedOn|toDayMonth}}</span></h5>
@@ -149,10 +181,12 @@
 						<a class="btn btn-default btn-lg btn-subscribe" ng-click="supportMe()" ng-if="showSupportMe">Support Me</a>
 						<div class="sm-group clearfix" ng-if="!showSupportMe">
 							<i class="fa fa-rupee" aria-hidden="true"></i>
-							<input type="text" class="sm-txt" placeholder="100, 500" ng-model="support.amount">
-							<a class="btn btn-default btn-lg btn-subscribe sm-btn" ng-click="supportMeContinue(support.amount);">Continue</a>
+							<input type="text" class="sm-txt" placeholder="500" ng-model="support.amount" currency-mask required>
+							<!--<div class="error-lable required">Password text field empty.</div>
+							<div class="error-lable format">Entering the invalid format.</div>-->
+							<button class="btn btn-default btn-lg btn-subscribe sm-btn" ng-disabled="!support.amount" ng-click="supportMeContinue(support.amount);">Continue</button>
 						</div>
-						<p class="desc">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's 	standard dummy text ever since the 1500s.</p>
+						<p class="desc">{{project.about}}</p>
 					</div>
 				</div>
 				<div class="support-box user">
@@ -160,28 +194,34 @@
 					<div class="user-info">
 						<h3 class="s-user">{{project.name}}</h3>
 						<p class="s-loc"><i class="fa fa-map-marker" aria-hidden="true"></i>{{project.location}}</p>
-						<p class="s-email"><i class="fa fa-envelope" aria-hidden="true"></i>{{project.email}}</p>
+						<p class="s-email"><i class="fa fa-envelope" aria-hidden="true"></i>
+							<a href="mailto:{{project.email}}?Subject={{project.title}}">{{project.email}}</a>
+						</p>
 					</div>
 				</div>
 				
-				<h4 class="s-proj-title">Support this project</h4>
-				<div ng-repeat="supportrewards in project.supportrewards track by $index">
-					<div class="support-box">
-						<h3 class="amount"><i class="fa fa-rupee" aria-hidden="true"></i>{{supportrewards.amount|toLocale}}<sup>.00</sup></h3>
-						<h4 class="s-title">{{supportrewards.title}}</h4>
-						<p class="s-desc">{{supportrewards.description}}</p>
-						<p class="s-support-cnt">5 People Supporting</p>
-					</div>
+				<h4 class="s-proj-title ">Support this project</h4>
+				<div ng-repeat="supportrewards in project.supportrewards track by $index" class="project-support-box">
+					<a href="#checkout/{{project.projectId}}/{{supportrewards.amount}}" class="support-box-link">
+						<div class="support-box">
+							<h3 class="amount"><i class="fa fa-rupee" aria-hidden="true"></i>{{supportrewards.amount|toLocale}}<sup>.00</sup></h3>
+							<h4 class="s-title">{{supportrewards.title}}</h4>
+							<p class="s-desc">{{supportrewards.description}}</p>
+							<p class="s-support-cnt">5 People Supporting</p>
+						</div>
+					</a>
 				</div>				
 				
-				<h4 class="s-proj-title">Service this project</h4>
+				<h4 class="s-proj-title" ng-if="project.servicerewards.length">Service this project</h4>
 				<div ng-repeat="servicerewards in project.servicerewards track by $index">
-					<div class="support-box">
-						<h3 class="amount"><i class="fa fa-rupee" aria-hidden="true"></i>{{servicerewards.amount|toLocale}}<sup>.00</sup></h3>
-						<h4 class="s-title">{{servicerewards.activityName}}</h4>
-						<p class="s-desc">{{servicerewards.description}}</p>
-						<p class="s-desc">{{servicerewards.availableDate}}</p>
-					</div>
+					<a href="#checkout/{{project.projectId}}/{{supportrewards.amount}}" class="support-box-link">
+						<div class="support-box">
+							<h3 class="amount"><i class="fa fa-rupee" aria-hidden="true"></i>{{servicerewards.amount|toLocale}}<sup>.00</sup></h3>
+							<h4 class="s-title">{{servicerewards.activityName}}</h4>
+							<p class="s-desc">{{servicerewards.description}}</p>
+							<p class="s-desc">{{servicerewards.availableDate}}</p>
+						</div>
+					</a>
 				</div>
 
 				
@@ -205,7 +245,9 @@
 								</div>
 							</a>
 							<div class="col-md-7">
-								<h5 class="title">{{sp.title}}</h5>
+								<a href="#project/{{sp.projectId}}" class="poster-title">
+									<h5 class="title">{{sp.title}}</h5>
+								</a>
 								<p class="desc">{{sp.viewsCount}} Views</p>
 								<p class="desc">{{sp.remainDays}} Days to go</p>
 							</div>
@@ -219,3 +261,4 @@
 		</div>
 	</div>
 </section>
+

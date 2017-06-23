@@ -10,7 +10,7 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 		email : '',
 		password: '',
 		name: '',
-		agree: true
+		agree: false
 	}
 	
 	_scope.loggedUser = {};
@@ -35,6 +35,97 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 		  {'name': 'Technology'},
 		  {'name': 'Theater'}
 	];
+
+	_scope.bankList = [
+		{'name': 'AB Bank'},
+		{'name': 'Abu Dhabi Commercial Bank'},
+		{'name': 'Allahabad Bank'},
+		{'name': 'American Express'},
+		{'name': 'Andhra Bank'},
+		{'name': 'Antwerp Diamond Bank'},
+		{'name': 'Australia and New Zealand Banking Group'},
+		{'name': 'Axis bank'},
+		{'name': 'Bandhan Bank'},
+		{'name': 'Bank Internasional Indonesia'},
+		{'name': 'Bank of America'},
+		{'name': 'Bank of Bahrain and Kuwait'},
+		{'name': 'Bank of Baroda'},
+		{'name': 'Bank of Ceylon'},
+		{'name': 'Bank of India'},
+		{'name': 'Bank of Maharashtra'},
+		{'name': 'Bank of Nova Scotia'},
+		{'name': 'Bank of Tokyo-Mitsubishi'},
+		{'name': 'Barclays Bank'},
+		{'name': 'BNP Paribas'},
+		{'name': 'Canara Bank'},
+		{'name': 'Catholic Syrian Bank'},
+		{'name': 'Central Bank of India'},
+		{'name': 'Chinatrust Commercial Bank'},
+		{'name': 'Citibank'},
+		{'name': 'City Union Bank'},
+		{'name': 'Commonwealth Bank of Australia'},
+		{'name': 'Corporation Bank'},
+		{'name': 'Credit Agricole'},
+		{'name': 'Credit Suisse'},
+		{'name': 'DBS Bank'},
+		{'name': 'DCB Bank'},
+		{'name': 'Dena Bank'},
+		{'name': 'Deutsche Bank'},
+		{'name': 'Dhanlaxmi Bank'},
+		{'name': 'Doha bank'},
+		{'name': 'FirstRand Bank'},
+		{'name': 'HDFC Bank'},
+		{'name': 'HSBC'},
+		{'name': 'HSBC Bank Oman'},
+		{'name': 'ICICI Bank'},
+		{'name': 'IDBI Bank'},
+		{'name': 'IDFC Bank'},
+		{'name': 'Indian Bank'},
+		{'name': 'IndusInd Bank'},
+		{'name': 'Industrial & Commercial Bank of China'},
+		{'name': 'Jammu and Kashmir Bank'},
+		{'name': 'Karnataka Bank'},
+		{'name': 'Karur Vysya Bank'},
+		{'name': 'Krung Thai Bank'},
+		{'name': 'Mashreq Bank'},
+		{'name': 'Mizuho Corporate Bank'},
+		{'name': 'National Australia Bank'},
+		{'name': 'Rabobank'},
+		{'name': 'RBL Bank'},
+		{'name': 'Royal Bank of Scotland (RBS N.V)'},
+		{'name': 'Sberbank'},
+		{'name': 'Shinhan Bank'},
+		{'name': 'Societe Generale'},
+		{'name': 'Sonali Bank'},
+		{'name': 'South Indian Bank'},
+		{'name': 'Standard Chartered Bank'},
+		{'name': 'State Bank of Mauritius'},
+		{'name': 'Sumitomo Mitsui Banking'},
+		{'name': 'UBS AG'},
+		{'name': 'United Bank of India'},
+		{'name': 'United Overseas Bank'},
+		{'name': 'VTB'},
+		{'name': 'Westpac Banking Corporation'},
+		{'name': 'Woori Bank'},
+		{'name': 'Equitas Small Finance Bank'},
+		{'name': 'Federal Bank'},
+		{'name': 'Indian Overseas Bank'},
+		{'name': 'J.P. Morgan Chase Bank'},
+		{'name': 'Kotak Mahindra Bank'},
+		{'name': 'Lakshmi Vilas Bank'},
+		{'name': 'Nainital Bank'},
+		{'name': 'Oriental Bank of Commerce'},
+		{'name': 'Punjab & Sindh Bank'},
+		{'name': 'Punjab National Bank'},
+		{'name': 'State Bank of India'},
+		{'name': 'Syndicate Bank'},
+		{'name': 'Tamilnad Mercantile Bank Limited'},
+		{'name': 'UCO Bank'},
+		{'name': 'Union Bank of India'},
+		{'name': 'Vijaya Bank'},
+		{'name': 'Yes Bank'}
+	];
+
 	
 	if(_appConstant.currentUser != '') {
 		_scope.loggedUser = _appConstant.currentUser;
@@ -52,18 +143,41 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 	_scope.categoryKey = '';
 	_scope.isSerchPage = false;
 	_scope.searchProjects = function(_query) {
+		_scope.isSeeAll = false;
 		_scope.categoryKey = _query;
-		_scope.projects = {};
+		_scope.projects = [];
 		_services.http.serve({
 			method: 'GET',
 			url: _appConstant.baseUrl + 'search?q=' + _query
 		}, function(data){
 			_scope.projects = data;
+			_services.pagination.init(_scope, _scope.projects);
 		}, function(err) {
 			console.log(err)
 		});
 	}
 	//_scope.searchProjects('');
+	_scope.isSeeAll = false;
+	_scope.seeAll = function(_type) {
+		_scope.type = _type;
+		_scope.isSerchPage = true;
+		_scope.isSeeAll = true;
+		_scope.projects = [];
+		_scope.category = '';
+		_services.http.serve({
+			method: 'GET',
+			url: _appConstant.baseUrl + 'bySocial?q='+_type+'&limit=1000000&category='+_scope.category
+		}, function(data){
+			_scope.projects = data[_type];
+			_services.pagination.init(_scope, _scope.projects);
+		}, function(err) {
+			console.log(err)
+		});
+
+	}
+
+	
+	
 	
 	_scope.location = {
 		projects: {}
@@ -140,15 +254,17 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 		$('#signUpModal').modal('hide');
 		$('#loginModal').modal('show');
 	}
-	_scope.showSignUp = function() {
+	_scope.signupFrom = '';
+	_scope.showSignUp = function(_signupFrom) {
 		_scope.app.signupForm.$setPristine();
 		_scope.app.signupForm.$setUntouched();
 		_scope.app.signupForm.$submitted = false;
+		_scope.signupFrom = _signupFrom;
 		_scope.signUpSettings = {
 			email : '',
 			password: '',
 			name: '',
-			agree: true
+			agree: false
 		}
 		_scope.showPassword = true;
 		$('#loginModal').modal('hide');
@@ -190,20 +306,30 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 			localStorage.setItem('backMeUser', JSON.stringify(_appConstant.currentUser));
 			_scope.loggedIn = true;
 			$('#loginModal').modal('hide');
+			if(_scope.signupFrom == 'basicInfo') {
+				_timeout(function() {
+					$("#basicNext").trigger('click');
+				}, 1000);
+			}
+			_scope.signupFrom = '';
 		}, function(err){
 			_services.toast.show('Invalid Email/Password.');
 		});
 	}
 	
 	_scope.finishSignup = function(_email, _pass, _name) {
-		if(!_email || !_pass || !_name) {
-			_services.toast.show('Email/Password/Name should not be blank.');
+		if(!_email || !_pass) {
+			_services.toast.show('Email/Password should not be blank.');
 			return;
 		}
-		_scope.signUpData = {
+		/*_scope.signUpData = {
 			email : _email,
 			password: _pass,
 			name: _name
+		}*/
+		_scope.signUpData = {
+			email : _email,
+			password: _pass
 		}
 		$('#signUpFinishModal').modal('hide');
 		_services.http.serve({
@@ -212,22 +338,33 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 			inputData: _scope.signUpData
 		}, function(res){
 			$('#signUpModal').modal('hide');
-			_appConstant.currentUser.name = _name;
+			$('#signUpFinishModal').modal('hide');
+			_appConstant.currentUser.name = _email;
+			_appConstant.currentUser.email = _email;
 			_appConstant.currentUser.userId = res.insertId;
 			console.log(_appConstant.currentUser)
 			_scope.loggedUser = _appConstant.currentUser;
 			localStorage.setItem('backMeUser', JSON.stringify(_appConstant.currentUser));
 			_scope.loggedIn = true;
 			_services.toast.show('<img src="../assets/icons/checked.png" class="toast-tick"/>Your account has created successfully.');
+			if(_scope.signupFrom != 'basicInfo') {
+				_state.go('create.startproject');
+			} else {
+				_timeout(function() {
+					$("#basicNext").trigger('click');
+				}, 1000);
+			}
+			_scope.signupFrom = '';
 		}, function(err) {
 			_services.toast.show(err.data);
 		});
 	}
 	
 
-	_scope.appSignup = function(_email, _pass) {
-		$('#signUpModal').modal('hide');
-		$('#signUpFinishModal').modal('show');
+	_scope.appSignup = function(_email, _pass, _name) {
+		_scope.finishSignup(_email, _pass, _name);
+		//$('#signUpModal').modal('hide');
+		//$('#signUpFinishModal').modal('show');
 	}
 	
 	/*Begin the google sign in*/
@@ -312,6 +449,7 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 			$('#signUpModal').modal('hide');
 			$('#loginModal').modal('hide');
 		}, function(err) {
+			console.log(err);
 			if(err.data == 'ER_DUP_ENTRY') {
 				_scope.socialLogin(_scope.googleUser.email, 'GOOGLE');
 			} else {

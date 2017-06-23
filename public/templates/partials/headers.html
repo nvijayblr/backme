@@ -43,7 +43,7 @@
 			    </li>
 				<li class="singup" ng-if="!loggedIn && !showSearch"><a href="" ng-click="showLogin()"><span class="glyphicon glyphicon-lock"></span>LOGIN/SIGNUP</a></li>
 				<li ng-if="loggedIn && !showSearch" class="login">
-					<div ng-if="!loggedUser.profilePicture" class="user-bg-div bg-name">{{loggedUser.name.substr(0,2)}}</div>
+					<div ng-if="!loggedUser.profilePicture" class="user-bg-div bg-name">{{loggedUser.name|getFirstLetter:loggedUser.name:loggedUser.email}}</div>
 					<div ng-if="loggedUser.profilePicture && loggedUser.loginType=='CUSTOM'" style="background-image:url(uploads/{{loggedUser.profilePicture}})" class="user-bg-div"></div>
 					<div ng-if="loggedUser.profilePicture && loggedUser.loginType=='GOOGLE'" style="background-image:url({{loggedUser.profilePicture}})" class="user-bg-div"></div>
 				   <div class="dropdown username">

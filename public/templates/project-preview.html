@@ -46,11 +46,12 @@
 						</p>
 					</div>-->
 					
-					<h4 class="btn-title">My Team</h4>
+					<h4 class="btn-title" ng-if="project.team.length">My Team</h4>
 					<div class="row team">
 						<div class="col-md-6" ng-repeat="team in project.team track by $index">
 							<div class="team-wrp clearfix">
-								<div style="background-image:url(uploads/{{team.picture}})" class="team-bg"></div>
+								<div ng-if="team.picture!='null'" style="background-image:url(/uploads/{{team.picture}})" class="team-bg"></div>
+								<div ng-if="team.picture=='null'" class="team-bg-txt">{{team.name.substr(0,2)}}</div>
 								<div class="name pull-left">
 									<h5>{{team.name}}</h5>
 									<p>{{team.designation}}</p>
@@ -62,12 +63,14 @@
 			</div>
 			<div class="col-md-4">
 				<div class="support-box user">
-					<img ng-if="!project.userPhoto" src="assets/images/support-user-bg.jpg" class="support-user-bg">
-					<img ng-if="project.userPhoto" ng-src="uploads/{{project.userPhoto}}" class="support-user-bg">
+					<div ng-if="!project.userPhoto" style="background-image:url(/assets/images/support-user-bg.jpg)" class="support-user-bg"></div>
+					<div ng-if="project.userPhoto" style="background-image:url(/uploads/{{project.userPhoto}})" class="support-user-bg"></div>
 					<div class="user-info">
 						<h3 class="s-user">{{project.name}}</h3>
 						<p class="s-loc"><i class="fa fa-map-marker" aria-hidden="true"></i>{{project.location.display?project.location.display:project.location}}</p>
-						<p class="s-email"><i class="fa fa-envelope" aria-hidden="true"></i>{{project.email}}</p>
+						<p class="s-email"><i class="fa fa-envelope" aria-hidden="true"></i>
+							<a href="mailto:{{project.email}}?Subject={{project.title}}">{{project.email}}</a>
+						</p>
 					</div>
 				</div>
 				
@@ -80,7 +83,7 @@
 					</div>
 				</div>
 				
-				<h4 class="s-proj-title">Service this project</h4>
+				<h4 class="s-proj-title" ng-if="project.servicerewards.length">Service this project</h4>
 				<div ng-repeat="servicerewards in project.servicerewards track by $index">
 					<div class="support-box">
 						<h3 class="amount"><i class="fa fa-rupee" aria-hidden="true"></i>{{servicerewards.amount|toLocale}}<sup>.00</sup></h3>

@@ -1,5 +1,5 @@
 'use strict';
-backMe.controller('basicinfoCtrl', ['$scope', 'BaseServices', '$timeout', 'Upload', 'appConstant', '$state', '$q', function(_scope, _services, _timeout, _http, _appConstant, _state, _q){
+backMe.controller('basicinfoCtrl', ['$scope', 'BaseServices', '$timeout', 'Upload', 'appConstant', '$state', '$q', '$window', function(_scope, _services, _timeout, _http, _appConstant, _state, _q, _window){
 	_scope.step = 1;
 	_scope.stepsTitle = "Enter Basic Project Information:";
 	_scope.posterImg = null;
@@ -7,16 +7,25 @@ backMe.controller('basicinfoCtrl', ['$scope', 'BaseServices', '$timeout', 'Uploa
 	_scope.myCroppedImage='';
 	_scope.projectId = _state.params.projectId;
   
-	_scope.startProjectDetails = function() {
+	_scope.startProjectDetails = function(isValidForm) {
+		if(!isValidForm) {
+			angular.element('md-input-container .ng-invalid').first().focus();
+			return;
+		}
 		if(_scope.project.location.display) {
 			_scope.project.location = _scope.project.location.display;
 		}
 		
 		if(!_scope.loggedIn && !_appConstant.currentUser.userId) {
-			_scope.showLogin();
+			_scope.showSignUp('basicInfo');
 			return;
 		}
-		
+		if(!_scope.project.email) {
+			_scope.project.email = _appConstant.currentUser.email;
+			//_scope.project.name = _appConstant.currentUser.name;
+			_scope.project.userPhoto = _appConstant.currentUser.profilePicture;
+		}
+		console.log(_scope.project);
 		if(!_scope.project.userId) {
 		  _scope.project.userId = _appConstant.currentUser.userId;
 		}
@@ -27,11 +36,21 @@ backMe.controller('basicinfoCtrl', ['$scope', 'BaseServices', '$timeout', 'Uploa
 		} else {
 			_scope.posterImg = {};
 		}
+		
+		if(!_scope.project.coverImage && !_scope.myCroppedImage) {
+			_services.toast.show('Please select poster image.');
+			return;
+		}
+
+		if(_scope.project.stepsCompleted < _scope.step) {
+			_scope.project.stepsCompleted = _scope.step;
+		}
 		_scope.data.posterImg = _scope.posterImg;
 		console.log(_scope.posterImg);
 		_scope.method = 'POST'; //update project
 		if(_scope.projectId == 'new')
 		  _scope.method = 'PUT'; //create project
+		
 		if(!_scope.project.location || !_scope.project.category || !_scope.project.description || !_scope.project.about || !_scope.project.title) {
 		_services.toast.show('Project Title/Location/Category/About should not be blank.');
 		return;

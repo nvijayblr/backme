@@ -24,6 +24,6 @@ backMe.controller('homeCtrl', ['$scope', 'BaseServices', '$timeout', 'appConstan
 		});
 	}
 	_scope.init('');
-
+	
 }]);
 

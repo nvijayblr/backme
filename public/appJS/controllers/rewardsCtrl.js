@@ -6,7 +6,12 @@ backMe.controller('rewardsCtrl', ['$scope', 'BaseServices', '$timeout', '$state'
 	
 	_scope.addRewardsSpendFields(_scope.projectId);
 	
-	_scope.startProfile = function () {
+	_scope.startProfile = function (isValidForm) {
+		if(!isValidForm) {
+			angular.element('md-input-container .ng-invalid').first().focus();
+			return;
+		}
+		
 		if(_scope.project.posterImg || _scope.project.projectImages) {
 			delete _scope.project.posterImg;
 		  	delete _scope.project.projectImages;
@@ -25,7 +30,7 @@ backMe.controller('rewardsCtrl', ['$scope', 'BaseServices', '$timeout', '$state'
 		});
 		if(!_scope.supportrewards) return;
 		if(_scope.totAmt > _scope.project.moneyNeeded) {
-			_services.toast.show('Total of the support rewards amount should not be greater than Money needed.');
+			_services.toast.show('Entering more amount than How much money I need.');
 			return false; 
 		}
 		
@@ -44,6 +49,9 @@ backMe.controller('rewardsCtrl', ['$scope', 'BaseServices', '$timeout', '$state'
 		if(_scope.totAmt > _scope.project.moneyNeeded) {
 			_services.toast.show('Total of the service rewards amount should not be greater than Money needed.');
 			return false; 
+		}
+		if(_scope.project.stepsCompleted < _scope.step) {
+			_scope.project.stepsCompleted = _scope.step;
 		}
 		_http.upload({
 			method: 'POST',

@@ -24,6 +24,9 @@ backMe.controller('projectCtrl', ['$scope', 'BaseServices', '$timeout', '$state'
 			method: 'GET',
 			url: _appConstant.baseUrl + 'projects/' + _scope.projectId +'?userId='+_scope.loggedUserId
 		}, function(data){
+			if(_scope.project.length == 0) {
+				_state.go('home');
+			}
 			_scope.project = data;
             _scope.loadSimilarProjects(_scope.project.category);
 			angular.forEach(_scope.project.projectsassets, function(_obj, _index){
@@ -37,7 +40,16 @@ backMe.controller('projectCtrl', ['$scope', 'BaseServices', '$timeout', '$state'
 					videoUrl: 'http://www.youtube.com/embed/'+_obj.videoId+'?autoplay=0&showinfo=0&rel=0&loop=1'
 				});
 			});
-			generateRemainDaysGraph(_scope.project.remaindayshours[0].totalDays, _scope.project.remaindayshours[0].remainDays);
+			_scope.images.unshift({
+				id : 0,
+				thumbUrl : 'uploads/'+_scope.project.coverImage,
+				url : 'uploads/'+_scope.project.coverImage,
+				extUrl : '',
+				type: 'Image',
+				videoId: '',
+				videoUrl: ''
+			});
+			//generateRemainDaysGraph(_scope.project.remaindayshours[0].totalDays, _scope.project.remaindayshours[0].remainDays);
 			_scope.spendData = [];
 			angular.forEach(_scope.project.spendmoney, function(obj, index){
 				_scope.spendData.push({
@@ -48,9 +60,6 @@ backMe.controller('projectCtrl', ['$scope', 'BaseServices', '$timeout', '$state'
 			});
 			generateSpendMoneyGraph(_scope.spendData);
 			
-			if(_scope.project.length == 0) {
-				_state.go('home');
-			}
 		}, function(err) {
 			console.log(err)
 		});
@@ -119,7 +128,7 @@ backMe.controller('projectCtrl', ['$scope', 'BaseServices', '$timeout', '$state'
 		}, function(data){
            _services.toast.show('Comment added successfully.');
             _scope.comments.unshift({comments:{comment:_comment, commentedOn: new Date()}, 
-                                     users:{name:_appConstant.currentUser.name, profilePicture:_appConstant.currentUser.profilePicture}});
+                                     users:{name:_appConstant.currentUser.name, profilePicture:_appConstant.currentUser.profilePicture, loginType:_appConstant.currentUser.loginType}});
             _scope.comment.commentInput = "";
 		}, function(err) {
 		});

@@ -6,10 +6,15 @@ backMe.controller('projectdetailsCtrl', ['$scope', 'BaseServices', '$timeout', '
 	_scope.disableDragDrop = false;
 	_scope.posterImg = null;
 	_scope.uploadCompleted = 0;
-	
-	
+		
 	_scope.addRewardsSpendFields(_scope.projectId);
-	_scope.startRewards = function () {
+	
+	_scope.startRewards = function (isValidForm) {
+		if(!isValidForm) {
+			angular.element('md-input-container .ng-invalid').first().focus();
+			return;
+		}
+		
 		if(_scope.disableDragDrop) {
 			_services.toast.show('Images/Video upload in progress.');
 			return;
@@ -39,18 +44,22 @@ backMe.controller('projectdetailsCtrl', ['$scope', 'BaseServices', '$timeout', '
 			_services.toast.show('End by date should not be blank/current date.');
 			return;
 		}
-		if(!_scope.projectImages && _scope.project.projectsassets.length==0) {
+		if(_scope.tempAssets.length==0 || !_scope.tempAssets[0].location) {
 			_services.toast.show('Project gallery images/videos should not be empty.');
 			return;
 		}
 		
 		_scope.inputData = {};
+		if(_scope.project.stepsCompleted < _scope.step) {
+			_scope.project.stepsCompleted = _scope.step;
+		}
+
 		angular.copy(_scope.project, _scope.inputData);
 		if(_scope.inputData) {
 			delete _scope.inputData.projectImages;
 			delete _scope.inputData.projectsassets;
 		}
-				
+
 		_http.upload({
 			method: 'POST',
 			url: _appConstant.baseUrl + 'projects',
@@ -64,7 +73,8 @@ backMe.controller('projectdetailsCtrl', ['$scope', 'BaseServices', '$timeout', '
 		});
 	}
 
-	_scope.uploadImagesVideos = function() {
+	_scope.uploadImagesVideos = function(_gallery) {
+		_gallery.uploadCompleted = 0;
 		_scope.uploadCompleted = 0;
 		_scope.disableDragDrop = true;
 		
@@ -102,31 +112,34 @@ backMe.controller('projectdetailsCtrl', ['$scope', 'BaseServices', '$timeout', '
 						description: _scope.assets[7] ? _scope.assets[7] : ''
 					});
 				}
+				angular.copy(_scope.data.projectsassets, _scope.tempAssets);
 				deferred.resolve(res);
 			}, function (err) {
 				console.log(err);
 				deferred.reject(err);
 				_services.toast.show(err.data);
 			}, function (evt) {
+				_gallery.uploadCompleted = parseInt(100.0 * evt.loaded / evt.total);
 				_scope.uploadCompleted = parseInt(100.0 * evt.loaded / evt.total);
 			});
 			return deferred.promise;
 		}
 
 		var promises = [];
-		console.log(_scope.projectImages)
-		angular.forEach(_scope.projectImages, function(_obj, index) {
+		console.log(_gallery.projectImages);
+		angular.forEach(_gallery.projectImages, function(_obj, index) {
 			promises.push(uploadFiles(_obj));
 		});
 		
 		_q.all(promises).then(function(values) {
 			if(promises.length) {
-				_services.toast.show('Images/Video uploaded successfully.');
-				_scope.projectImages = undefined;
+				//_services.toast.showProject('Images/Video uploaded successfully !!');
+				$(".image-toast").show().delay(3000).fadeOut();
+				//_scope.projectImages = undefined;
 				_scope.disableDragDrop = false;
 				_rootScope.images = [];
 			} else {
-				_services.toast.show('Selected Invalid Video format.');
+				_services.toast.show('Large size image(more than 15MB) / Selected Invalid Video format.');
 				_scope.disableDragDrop = false;
 			}
 		});
@@ -146,15 +159,17 @@ backMe.controller('projectdetailsCtrl', ['$scope', 'BaseServices', '$timeout', '
 			_spendmoney[i].showDescError = false;
 			if(!_spendmoney[i].amount) {
 				_spendmoney[i].showAmtError = true;
+				$("#spendamount_"+i).focus();
 				_scope.showError=true;
 			}
 			if(!_spendmoney[i].description) {
 				_spendmoney[i].showDescError = true;
+				$("#spenddesc_"+i).focus();
 				_scope.showError=true;
 			}
 		}
 		if(_scope.totAmt > moneyNeeded) {
-			_services.toast.show('Total of the spend amount should not be greater than Money needed.');
+			_services.toast.show('Entering more amount than How much money I need.');
 			return false; 
 		}
 		console.log(_scope.totAmt, moneyNeeded )
@@ -186,7 +201,7 @@ backMe.controller('projectdetailsCtrl', ['$scope', 'BaseServices', '$timeout', '
 	
 	_scope.changeDays = function(_noOfDays) {
 		if(_noOfDays) {
-			_scope.project.endByDate = moment(_scope.project.endByDate).add(_noOfDays, 'days').toDate();
+			_scope.project.endByDate = moment(_scope.project.createdDate).add(_noOfDays, 'days').toDate();
 		}
 	}
 
@@ -199,6 +214,49 @@ backMe.controller('projectdetailsCtrl', ['$scope', 'BaseServices', '$timeout', '
 	_scope.deleteSpendMoney = function(_spend, _index) {
 		_spend.splice(_index, 1);
 	}
-
+	
+	_scope.selectedItems = [];
+	
+	_scope.selectPreview = function(_item) {
+		if(!_item.selected) {
+			_scope.selectedItems.push(_item.assetId);
+		} else {
+			_scope.selectedItems.splice(_scope.selectedItems.indexOf(_item.assetId),1);
+		}
+		_item.selected = !_item.selected;
+	}
+	
+	_scope.deleteSelectedAssets = function(_selectedItems) {
+		_scope.disableDragDrop = true;
+		_services.http.serve({
+			method: 'DELETE',
+			url: _appConstant.baseUrl + 'deleteAssets',
+			inputData: _selectedItems
+		}, function(data){
+			angular.forEach(_selectedItems, function(_assetId) {
+				_scope.index = _scope.project.projectsassets.map(function(d) { 
+					return d['assetId']; 
+				}).indexOf(_assetId);
+				_scope.project.projectsassets.splice(_scope.index,1)
+			});
+			angular.copy(_scope.project.projectsassets, _scope.tempAssets);
+			_scope.disableDragDrop = false;
+		}, function(err) {
+			console.log(err);
+			_scope.disableDragDrop = false;
+		});
+	}
+	
+	_scope.addProjectAssets = function(_assets) {
+		_assets.push({
+			type: '',
+			location: '',
+			videoId : '',
+			title : '',
+			description : '',
+			projectId : _scope.project.projectId,
+			userId: _scope.project.userId
+		});
+	}
 
 }]);

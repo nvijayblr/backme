@@ -2,18 +2,40 @@
 	<div class="container dashboard">
 		<div class="db-banner">
 			<div class="db-profile-wrp">
-				<div ng-if="!user.coverPicture" class="db-profile-pic" style="background-image: url(assets/images/profile-img.png);"></div>
-				<div ng-if="user.coverPicture" class="db-profile-pic" style="background-image: url(uploads/{{user.coverPicture}});"></div>
+				<!--<div ng-if="!user.coverPicture" class="db-profile-pic">{{user.name|getFirstLetter:user.name:user.email}}</div>-->
+				<div ng-if="!user.coverPicture" class="db-profile-pic" style="background-image: url(/assets/images/profile-img.png);"></div>
+				<div ng-if="user.coverPicture" class="db-profile-pic" style="background-image: url(/uploads/{{user.coverPicture}});"></div>
 			</div>
 			<div class="user-wrp prfile">
 				<div class="user-img">
-					<img ng-if="!user.profilePicture" src="assets/images/user-img.png"/>
+					<div ng-if="!user.profilePicture" class="db-profile-pic-small">{{user.name|getFirstLetter:user.name:user.email}}</div>
 					<div ng-if="user.profilePicture && user.loginType=='CUSTOM'" class="img" style="background-image: url(uploads/{{user.profilePicture}});"></div>
 					<div ng-if="user.profilePicture && user.loginType=='GOOGLE'" class="img" style="background-image: url({{user.profilePicture}});"></div>
 				</div>
 			</div>
 			<h4 class="db-title">{{user.name}}</h4>
 			<p class="db-loc">{{user.city}}, {{user.country}}</p>
+		</div>
+		<div class="db-highlights">
+			<div class="row highlights-wrp">
+				<div class="col-md-3 clearfix">
+					<h3 class="count">{{statistics.viewsCount|convertToK}}</h3>
+					<p class="desc">Project<br/>Views</p>
+				</div>
+				<div class="col-md-3 clearfix">
+					<h3 class="count">{{statistics.supportersCount|convertToK}}</h3>
+					<p class="desc">People<br/>Supporting</p>
+				</div>
+				<div class="col-md-3 clearfix">
+					<h3 class="count">{{statistics.commentsCount|convertToK}}</h3>
+					<p class="desc">Comments<br/>on Projects</p>
+				</div>
+				<div class="col-md-3 clearfix">
+					<h3 class="count">
+						<i class="fa fa-rupee" aria-hidden="true" ng-if="statistics.amountReceived<1000"></i>{{statistics.amountReceived|convertToK}}</h3>
+					<p class="desc">Money<br/>Raised</p>
+				</div>
+			</div>
 		</div>
 		<div class="row" ng-init="tab=1">
 			<div class="col-md-8">
@@ -31,9 +53,8 @@
 							<div class="row project">
 								<div class="col-md-8">
 									<div class="proj-banner-wrp">
-										<div ng-if="!project.coverImage" class="proj-banner" style="background-image: url(assets/images/my-proj-banner.png);"></div>
+										<div ng-if="!project.coverImage" class="proj-banner" style="background-image: url(/assets/images/my-proj-banner.png);"></div>
 										<div ng-if="project.coverImage" class="proj-banner" style="background-image: url(uploads/{{project.coverImage}});"></div>
-										
 										<div class="proj-info clearfix">
 											<div class="views">
 												<h5>{{project.remaindayshours[0].viewsCount}}</h5>
@@ -49,76 +70,40 @@
 											</div>
 										</div>
 									</div>
-                                    <p class="p-desc"><a href="#project/{{project.projectId}}" class="poster-title">{{project.title}}</a></p>
-									<div class="proj-btn-wrp">
-										<div class="row">
-											<div class="col-md-6">
-												<a href="" class="btn btn-default">Promote Your Project</a>
-											</div>
-											<div class="col-md-6">
-												<a href="" class="btn btn-default">Make it a Featured Project</a>
-											</div>
-										</div>
-										<a href="" class="btn btn-default">I will pay Rs. 5000 for 5 Days for Home Page promotion</a>
-									</div>
+                                    <p class="p-desc">
+										<a ng-if="project.remaindayshours[0].remainDays>=0" href="#project/{{project.projectId}}" class="poster-title">{{project.title}}</a>
+										<a ng-if="project.remaindayshours[0].remainDays<0" href="" class="poster-title" ng-click="showProjectExpired();">{{project.title}}</a>
+									</p>
 								</div>
 								<div class="col-md-4 statistics">
-									<h3 class="amount"><i class="fa fa-rupee" aria-hidden="true"></i>{{project.moneyNeeded}}</h3>
-									<h4 class="s-title">Money Raised</h4>
+									<money-raised-graph index='$index' data="{amtNeeded:project.moneyNeeded, amtReceived:project.payments[0].amount}" ></money-raised-graph>
+									<h3 class="amount money-raised">
+										<i class="fa fa-rupee" aria-hidden="true" ng-if="project.payments[0].amount<1000"></i>{{project.payments[0].amount|convertToK}}
+									</h3>
+									<h4 class="s-title money-raised">Money Raised</h4>
 									<h3 class="amount">{{project.remaindayshours[0].supportersCount}}</h3>
-									<h4 class="s-title">People Supporting</h4>
-									<h3 class="amount">{{project.remaindayshours[0].remainHours|getDays}} Days {{project.remaindayshours[0].remainHours|getHours}} Hrs </h3>
-									<h4 class="s-title">Time Remaining</h4>
-									<a href="" class="extend">Extend the Project</a>
-									<a href="" class="extend">Discontinue this Project</a>
+									<h4 class="s-title">Supporters</h4>
+									<h3 class="amount">{{project.remaindayshours[0].remainDays}}</h3>
+									<h4 class="s-title">Days Remains</h4>
+								</div>
+							</div>
+							<div class="db-actions">
+								<div class="proj-btn-wrp">
+									<div class="row">
+										<div class="col-md-12">
+											<a href="" class="btn btn-default btn-secondary">Edit Project</a>
+											<a href="" class="btn btn-default btn-secondary">Social Media Promotion</a>
+											<a href="" class="btn btn-default btn-secondary">Home Page Promotion</a>
+										</div>
+									</div>
+									<div class="extend-link">
+										<a href="" class="extend" ng-click="showExtendProjectModal(project);">Extend the Project</a> &nbsp;|&nbsp; 
+										<a href="" class="extend" ng-click="showDiscontinueProjectModal(project);">Discontinue this Project</a>
+									</div>
+									<!--<a href="" class="btn btn-default">I will pay Rs. 5000 for 5 Days for Home Page promotion</a>-->
 								</div>
 							</div>
 						</div>
-						<!--<div class="my-project last">
-							<div class="row project">
-								<div class="col-md-8">
-									<div class="proj-banner-wrp">
-										<div class="proj-banner" style="background-image: url(assets/images/my-proj-banner.png);"></div>
-										<div class="proj-info clearfix">
-											<div class="views">
-												<h5>264</h5>
-												<p><i class="fa fa-eye" aria-hidden="true"></i>Views</p>
-											</div>
-											<div class="comments">
-												<h5>2643</h5>
-												<p><i class="fa fa-heart" aria-hidden="true"></i>Likes</p>
-											</div>
-											<div class="likes">
-												<h5>34</h5>
-												<p><i class="fa fa-comments" aria-hidden="true"></i>Comments</p>
-											</div>
-										</div>
-									</div>
-									<p class="p-desc">Lorem Ipsum is simply dummy text of the printing and typesetting industry</p>
-									<div class="proj-btn-wrp">
-										<div class="row">
-											<div class="col-md-6">
-												<a href="" class="btn btn-default">Promote Your Project</a>
-											</div>
-											<div class="col-md-6">
-												<a href="" class="btn btn-default">Make it a Featured Project</a>
-											</div>
-										</div>
-										<a href="" class="btn btn-default">I will pay Rs. 5000 for 5 Days for Home Page promotion</a>
-									</div>
-								</div>
-								<div class="col-md-4 statistics">
-									<h3 class="amount"><i class="fa fa-rupee" aria-hidden="true"></i>24,000</h3>
-									<h4 class="s-title">Money Raised</h4>
-									<h3 class="amount">14</h3>
-									<h4 class="s-title">People Supporting</h4>
-									<h3 class="amount">2 Days 4 Hrs</h3>
-									<h4 class="s-title">Time Remaining</h4>
-									<a href="" class="extend">Extend the Project</a>
-									<a href="" class="extend">Discontinue this Project</a>
-								</div>
-							</div>
-						</div>-->
 					</div>
 					<!--End of the My Project tab-->
 					
@@ -143,7 +128,7 @@
 										<img ngf-size="{width: 356, height: 176}" ngf-thumbnail="userCoverPhoto">
 									</div>
 									<div class="user-img" ng-if="user.coverPicture && !userCoverPhoto">
-										<img class="user-photo" ng-src="uploads/{{user.coverPicture}}">
+										<div class="user-photo" style="background-image:url(/uploads/{{user.coverPicture}})"></div>
 									</div>
 								</div>
 							</div>
@@ -164,7 +149,7 @@
 										<img ngf-size="{width: 356, height: 176}" ngf-thumbnail="userProfilePhoto">
 									</div>
 									<div class="user-img" ng-if="user.profilePicture && !userProfilePhoto">
-										<img class="user-photo" ng-if="user.loginType=='CUSTOM'" ng-src="uploads/{{user.profilePicture}}">
+										<div class="user-photo" ng-if="user.loginType=='CUSTOM'" style="background-image:url(/uploads/{{user.profilePicture}})"></div>
 										<img class="user-photo" ng-if="user.loginType=='GOOGLE'" ng-src="{{user.profilePicture}}" style="width:100%;">
 									</div>
 								</div>
@@ -181,7 +166,7 @@
 								<label class="f-label">Mobile Number</label>
 								<md-input-container>
 									<label class="ph-label">Your mobile number</label>
-									<input type="text" ng-model="user.mobileNumer" required>
+									<input type="text" ng-model="user.mobileNumber" required>
 									<div class="error-lable">Mobile number is required!</div>
 								</md-input-container>
 							</div>
@@ -230,34 +215,66 @@
 					<!--End the Personal details tab-->
 					
 					<!--Begin the Account details tab-->
+					<form name="userAccountForm" ng-submit="updateUserAccount(user);" novalidate autocomplete="off">
 					<div class="proj-steps-wrp account-details" ng-show="tab==3">
+						<h5 style="padding-top:25px;">BANK ACCOUNT INFORMATION</h5>
 						<div class="steps-form">
 							<div class="input-wrp">
-								<label class="f-label">Current Passowrd</label>
+								<label class="f-label">Bank Name</label>
+								<md-input-container class="md-block select" flex-gt-sm>
+									<label class="ph-label">Select Bank</label>
+									<md-select ng-model="project.bankName">
+										<md-option ng-repeat="bank in bankList" value="{{bank.name}}">
+											{{bank.name}}
+										</md-option>
+									</md-select>
+									<div class="error-lable select">Bank name is required!</div>
+								</md-input-container>
+							</div>
+
+							<div class="input-wrp">
+								<label class="f-label">Account Holder's Name</label>
 								<md-input-container>
-									<label class="ph-label">Enter Your Current Passowrd</label>
-									<input type="password">
+									<label class="ph-label">Your name</label>
+									<input type="text" ng-model="project.accountName">
+									<div class="error-lable">Account holder's name is required!</div>
 								</md-input-container>
 							</div>
 							<div class="input-wrp">
-								<label class="f-label">New Passowrd</label>
+								<label class="f-label">Bank Account Number</label>
 								<md-input-container>
-									<label class="ph-label">Enter New Passowrd</label>
-									<input type="password">
+									<label class="ph-label">Account Number</label>
+									<input type="text" ng-model="project.accountNo" ng-pattern="/^[0-9]*$/">
+									<div class="error-lable">Incorrect format of Account number.</div>
 								</md-input-container>
 							</div>
 							<div class="input-wrp">
-								<label class="f-label">Re-enter New Passowrd</label>
+								<label class="f-label">IFSC Code</label>
 								<md-input-container>
-									<label class="ph-label">Re-enter Your New Passowrd</label>
-									<input type="password">
+									<label class="ph-label">IFSC Code</label>
+									<input type="text" ng-model="project.ifscCode" name="ifsc" ng-pattern="/^[A-Za-z]{4}\d{7}$/">
+									<div ng-messages="profileForm.ifsc.$error" ng-show="profileForm.ifsc.$touched">
+										<div ng-message="required">IFSC code is required!</div>
+										<div ng-message="pattern">Incorrect format of IFSC code.</div>
+									</div>
+								</md-input-container>
+							</div>
+							
+							<div class="input-wrp">
+								<label class="f-label">Bank Address</label>
+								<md-input-container class="textarea bank-address">
+									<label class="ph-label">Address</label>
+									<textarea ng-model="project.bankAddress"></textarea>
+									<div class="error-lable">Bank address is required!</div>
 								</md-input-container>
 							</div>
 							<div class="support-me update-user">
-								<a class="btn btn-default btn-lg btn-subscribe ng-scope" ng-click="supportMe()">Update Account Information</a>
+								<button class="btn btn-default btn-lg btn-subscribe ng-scope" ng-click="userAccountForm.submit()">Update Account Details</button>
 							</div>							
-						</div>
+							
+						</div>					
 					</div>
+					</form>
 					<!--End the Account details tab-->
 					
 				</div>
@@ -296,3 +313,95 @@
 		</div>
 	</div>
 </section>
+
+<!--Discontinue project popup-->
+<div class="modal fade loginModal extendProject" id="discontinueProjectModal" role="dialog" data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog">
+	  <div class="modal-content">
+		<div class="modal-header">
+		  <button type="button" class="close" data-dismiss="modal">&times;</button>
+		  <h4 class="modal-title">Discontinue Project</h4>
+		</div>
+		<div class="modal-body">
+			
+			<div class="login-wrp">
+				<form name="app.discontinueProject" ng-submit="app.discontinueProject.$valid && discontinueProject(discontinue);" novalidate autocomplete="off">
+					<div class="login-section">
+						<label class="f-label">Reason for Discontinuing</label>
+						<md-input-container class="textarea bank-address">
+							<!--<label class="ph-label">Reason for Discontinuing</label>-->
+							<textarea ng-model="discontinue.reason" required class="focus-txt" aria-label="Reason for Discontinuing"></textarea>
+							<div class="error-lable required">Reason text field empty.</div>
+							<div class="error-lable format">Entering the invalid format.</div>
+						</md-input-container>
+						<div class="btn-wrp">
+							<button type="button" class="btn btn-default btn-secondary" ng-click="closeDiscontinueProjectModal();">Cancel</button>
+							<button type="submit" class="btn btn-default btn-primary" ng-click="app.discontinueProject.submit()">Submit</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	  </div>
+	</div>
+</div>
+
+<!--Extend project popup-->
+<div class="modal fade loginModal extendProject" id="extendProjectModal" role="dialog" data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog">
+	  <div class="modal-content">
+		<div class="modal-header">
+		  <button type="button" class="close" data-dismiss="modal">&times;</button>
+		  <h4 class="modal-title">Extend Project By</h4>
+		</div>
+		<div class="modal-body">
+			
+			<div class="login-wrp">
+				<form name="app.extendProject" ng-submit="app.extendProject.$valid && extendProject(extend);" novalidate autocomplete="off">
+					<div class="login-section">
+						<div class="input-wrp">
+							<md-radio-group ng-model="extend.daysDate">
+								<div style="margin-bottom:20px;">
+									<md-radio-button value="Days" class="md-primary duration-lt">No. of Days</md-radio-button>
+									<md-input-container class="duration-rt">
+										<label class="ph-label">30</label>
+										<input type="text" ng-model="extend.noOfDays" ng-disabled="extend.daysDate=='Date'" ng-change="changeDays(extend.noOfDays)" ng-minlength="1" ng-maxlength="3" ng-pattern="/^[0-9]*$/" ng-required="extend.daysDate=='Days'" class="focus-txt">
+										<div class="error-lable required">No.of days text field empty.</div>
+										<div class="error-lable format">Entering the invalid format.</div>
+									</md-input-container>
+								</div>
+								<div>
+									<md-radio-button value="Date" class="md-primary duration-lt">End by Date</md-radio-button>
+									<div class="date-rt">
+										<md-datepicker name="endByDate" ng-model="extend.endByDate" md-min-date="projectMinDate" md-max-date="projectMaxDate" md-placeholder="" ng-disabled="extend.daysDate=='Days'" ng-change="changeDate(extend.endByDate)" required></md-datepicker>
+										<div class="validation-messages" ng-messages="projectdetailsForm.endByDate.$error">
+											<div ng-message="required" class="date-error-lable">Date field is empty.</div>
+											<div ng-message="mindate" class="date-error-lable">Past date selection.</div>
+											<div ng-message="maxdate" class="date-error-lable">Entering the invalid format.</div>
+											<div ng-message="valid" class="date-error-lable">Entering the invalid format.</div>
+										</div>
+									</div>
+								</div>
+							</md-radio-group>
+						</div>						
+						<div class="input-wrp">
+							<label class="f-label">Reason for Extension</label>
+							<md-input-container class="textarea bank-address">
+								<!--<label class="ph-label">Reason for Discontinuing</label>-->
+								<textarea ng-model="extend.reason" required aria-label="Reason for Discontinuing"></textarea>
+								<div class="error-lable required">Reason text field empty.</div>
+								<div class="error-lable format">Entering the invalid format.</div>
+							</md-input-container>
+						</div>
+						<div class="btn-wrp">
+							<button type="button" class="btn btn-default btn-secondary" ng-click="closeExtendProjectModal();">Cancel</button>
+							<button type="submit" class="btn btn-default btn-primary" ng-click="app.extendProject.submit()">Submit</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	  </div>
+	</div>
+</div>
+

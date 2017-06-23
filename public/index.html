@@ -5,6 +5,7 @@
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta property="og:image" content="http://supportmytalent.in/assets/images/logo.png"/>
 		<!--<meta name="google-site-verification" content="2fp-pPaMd7MU_1MdIAa-qP-fOdv4iy8MpWBAym4JE20" />-->
 		<title>BACKME</title>
 		
@@ -77,16 +78,21 @@
 	<!--begin services-->
 	<script src="appJS/services/HttpServices.js"></script>
 	<script src="appJS/services/toastServices.js"></script>
+	<script src="appJS/services/paginationServices.js"></script>
 	<script src="appJS/services/BaseServices.js"></script>
 	
 	<!--begin factory-->
 	<script src="appJS/factory/uploadImages.js"></script>
 
-	<!--begin directives-->
-	<!--<script src="assets/library/google-plus-signin.js"></script>-->
-	
 	<!--begin filters-->
 	<script src="appJS/filters/commonFilters.js"></script>
+	<script src="appJS/filters/paginationFilters.js"></script>
+	
+	<!--begin directives-->
+	<!--<script src="assets/library/google-plus-signin.js"></script>-->
+	<script src="appJS/directive/moneyRaisedGraph.js"></script>
+	<script src="appJS/directive/ng-currency-mask.js"></script>
+	<script src="appJS/directive/paginationDirective.js"></script>
 	
 	<!--begin controllers-->
 	<script src="appJS/controllers/backMeCtrl.js"></script>
@@ -104,6 +110,7 @@
 	<script src="appJS/controllers/projectCtrl.js"></script>
 	<script src="appJS/controllers/checkoutCtrl.js"></script>
 	<script src="appJS/controllers/dashboardCtrl.js"></script>
+	<script src="appJS/controllers/paymentCtrl.js"></script>
 	<!--end controllers-->
 	
 	<!-- D3 chart lib -->

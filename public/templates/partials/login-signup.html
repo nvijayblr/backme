@@ -14,7 +14,8 @@
 						<md-input-container>
 							<label class="p-lable">Your Email</label>
 							<input type="email" ng-model="loginSettings.email" name="email" required ng-pattern='/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/'>
-							<div class="error-lable">Please enter a valid email.</div>
+							<div class="error-lable required">Email text field empty.</div>
+							<div class="error-lable format">Entering the invalid format.</div>
 						</md-input-container>
 
 						<label class="f-label">Password</label>
@@ -22,14 +23,16 @@
 							<label class="p-lable">Password</label>
 							<input ng-model="loginSettings.password" type="password" required>
 							<a href="" class="show-pwd" ng-click="showHidePassword();">{{showPassword?'Show Password':'Hide Password'}}</a>
-							<div class="error-lable">Password is required!</div>
+							<div class="error-lable required">Password text field empty.</div>
+							<div class="error-lable format">Entering the invalid format.</div>
 						</md-input-container>
 
 						<md-input-container class="pwd-wrp" ng-if="!showPassword">
 							<label class="p-lable">Password</label>
 							<input ng-model="loginSettings.password" type="text" required>
 							<a href="" class="show-pwd" ng-click="showHidePassword();">{{showPassword?'Show Password':'Hide Password'}}</a>
-							<div class="error-lable">Password is required!</div>
+							<div class="error-lable required">Password text field empty.</div>
+							<div class="error-lable format">Entering the invalid format.</div>
 						</md-input-container>							
 						<button class="btn btn-default btn-subscribe btn-login" ng-click="app.loginForm.submit()">Login</button>
 						<div class="or-label">or</div>
@@ -86,7 +89,8 @@
 						<md-input-container>
 							<label class="p-lable">Your Email</label>
 							<input type="email" ng-model="signUpSettings.email" required ng-pattern='/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/'>
-							<div class="error-lable">Please enter a valid email.</div>
+							<div class="error-lable required">Email text field empty.</div>
+							<div class="error-lable format">Entering the invalid format.</div>
 						</md-input-container>
 
 						<label class="f-label">Password</label>
@@ -94,18 +98,29 @@
 							<label class="p-lable">Choose a password</label>
 							<input ng-model="signUpSettings.password" type="password" required>
 							<a href="" class="show-pwd" ng-click="showHidePassword();">{{showPassword?'Show Password':'Hide Password'}}</a>
-							<div class="error-lable">Password is required!</div>
+							<div class="error-lable required">Password text field empty.</div>
+							<div class="error-lable format">Entering the invalid format.</div>
 						</md-input-container>
 
 						<md-input-container class="pwd-wrp" ng-if="!showPassword">
 							<label>Password</label>
 							<input ng-model="signUpSettings.password" type="text" required>
 							<a href="" class="show-pwd" ng-click="showHidePassword();">{{showPassword?'Show Password':'Hide Password'}}</a>
-							<div class="error-lable">Password is required!</div>
+							<div class="error-lable required">Password text field empty.</div>
+							<div class="error-lable format">Entering the invalid format.</div>
 						</md-input-container>
+						
 						<!--ng-click="showSignUpComplete();"-->
+						<div class="terms-wrp">
+							<p class="create-acc-msg">
+								<md-checkbox md-no-ink name="app.signupForm.agree" class="md-primary agree" ng-model="signUpSettings.agree" required>I agree to <a href="">terms &amp; conditions.</a>
+								<span class="error-lable">Please select the check box (Mandatory).</span>
+								</md-checkbox>
+							</p>
+						</div>
+						
 						<button class="btn btn-default btn-subscribe btn-login" ng-click="app.signupForm.submit()">Create Account</button>
-						<p class="create-acc-msg">Lorem Ipsum is simply dummy text of the printing and 	typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+						<!--<p class="create-acc-msg">Lorem Ipsum is simply dummy text of the printing and 	typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>-->
 					</div>
 				</form>
 			</div>
@@ -128,22 +143,11 @@
 				<div class="login-section">
 					<h4>What do you want to see?</h4>
 					<div class="row">
-						<div class="col-md-6">
-							<ul class="interest">
-								<li><md-checkbox md-no-ink class="md-primary">Singer</md-checkbox></li>
-								<li><md-checkbox md-no-ink class="md-primary">Cute</md-checkbox></li>
-								<li><md-checkbox md-no-ink class="md-primary">Funny</md-checkbox></li>
-								<li><md-checkbox md-no-ink class="md-primary">Prank</md-checkbox></li>
-								<li><md-checkbox md-no-ink class="md-primary">Music</md-checkbox></li>
-							</ul>
-						</div>
-						<div class="col-md-6">
-							<ul class="interest">
-								<li><md-checkbox md-no-ink class="md-primary">Singer</md-checkbox></li>
-								<li><md-checkbox md-no-ink class="md-primary">Cute</md-checkbox></li>
-								<li><md-checkbox md-no-ink class="md-primary">Funny</md-checkbox></li>
-								<li><md-checkbox md-no-ink class="md-primary">Prank</md-checkbox></li>
-								<li><md-checkbox md-no-ink class="md-primary">Music</md-checkbox></li>
+						<div class="col-md-12">
+							<ul class="interest clearfix">
+								<li ng-repeat="category in categoryList track by $index">
+									<md-checkbox md-no-ink class="md-primary">{{category.name}}</md-checkbox>
+								</li>
 							</ul>
 						</div>
 					</div>

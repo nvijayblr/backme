@@ -3,8 +3,11 @@ backMe.controller('previewCtrl', ['$scope', 'BaseServices', '$timeout', '$state'
 	_scope.step = 5;
 	_scope.stepsTitle = "Your Project Preview";
 	_scope.projectId = _state.params.projectId;
+	_scope.pieColors = ["#4d9839", "#db4d0d", "#f18b17", "#ecca34", "#01779a"];
 	
-	if(_rootScope.images.length == 0) {
+	console.log(_rootScope.images.length);
+
+	if(_rootScope.images.length==0) {
 		angular.forEach(_scope.project.projectsassets, function(_obj, _index){
 			console.log(_obj);
 			_rootScope.images.push({
@@ -17,6 +20,17 @@ backMe.controller('previewCtrl', ['$scope', 'BaseServices', '$timeout', '$state'
 				videoUrl: 'http://www.youtube.com/embed/'+_obj.videoId+'?autoplay=0&showinfo=0&rel=0&loop=1'
 			});
 		});
+		if(_scope.project.projectsassets) {
+			_rootScope.images.unshift({
+				id : 0,
+				thumbUrl : 'uploads/'+_scope.project.coverImage,
+				url : 'uploads/'+_scope.project.coverImage,
+				extUrl : '',
+				type: 'Image',
+				videoId: '',
+				videoUrl: ''
+			});
+		}
 	}
 
 	_scope.spendData = [];
@@ -27,8 +41,14 @@ backMe.controller('previewCtrl', ['$scope', 'BaseServices', '$timeout', '$state'
 			color: _scope.pieColors[index]
 		});
 	});
-
-	generateSpendMoneyGraph(_scope.spendData);
+	
+	console.log(_scope.spendData.length);
+	
+	if(_scope.spendData.length!=0){
+		_timeout(function(){
+			generateSpendMoneyGraph(_scope.spendData);
+		}, 1000);
+	}
 	
 	_scope.submitProject = function() {
 		if(_scope.project.posterImg || _scope.project.projectImages) {
@@ -37,6 +57,7 @@ backMe.controller('previewCtrl', ['$scope', 'BaseServices', '$timeout', '$state'
 		}		
 		_scope.project.status = 'ACTIVE';
 		_scope.data = _scope.project;
+		_scope.project.stepsCompleted = _scope.step;
 		_http.upload({
 			method: 'POST',
 			url: _appConstant.baseUrl + 'projects',
@@ -51,6 +72,9 @@ backMe.controller('previewCtrl', ['$scope', 'BaseServices', '$timeout', '$state'
 	}
 	
 	function generateSpendMoneyGraph(spendData) {
+		console.log(spendData);
+		//if($('#spendmoneyGraph').html()) return;
+		$('#spendmoneyGraph').html('');
 		var svg = d3.select("#spendmoneyGraph").append("svg").attr("width",300).attr("height",300);
 		svg.append("g").attr("id","spendmoney");
 		Donut3D.draw("spendmoney", spendData, 150, 150, 130, 100, 30, 0.4);
