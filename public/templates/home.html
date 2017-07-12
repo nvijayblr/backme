@@ -5,7 +5,7 @@
 			<h1>Welcome to BackMe.</h1>
 			<h3>Best platform for you to start your project, Always.</h3>
 			<div class="btn-wrp">
-				<a href="" class="btn btn-lg btn-default learn-more">Learn More</a>
+				<a href="" class="btn btn-lg btn-md btn-sm btn-xs btn-default learn-more">Learn More</a>
 				<a href="" class="btn btn-lg btn-default learn-more" ng-click="startProject();">Get Started</a>
 			</div>
 		</div>
@@ -20,12 +20,12 @@
 				
 				<section class="projects pc-wrp" ng-if="isSerchPage">
 					<div class="row btn-wrp first">
-						<h3 class="col-md-12 p-title" ng-if="!isSeeAll">Search results for {{searchKeywordsList}}</h3>
-						<h3 class="col-md-12 p-title" ng-if="isSeeAll">{{title[type]}}</h3>
+						<h3 class="col-md-12 col-sm-6 col-xs-6 p-title" ng-if="!isSeeAll">Search results for {{searchKeywordsList}}</h3>
+						<h3 class="col-md-12 col-sm-6 col-xs-6 p-title" ng-if="isSeeAll">{{title[type]}}</h3>
 					</div>
 					<div class="row poster-wrp">
 						
-						<div class="col-md-4" ng-repeat="project in projects | paginationFilters_startFrom:currentPage*pageSize | limitTo:pageSize track by $index">
+						<div class="col-md-4 col-sm-6" ng-repeat="project in projects | paginationFilters_startFrom:currentPage*pageSize | limitTo:pageSize track by $index">
 							<div class="poster">
 								<a href="#project/{{project.projectId}}" class="poster-title">
 									<div class="p-img">
@@ -35,8 +35,10 @@
 									<h5 class="poster-title">{{project.title}}</h5>
 								</a>
 								<div class="owner clearfix">
-									<div class="owner-img"><div class="img" style="background-image:url(/uploads/{{project.userPhoto}})"></div></div>
-									<h5 class="owner-name pull-left">{{project.name}}</h5>
+									<a href="#dashboard/{{project.userId}}" class="poster-title">
+										<div class="owner-img"><div class="img" style="background-image:url(/uploads/{{project.userPhoto}})"></div></div>
+										<h5 class="owner-name pull-left">{{project.name}}</h5>
+									</a>
 								</div>
 								<div class="funded-wrp">
 									<div class="f-progress">
@@ -68,14 +70,14 @@
 				<section class="projects" ng-if="!isSerchPage">
 					<div class="pc-wrp" ng-repeat="(key, projects) in homeProjects track by $index" ng-class="$first?'first':''">
 					<div class="row btn-wrp first">
-						<h3 class="col-md-6 p-title">{{title[key]}}</h3>
-						<div class="col-md-6 p-title right">
+						<h3 class="col-md-6 col-sm-6 col-xs-6 p-title">{{title[key]}}</h3>
+						<div class="col-md-6 col-sm-6 col-xs-6 p-title right">
 							<a href="" class="btn btn-default btn-secondary" ng-if="projects.length>=6" ng-click="seeAll(key)">See All</a>
 						</div>
 					</div>
 					<div class="row poster-wrp">
 						
-						<div class="col-md-4" ng-repeat="project in projects track by $index">
+						<div class="col-md-4 col-sm-6" ng-repeat="project in projects track by $index">
 							<div class="poster">
 								<a href="#project/{{project.projectId}}" class="poster-title">
 									<div class="p-img">
@@ -85,8 +87,10 @@
 									<h5 class="poster-title">{{project.title}}</h5>
 								</a>
 								<div class="owner clearfix">
-									<div class="owner-img"><div class="img" style="background-image:url(/uploads/{{project.userPhoto}})"></div></div>
-									<h5 class="owner-name pull-left">{{project.name}}</h5>
+									<a href="#dashboard/{{project.userId}}" class="poster-title">
+										<div class="owner-img"><div class="img" style="background-image:url(/uploads/{{project.userPhoto}})"></div></div>
+										<h5 class="owner-name pull-left">{{project.name}}</h5>
+									</a>
 								</div>
 								<div class="funded-wrp">
 									<div class="f-progress">

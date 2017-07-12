@@ -102,7 +102,7 @@
 						</div>
 					</div>
 					
-					<h4 class="btn-title">My Team</h4>
+					<h4 class="btn-title" ng-if="project.team.length">My Team</h4>
 					<div class="row team">
 						<div class="col-md-6" ng-repeat="team in project.team track by $index">
 							<div class="team-wrp clearfix">
@@ -163,7 +163,7 @@
 								
 								<p class="desc">
 									{{project.achivedPercent | toAchivedPercent :project.payments[0].amount:project.moneyNeeded}}% 
-									amount achievd of <br>
+									amount achieved of <br>
 									<i class="fa fa-rupee" aria-hidden="true"></i> {{project.moneyNeeded|toLocale}}
 								</p>
 							</div>
@@ -190,9 +190,13 @@
 					</div>
 				</div>
 				<div class="support-box user">
-					<div style="background-image:url(uploads/{{project.userPhoto}})" class="support-user-bg"></div>
+					<a href="#dashboard/{{project.userId}}" class="poster-title">
+						<div style="background-image:url(uploads/{{project.userPhoto}})" class="support-user-bg"></div>
+					</a>
 					<div class="user-info">
-						<h3 class="s-user">{{project.name}}</h3>
+						<a href="#dashboard/{{project.userId}}" class="poster-title">
+							<h3 class="s-user">{{project.name}}</h3>
+						</a>
 						<p class="s-loc"><i class="fa fa-map-marker" aria-hidden="true"></i>{{project.location}}</p>
 						<p class="s-email"><i class="fa fa-envelope" aria-hidden="true"></i>
 							<a href="mailto:{{project.email}}?Subject={{project.title}}">{{project.email}}</a>

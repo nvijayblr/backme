@@ -1,7 +1,7 @@
 'use strict';
 backMe.controller('basicinfoCtrl', ['$scope', 'BaseServices', '$timeout', 'Upload', 'appConstant', '$state', '$q', '$window', function(_scope, _services, _timeout, _http, _appConstant, _state, _q, _window){
 	_scope.step = 1;
-	_scope.stepsTitle = "Enter Basic Project Information:";
+	_scope.stepsTitle = "Title and basic project description";
 	_scope.posterImg = null;
 	_scope.posterOriginalImg = '';
 	_scope.myCroppedImage='';
@@ -25,7 +25,6 @@ backMe.controller('basicinfoCtrl', ['$scope', 'BaseServices', '$timeout', 'Uploa
 			//_scope.project.name = _appConstant.currentUser.name;
 			_scope.project.userPhoto = _appConstant.currentUser.profilePicture;
 		}
-		console.log(_scope.project);
 		if(!_scope.project.userId) {
 		  _scope.project.userId = _appConstant.currentUser.userId;
 		}
@@ -71,7 +70,11 @@ backMe.controller('basicinfoCtrl', ['$scope', 'BaseServices', '$timeout', 'Uploa
 			  _services.toast.showProject('Project saved in draft successfully !!');
 			  _scope.posterImg = undefined;
 		  }
-		  _state.go('create.projectdetails', { 'projectId': _scope.projectId});
+		  if(_scope.edit) {
+			  _state.go('edit.projectdetails', { 'projectId': _scope.projectId});
+		  } else {
+			  _state.go('create.projectdetails', { 'projectId': _scope.projectId});
+		  }
 		}, function(err) {
 		  console.log(err);
 		  _services.toast.show(err.data);

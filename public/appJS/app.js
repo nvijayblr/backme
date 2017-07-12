@@ -1,8 +1,8 @@
 'use strict';
-var backMe = angular.module('backMe', ['ui.router', 'angular-loading-bar', 'ngMaterial', 'ngMessages', 'facebook', 'ngFileUpload', 'thatisuday.ng-image-gallery', '720kb.socialshare', 'ngImgCrop', 'vtex.ngCurrencyMask']);
+var backMe = angular.module('backMe', ['ui.router', 'angular-loading-bar', 'ngMaterial', 'ngMessages', 'facebook', 'ngFileUpload', 'thatisuday.ng-image-gallery', '720kb.socialshare', 'ngImgCrop', 'vtex.ngCurrencyMask', 'uiCropper', 'ngDialog']);
 
 backMe
-.config(['$stateProvider', '$urlRouterProvider', 'FacebookProvider', '$mdDateLocaleProvider', function(_stateProvider, _urlRouterProvider, FacebookProvider, _mdDateLocaleProvider) {
+.config(['$stateProvider', '$urlRouterProvider', 'FacebookProvider', '$mdDateLocaleProvider', '$injector', function(_stateProvider, _urlRouterProvider, FacebookProvider, _mdDateLocaleProvider, _injector) {
     
     _urlRouterProvider.otherwise('/home');
     
@@ -58,6 +58,37 @@ backMe
 				templateUrl: 'templates/preview.html',
 				controller: 'previewCtrl'
 		})
+		.state('edit', {
+				abstract: true,
+				url: '/edit',
+				template: '<div ui-view class="fade-view"/>',
+				controller: 'editProjectCtrl'
+		})
+		.state('edit.basicinfo', {
+				url: '/basicinfo/:projectId',
+				templateUrl: 'templates/basicinfo.html',
+				controller: 'basicinfoCtrl'
+		})
+		.state('edit.projectdetails', {
+				url: '/projectdetails/:projectId',
+				templateUrl: 'templates/projectdetails.html',
+				controller: 'projectdetailsCtrl'
+		})
+		.state('edit.rewards', {
+				url: '/rewards/:projectId',
+				templateUrl: 'templates/rewards.html',
+				controller: 'rewardsCtrl'
+		})
+		.state('edit.profile', {
+				url: '/profile/:projectId',
+				templateUrl: 'templates/profile.html',
+				controller: 'profileCtrl'
+		})
+		.state('edit.preview', {
+				url: '/preview/:projectId',
+				templateUrl: 'templates/preview.html',
+				controller: 'previewCtrl'
+		})
 		.state('project', {
 				url: '/project/:projectId',
 				templateUrl: 'templates/project.html',
@@ -74,12 +105,73 @@ backMe
 				controller: 'checkoutCtrl'
 		})
 		.state('dashboard', {
-				url: '/dashboard',
+				url: '/dashboard/:userId',
 				templateUrl: 'templates/dashboard.html',
 				controller: 'dashboardCtrl'
 		})
+		/*.state('admin', {
+				abstract: true,
+				url: '/admin',
+				template: '<div ui-view class="fade-view"/>',
+				controller: 'adminCtrl'
+		})*/
+		.state('adminRoot', {
+				url: '/admin/',
+				templateUrl: 'templates/admin/adminLogin.html',
+				controller: 'adminLoginCtrl'
+		})
+		.state('adminLogin', {
+				url: '/admin/login',
+				templateUrl: 'templates/admin/adminLogin.html',
+				controller: 'adminLoginCtrl'
+		})
+		.state('admin', {
+				abstract: true,
+				url: '/admin',
+				templateUrl: 'templates/admin/adminMain.html',
+				controller: 'adminCtrl'
+		})
+		.state('admin.dashboard', {
+				url: '/dashboard',
+				templateUrl: 'templates/admin/dashboard.html',
+				controller: 'adminDashboardCtrl'
+		})
+		.state('admin.admins', {
+				url: '/admins',
+				templateUrl: 'templates/admin/admins.html',
+				controller: 'adminAdminsCtrl'
+		})
+		.state('admin.users', {
+				url: '/users',
+				templateUrl: 'templates/admin/users.html',
+				controller: 'adminUsersCtrl'
+		})
+		.state('admin.projects', {
+				url: '/projects',
+				templateUrl: 'templates/admin/projects.html',
+				controller: 'adminProjectsCtrl'
+		})
+		.state('admin.payments', {
+				url: '/payments',
+				templateUrl: 'templates/admin/payments.html',
+				controller: 'adminPaymentsCtrl'
+		})
+		.state('admin.category', {
+				url: '/category',
+				templateUrl: 'templates/admin/category.html',
+				controller: 'adminCategoryCtrl'
+		})
+		.state('admin.banks', {
+				url: '/banks',
+				templateUrl: 'templates/admin/banks.html',
+				controller: 'adminBanksCtrl'
+		})
+		.state('admin.cities', {
+				url: '/cities',
+				templateUrl: 'templates/admin/cities.html',
+				controller: 'adminCitiesCtrl'
+		})
 		;
-
 		/*config facebook login button*/
 		var myAppId = '211137599382729';
 		FacebookProvider.init(myAppId);
@@ -93,8 +185,3 @@ backMe
 backMe.run(['$rootScope', '$window', function(_rootScope, _window) {
 	console.log('app run phase...')
 }]);
-/*.state('app.extendreservation', {
-		url: 'extendreservation/:userId/:reservationId/:outTime',
-		templateUrl: 'templates/extendreservation.html',
-		controller: 'extendreservationCtrl'
-})*/

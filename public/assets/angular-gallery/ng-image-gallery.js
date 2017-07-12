@@ -101,12 +101,12 @@
 						scope._bubblesInView = bubblesInView;
 						scope._finalBubbleSpace = finalBubbleSpace;
 						scope._bubbleMargin = '0 ' + (bubbleMargin/2) + 'px';
+						console.log('HJaa', bubbleSize)
 
 						scope._safeApply(angular.noop);
 					};
 
-					$timeout(autoFitBubbles);
-
+					$timeout(autoFitBubbles, 1000);
 					angular.element($window).bind('resize', function(){
 						$timeout(autoFitBubbles);
 					});
@@ -260,6 +260,8 @@
 
 										// Image bubble navigation container
 										'<div class="galleria-bubbles-wrapper" ng-if="bubbles && imgBubbles" ng-hide="images.length == 1" ng-style="{\'height\' : bubbleSize+\'px\'}" bubble-auto-fit>'+
+											'<div class="thumb prev" ng-click="methods.prev();" ng-class="{\'bubbles-on\':bubbles}" ng-hide="images.length == 1"></div>'+
+											'<div class="thumb next" ng-click="methods.next();" ng-class="{\'bubbles-on\':bubbles}" ng-hide="images.length == 1"></div>'+
 											'<div class="galleria-bubbles" bubble-auto-scroll ng-style="{\'margin-left\': _bubblesContainerMarginLeft}">'+
 												'<span class="galleria-bubble img-bubble" ng-click="_setActiveImg(image);" ng-repeat="image in images track by image.id" ng-class="{active : (_activeImg == image)}" show-image-async="{{image.bubbleUrl || image.thumbUrl || image.url}}" async-kind="bubble" ng-style="{\'width\' : bubbleSize+\'px\', \'height\' : bubbleSize+\'px\', \'border-width\' : bubbleSize/10+\'px\', margin: _bubbleMargin}"></span>'+
 											'</div>'+

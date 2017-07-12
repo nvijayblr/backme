@@ -1,5 +1,15 @@
 'use strict';
 backMe
+.filter('commonSorting', [function() {
+    return function(_scope) {
+		_scope.sort_propertyName = null;
+		_scope.sort_reverse = true;
+		_scope.sortBy = function(sort_propertyName) {
+			_scope.sort_reverse = (_scope.sort_propertyName === sort_propertyName) ? !_scope.sort_reverse : false;
+			_scope.sort_propertyName = sort_propertyName;
+		};
+    };
+}])
 .filter('isEmpty', [function() {
     return function(obj) {
 		for (var i in obj) if (obj.hasOwnProperty(i)) return false;
@@ -29,6 +39,14 @@ backMe
 			return parseFloat(_amt).toLocaleString();
 		else
 			return '0';
+    };
+}])
+.filter('ddmmyyyy', [function() {
+    return function(_date) {
+		if(_date)
+			return moment(_date).format('DD/MM/YYYY');
+		else
+			return '-';
     };
 }])
 .filter('convertToK', [function() {
@@ -69,7 +87,7 @@ backMe
 }])
 .filter('getFirstLetter', [function() {
 	var str = '';
-    return function(_display, _name, _email,) {
+    return function(_display, _name, _email) {
 		if(_name) {
 			str = _name.substring(0,1);
 			if(_name.split(' ')[1])

@@ -1,11 +1,14 @@
 'use strict';
-backMe.controller('dashboardCtrl', ['$scope', 'BaseServices', 'appConstant', '$timeout', '$state', 'Upload', function(_scope, _services, _appConstant, _timeout, _state, _http){
-
-	if(_appConstant.currentUser == '' || angular.equals(_appConstant.currentUser, {})) {
+backMe.controller('dashboardCtrl', ['$scope', 'BaseServices', 'appConstant', '$timeout', '$state', 'Upload', '$rootScope', function(_scope, _services, _appConstant, _timeout, _state, _http, _rootScope){
+	/*if(_appConstant.currentUser == '' || angular.equals(_appConstant.currentUser, {})) {
 		_state.go('home');
 		return false;
-	}
-	_scope.user = _appConstant.currentUser;
+	}*/
+	_scope.user = {};
+	_scope.userId = _state.params.userId;
+	_scope.curUser = false;
+	if(_scope.userId == _appConstant.currentUser.userId) _scope.curUser = true;
+	console.log('_scope.curUser', _scope.curUser);
 	
 	_scope.statistics = {
 		viewsCount: 0,
@@ -14,13 +17,20 @@ backMe.controller('dashboardCtrl', ['$scope', 'BaseServices', 'appConstant', '$t
 		amountReceived: 0
 	};
 	
+	if(_rootScope.projectCreated) {
+		_timeout(function(){
+			$("#thankyouModal").modal('show');
+		}, 1000);
+	}
 	_scope.getUserInfo = function() {
 		_services.http.serve({
 			method: 'GET',
-			url: _appConstant.baseUrl + 'users/'+_scope.user.userId
+			url: _appConstant.baseUrl + 'users/'+_scope.userId
 		}, function(data){
 			_scope.user = data[0];
-			localStorage.setItem('backMeUser', JSON.stringify(_scope.user));
+			if(_appConstant.currentUser.userId == _scope.user.userId) {
+				localStorage.setItem('backMeUser', JSON.stringify(_scope.user));
+			}
 		}, function(err) {
 			console.log(err)
 		});
@@ -30,13 +40,15 @@ backMe.controller('dashboardCtrl', ['$scope', 'BaseServices', 'appConstant', '$t
 	_scope.getProjectByUser = function() {
 		_services.http.serve({
 			method: 'GET',
-			url: _appConstant.baseUrl + 'projectsByUser?userId='+_scope.user.userId+'&status=ACTIVE'
+			url: _appConstant.baseUrl + 'projectsByUser?userId='+_scope.userId+'&status=ALL'
 		}, function(data){
 			_scope.projects = data;
 			angular.forEach(_scope.projects, function(_obj) {
-				_scope.statistics.viewsCount = _scope.statistics.viewsCount + _obj.remaindayshours[0].viewsCount;
-				_scope.statistics.supportersCount = _scope.statistics.supportersCount + _obj.remaindayshours[0].supportersCount;
-				_scope.statistics.commentsCount = _scope.statistics.commentsCount + _obj.remaindayshours[0].commentsCount;
+				if(_obj.remaindayshours.length) {
+					_scope.statistics.viewsCount = _scope.statistics.viewsCount + _obj.remaindayshours[0].viewsCount;
+					_scope.statistics.supportersCount = _scope.statistics.supportersCount + _obj.remaindayshours[0].supportersCount;
+					_scope.statistics.commentsCount = _scope.statistics.commentsCount + _obj.remaindayshours[0].commentsCount;
+				}
 				if(_obj.payments && _obj.payments.length) {
 					_scope.statistics.amountReceived = _scope.statistics.amountReceived + _obj.payments[0].amount;
 				}
@@ -51,6 +63,7 @@ backMe.controller('dashboardCtrl', ['$scope', 'BaseServices', 'appConstant', '$t
 	_scope.userProfilePhoto = null;
 	
 	_scope.updateUserProfile = function(_user) {
+		if(_scope.userId != _scope.user.userId) return;
 		if(!_scope.userCoverPhoto && !_user.coverPicture) {
 			_services.toast.show('Please upload the cover photo.');
 			return;
@@ -65,6 +78,9 @@ backMe.controller('dashboardCtrl', ['$scope', 'BaseServices', 'appConstant', '$t
 		if(_scope.userProfilePhoto) {
 			_user.userProfilePhoto = _scope.userProfilePhoto;
 		}
+		if(_scope.myCroppedProfileImage) {
+			_user.userProfilePhoto = _http.dataUrltoBlob(_scope.myCroppedProfileImage, _scope.userProfilePhoto.name);
+		}
 		
 		_http.upload({
 			method: 'POST',
@@ -75,6 +91,7 @@ backMe.controller('dashboardCtrl', ['$scope', 'BaseServices', 'appConstant', '$t
 			localStorage.setItem('backMeUser', JSON.stringify(res.data.user));
 			_scope.userCoverPhoto = undefined;
 			_scope.userProfilePhoto = undefined;
+			_scope.myCroppedImage = undefined;
 			_services.toast.show('Profile updated successfully');
 		}, function (err) {
 			_services.toast.show(err.data);
@@ -86,7 +103,7 @@ backMe.controller('dashboardCtrl', ['$scope', 'BaseServices', 'appConstant', '$t
 		console.log(user);
 	}
 	_scope.showProjectExpired = function() {
-		_services.toast.show('Profile has been expired. Please Extend the project !!');
+		_services.toast.show('Project has been expired. Please Extend the project !!');
 	}
 	
 	_scope.discontinue = {
@@ -107,6 +124,7 @@ backMe.controller('dashboardCtrl', ['$scope', 'BaseServices', 'appConstant', '$t
 	_scope.projectMaxDate = moment().add(999, 'days').toDate();
 	
 	_scope.showDiscontinueProjectModal = function(_project) {
+		if(_scope.userId != _scope.user.userId) return;
 		_scope.app.discontinueProject.$setPristine();
 		_scope.app.discontinueProject.$setUntouched();
 		_scope.app.discontinueProject.$submitted = false;
@@ -119,6 +137,7 @@ backMe.controller('dashboardCtrl', ['$scope', 'BaseServices', 'appConstant', '$t
 	}
 	
 	_scope.showExtendProjectModal = function(_project) {
+		if(_scope.userId != _scope.user.userId) return;
 		_scope.app.extendProject.$setPristine();
 		_scope.app.extendProject.$setUntouched();
 		_scope.app.extendProject.$submitted = false;
@@ -140,6 +159,7 @@ backMe.controller('dashboardCtrl', ['$scope', 'BaseServices', 'appConstant', '$t
 		$("#extendProjectModal").modal('hide');
 	}
 	_scope.discontinueProject = function(_discontinue) {
+		if(_scope.userId != _scope.user.userId) return;
 		_services.http.serve({
 			method: 'PUT',
 			url: _appConstant.baseUrl + 'update',
@@ -153,6 +173,7 @@ backMe.controller('dashboardCtrl', ['$scope', 'BaseServices', 'appConstant', '$t
 
 	}
 	_scope.extendProject = function(_extend) {
+		if(_scope.userId != _scope.user.userId) return;
 		_services.http.serve({
 			method: 'PUT',
 			url: _appConstant.baseUrl + 'update',

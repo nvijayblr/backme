@@ -1,0 +1,76 @@
+<section class="filter create">
+	<div class="input-wrp">
+		<div class="clearfix search-wrp">
+			<input type="text" ng-model="filter.search" class="form-control search-txt" placeholder="Search" />
+			<button type="button" class="btn btn-xs btn-primary search-btn" ng-click="applySearch(filter.search);">Search</button>
+		</div>		
+	</div>
+	<div class="clearfix">
+		<p class="pull-left title">Total: {{projects.length}}</p>
+		<button type="button" class="btn btn-xs btn-primary pull-right">Create</button>
+	</div>
+</section>
+<table class="table table-hover table-responsive table-striped">
+	<tr>
+		<th ng-click="sortBy('projectId')" class="sort-title">
+			ProjectId
+			<i ng-show="sort_propertyName == 'projectId'" class="glyphicon glyphicon-triangle-{{sort_reverse? 'bottom':'top'}}"></i>
+			<i ng-hide="sort_propertyName == 'projectId'" class="glyphicon glyphicon-triangle-bottom"></i>
+		</th>
+		<th ng-click="sortBy('title')" class="sort-title">
+			Title
+			<i ng-show="sort_propertyName == 'title'" class="glyphicon glyphicon-triangle-{{sort_reverse? 'bottom':'top'}}"></i>
+			<i ng-hide="sort_propertyName == 'title'" class="glyphicon glyphicon-triangle-bottom"></i>
+		</th>
+		<th ng-click="sortBy('category')" class="sort-title">
+			Category
+			<i ng-show="sort_propertyName == 'category'" class="glyphicon glyphicon-triangle-{{sort_reverse? 'bottom':'top'}}"></i>
+			<i ng-hide="sort_propertyName == 'category'" class="glyphicon glyphicon-triangle-bottom"></i>
+		</th>
+		<th ng-click="sortBy('name')" class="sort-title">
+			User
+			<i ng-show="sort_propertyName == 'name'" class="glyphicon glyphicon-triangle-{{sort_reverse? 'bottom':'top'}}"></i>
+			<i ng-hide="sort_propertyName == 'name'" class="glyphicon glyphicon-triangle-bottom"></i>
+		</th>
+		<th ng-click="sortBy('createdDate')" class="sort-title">
+			Created On
+			<i ng-show="sort_propertyName == 'createdDate'" class="glyphicon glyphicon-triangle-{{sort_reverse? 'bottom':'top'}}"></i>
+			<i ng-hide="sort_propertyName == 'createdDate'" class="glyphicon glyphicon-triangle-bottom"></i>
+		</th>
+		<th ng-click="sortBy('endByDate')" class="sort-title">
+			End Date
+			<i ng-show="sort_propertyName == 'endByDate'" class="glyphicon glyphicon-triangle-{{sort_reverse? 'bottom':'top'}}"></i>
+			<i ng-hide="sort_propertyName == 'endByDate'" class="glyphicon glyphicon-triangle-bottom"></i>
+		</th>
+		<th ng-click="sortBy('moneyNeeded')" class="sort-title">
+			Money Needed
+			<i ng-show="sort_propertyName == 'moneyNeeded'" class="glyphicon glyphicon-triangle-{{sort_reverse? 'bottom':'top'}}"></i>
+			<i ng-hide="sort_propertyName == 'moneyNeeded'" class="glyphicon glyphicon-triangle-bottom"></i>
+		</th>
+		<th ng-click="sortBy('status')" class="sort-title">
+			Status
+			<i ng-show="sort_propertyName == 'status'" class="glyphicon glyphicon-triangle-{{sort_reverse? 'bottom':'top'}}"></i>
+			<i ng-hide="sort_propertyName == 'status'" class="glyphicon glyphicon-triangle-bottom"></i>
+		</th>
+	</tr>
+	<tr ng-repeat="project in projects | orderBy: sort_propertyName:sort_reverse | paginationFilters_startFrom:currentPage*pageSize | limitTo:pageSize track by $index">
+		<td>{{project.projectId}}</td>
+		<td><a href="#/project/{{project.projectId}}" target="_blank" class="link">{{project.title}}</a></td>
+		<td>{{project.category}}</td>
+		<td><a href="#/dashboard/{{project.userId}}" target="_blank" class="link">{{project.name}}</a></td>
+		<td>{{project.createdDate|ddmmyyyy}}</td>
+		<td>{{project.endByDate|ddmmyyyy}}</td>
+		<td><i class="fa fa-rupee" aria-hidden="true"></i>{{project.moneyNeeded|toLocale}}</td>
+		<td>
+			<div class="btn-group" role="group" aria-label="Basic example">
+				<button type="button" class="btn btn-xs" ng-class="project.status=='ACTIVE'?'btn-primary':'btn-secondary'" ng-click="deActivateProjects('ACTIVE', project)">Activate</button>
+				<button type="button" class="btn btn-xs" ng-class="project.status!='ACTIVE'?'btn-primary':'btn-secondary'" ng-click="deActivateProjects('DEACTIVE', project)">Deactivate</button>
+				<button type="button" class="btn btn-xs btn-secondary">Edit</button>
+			</div>
+		</td>
+	</tr>
+</table>
+<div class="center" ng-if="projects.length">
+	<div class="pagination-wrapper" pagination-directive></div>
+</div>
+<div class="center" ng-if="!projects.length">No record found.</div>

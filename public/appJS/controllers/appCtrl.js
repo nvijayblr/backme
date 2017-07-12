@@ -1,7 +1,15 @@
 'use strict';
 backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope', '$window', '$state', '$mdToast', 'appConstant', 'Facebook', '$http',   function(_scope, _services, _timeout, _rootScope, _window, _state, _mdToast, _appConstant, Facebook, _http){
-	
+
 	_scope.appConstant = _appConstant;
+	_scope.isAdmin = false;
+	_scope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams){
+		_scope.isAdmin = false;
+		if(toState.name.substr(0,5) == 'admin') {
+			_scope.isAdmin = true;
+		}
+	});
+	
 	_scope.loginSettings = {
 		email : '',
 		password: ''
@@ -126,6 +134,25 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 		{'name': 'Yes Bank'}
 	];
 
+	/*Autocomplete - City related functions*/
+	_scope.cityList = {};
+	_scope.loadAllCities = function(_callback) {
+		_services.http.serve({
+			method: 'GET',
+			url: _appConstant.baseUrl + 'cities'
+		}, function(data){
+			_scope.cityList = data.map( function (_obj) {
+				return {
+					value: _obj.city.toLowerCase(),
+					display: _obj.city
+				};
+			});
+			return _callback(_scope.cityList);
+		}, function(err) {
+		});
+    }	
+	
+	_rootScope.projectCreated = false;
 	
 	if(_appConstant.currentUser != '') {
 		_scope.loggedUser = _appConstant.currentUser;
@@ -169,6 +196,7 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 			url: _appConstant.baseUrl + 'bySocial?q='+_type+'&limit=1000000&category='+_scope.category
 		}, function(data){
 			_scope.projects = data[_type];
+			_scope.pageSize = 6;
 			_services.pagination.init(_scope, _scope.projects);
 		}, function(err) {
 			console.log(err)

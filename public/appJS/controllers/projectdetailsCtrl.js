@@ -1,7 +1,7 @@
 'use strict';
 backMe.controller('projectdetailsCtrl', ['$scope', 'BaseServices', '$timeout', '$state', 'Upload', '$q', 'appConstant', 'uploadImages', '$rootScope', function (_scope, _services, _timeout, _state, _http, _q, _appConstant, _uploadImages, _rootScope) {
 	_scope.step = 2;
-	_scope.stepsTitle = "Enter Project Details:";
+	_scope.stepsTitle = "Project Videos/Photos and fund required";
 	_scope.projectId = _state.params.projectId;
 	_scope.disableDragDrop = false;
 	_scope.posterImg = null;
@@ -66,7 +66,11 @@ backMe.controller('projectdetailsCtrl', ['$scope', 'BaseServices', '$timeout', '
 			data: _scope.inputData
 		}).then(function (data) {
 			_services.toast.showProject('Project details upated successfully !!');
+		  if(_scope.edit) {
+			_state.go('edit.rewards', {'projectId': _scope.projectId});
+		  } else {
 			_state.go('create.rewards', {'projectId': _scope.projectId});
+		  }
 		}, function (err) {
 			console.log(err);
 			_services.toast.show(err.data);
@@ -257,6 +261,9 @@ backMe.controller('projectdetailsCtrl', ['$scope', 'BaseServices', '$timeout', '
 			projectId : _scope.project.projectId,
 			userId: _scope.project.userId
 		});
+		_timeout(function() {
+			$(".drag-drop-box").last().trigger('click');
+		}, 300);
 	}
 
 }]);

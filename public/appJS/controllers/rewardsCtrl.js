@@ -1,7 +1,7 @@
 'use strict';
 backMe.controller('rewardsCtrl', ['$scope', 'BaseServices', '$timeout', '$state', 'Upload', 'appConstant', function(_scope, _services, _timeout, _state, _http, _appConstant){
 	_scope.step = 3;
-	_scope.stepsTitle = "Rewards & Services:";
+	_scope.stepsTitle = "Support and services reward details against funding";
 	_scope.projectId = _state.params.projectId;
 	
 	_scope.addRewardsSpendFields(_scope.projectId);
@@ -59,7 +59,11 @@ backMe.controller('rewardsCtrl', ['$scope', 'BaseServices', '$timeout', '$state'
 			data: _scope.data
 		}).then(function (data) {
 			_services.toast.showProject('Project details upated successfully !!');
+		  if(_scope.edit) {
+			_state.go('edit.profile', {'projectId': _scope.projectId});
+		  } else {
 			_state.go('create.profile', {'projectId': _scope.projectId});
+		  }
 		}, function (err) {
 			_services.toast.show(err.data);
 			console.log(err);

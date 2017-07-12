@@ -15,24 +15,25 @@ var app = express();
 
 var validate = require('./modules/validation');
 var projects = require('./modules/projects');
+var admin = require('./modules/admin');
 var social = require('./modules/social');
 var youtube = require('./modules/youtube-upload');
 var nesting = require('./modules/mysql-nesting');
 
 var dbConnection = mysql.createConnection({
-	/*host: 'localhost',
+	host: 'localhost',
 	user: 'root',
 	password: '',
-	database: 'backme'*/
-  	host: 'localhost',
+	database: 'backme'
+  	/*host: 'localhost',
 	user: 'root',
 	password: 'Xcz?2oAffm',
 	database: 'backme',
 	port: 3306,
-	debug: true
+	debug: true*/
 });
 
-var host = 80;
+var host = 3001;
 
 /*
 backme.talent@gmail.com
@@ -47,11 +48,11 @@ https://www.twilio.com/blog/2015/02/building-your-own-personal-assistant-with-tw
 //Youtube config
 
 //Local Server
-/*var oAuthCredentials = {
+var oAuthCredentials = {
 	client_id: '47668821926-88cp2nt18qdvh525lm6gf509ug38c92d.apps.googleusercontent.com',
 	client_secret: 'aEmqEAy8x4m8J3W70N0Vo1Ip',
 	redirect_url: 'http://localhost:3001/auth'
-};*/
+};
 
 
 /*
@@ -59,11 +60,11 @@ https://accounts.google.com/o/oauth2/auth?access_type=offline&scope=https%3A%2F%
 */
 
 //Live server
-var oAuthCredentials = {
+/*var oAuthCredentials = {
 	client_id: '1022772628270-hbpvh5ooeub8h0bdfu4nsf895vtuifp1.apps.googleusercontent.com',
 	client_secret: '7KvmTlj8s-ribzsuplXbYzjH',
 	redirect_url: 'http://supportmytalent.in/auth'
-};
+};*/
 
 var server = app.listen(host, function (request, response) {
     var host = server.address().address,
@@ -121,6 +122,10 @@ projects.projectsAPI(app, dbConnection, validate, multer, path, nesting, async, 
 
 /*Social related API*/
 social.socialAPI(app, dbConnection, validate, multer, path, nesting, async, moment, transporter, emails);
+
+/*admin related API*/
+admin.adminAPI(app, dbConnection, validate, multer, path, nesting, async, moment, transporter, emails);
+
 
 
 /*Paytm Integration*/
@@ -275,7 +280,6 @@ app.post('/login', function (req, res) {
 	}
 });
 
-var hostPath = ""
 
 /*singup user*/
 app.post('/signup', function (req, res) {

@@ -196,7 +196,7 @@ exports.projectsAPI = function(app, dbConnection, validate, multer, path, nestin
 				return;
 			}
 			var project = req.body;
-			//console.log(req.files);
+			console.log(project);
 			if(req.files && req.files.posterImg) {
 				project.coverImage = req.files.posterImg[0].filename;
 			}
@@ -242,6 +242,9 @@ exports.projectsAPI = function(app, dbConnection, validate, multer, path, nestin
 				}
 				if(project.remaindayshours) {
 					delete project.remaindayshours;	
+				}
+				if(project.likes) {
+					delete project.likes;	
 				}
 				if(project.otherCategory) {
 					project.category = project.category + '|' +project.otherCategory;
@@ -385,7 +388,7 @@ exports.projectsAPI = function(app, dbConnection, validate, multer, path, nestin
 					LEFT JOIN supportrewards ON (projects.projectId = supportrewards.projectId) \
 					LEFT JOIN team ON (projects.projectId = team.projectId) \
 					LEFT JOIN (SELECT orderId, projectId, COALESCE(SUM(amount),0) as amount, count(orderId) as count FROM payments WHERE txnStatus="TXN_SUCCESS" GROUP BY projectId) payments ON (projects.projectId = payments.projectId) \
-					WHERE projects.STATUS = "ACTIVE" AND projects.endByDate >= CURDATE()', nestTables: true}, function (error, results, fields) {
+					WHERE projects.STATUS = "ACTIVE" AND projects.endByDate >= CURDATE()', nestTables: true}, [userId], function (error, results, fields) {
 				var nestingOptions = [
 					{ tableName : 'projects', pkey: 'projectId', fkeys:[{table:'spendmoney',col:'projectId'}, {table:'projectsassets',col:'projectId'}, {table:'servicerewards',col:'projectId'}, {table:'supportrewards',col:'projectId'}, {table:'team',col:'projectId'}, {table:'remaindayshours',col:'projectId'}, {table:'payments',col:'projectId'}]},
 					{ tableName : 'spendmoney', pkey: 'spendId'},
@@ -404,11 +407,12 @@ exports.projectsAPI = function(app, dbConnection, validate, multer, path, nestin
 				res.status(200).send(nestedRows);
 			});
 		} catch(e) {
+			console.log(e);
 			res.status(500).send("Internal Server Error.");
 		}
 	});
 	
-	/*Get Specific project details*/
+	/*Get Specific project by ACTIVE status and by userId details*/
 	app.get('/projects/:projectId', function (req, res) {
 		var projectId = req.params.projectId;
 		var userId = 0;
@@ -425,7 +429,48 @@ exports.projectsAPI = function(app, dbConnection, validate, multer, path, nestin
 					LEFT JOIN team ON (projects.projectId = team.projectId) \
 					LEFT JOIN (SELECT orderId, projectId, COALESCE(SUM(amount),0) as amount, count(orderId) as count FROM payments WHERE txnStatus="TXN_SUCCESS" GROUP BY projectId) payments ON (projects.projectId = payments.projectId) \
 					LEFT JOIN (SELECT projectId, likeId, count(likeId) as likeCount, EXISTS(SELECT * FROM likes WHERE userId=?) as alreadyLiked  from likes WHERE projectId=?) likes ON (projects.projectId = likes.projectId) \
-					WHERE projects.projectId=? AND projects.STATUS = "ACTIVE" AND projects.endByDate >= CURDATE()', nestTables: true}, [userId, projectId, projectId, projectId], function (error, results, fields) {
+					WHERE projects.projectId=? AND projects.STATUS = "ACTIVE" AND projects.endByDate >= CURDATE()', nestTables: true}, [userId, userId, projectId, projectId], function (error, results, fields) {
+					var nestingOptions = [
+						{ tableName : 'projects', pkey: 'projectId', fkeys:[{table:'spendmoney',col:'projectId'}, {table:'projectsassets',col:'projectId'}, {table:'servicerewards',col:'projectId'}, {table:'supportrewards',col:'projectId'}, {table:'team',col:'projectId'}, {table:'remaindayshours',col:'projectId'}, {table:'payments',col:'projectId'}, {table:'likes',col:'projectId'}]},
+						{ tableName : 'spendmoney', pkey: 'spendId'},
+						{ tableName : 'projectsassets', pkey: 'assetId'},
+						{ tableName : 'servicerewards', pkey: 'serviceId'},
+						{ tableName : 'supportrewards', pkey: 'supportId'},
+						{ tableName : 'team', pkey: 'teamId'},
+						{ tableName : 'remaindayshours', pkey: 'remainId'},
+						{ tableName : 'payments', pkey: 'orderId'},
+						{ tableName : 'likes', pkey: 'likeId'}
+					];
+					var nestedRows = nesting.convertToNested(results, nestingOptions);
+					if (error) {
+						console.log(error);
+						res.status(500).send("Internal Server Error.");
+						return;
+					}
+					res.status(200).send(nestedRows.length ? nestedRows[0] : nestedRows);
+				});
+			}
+		} catch(e) {
+			console.log(e);
+			res.status(500).send("Internal Server Error.");
+		}
+	});
+	
+	/*Get Specific project by projectId without any condition*/
+	app.get('/getProjectDetails/:projectId', function (req, res) {
+		var projectId = req.params.projectId;
+		try {
+			if(projectId) {
+				dbConnection.query({sql: 'SELECT *, TIMESTAMPDIFF(HOUR,CURDATE(),endByDate) as remainHours, \
+					TIMESTAMPDIFF(DAY,CURDATE(),endByDate) as remainDays, TIMESTAMPDIFF(DAY,createdDate,endByDate) as totalDays, (SELECT COUNT(*) from likes l where l.projectId=projects.projectId) AS likesCount, (SELECT COUNT(*) from likes al where al.projectId=projects.projectId) AS alreadyLiked, (SELECT COUNT(*) from views v where v.projectId=projects.projectId) AS viewsCount, (SELECT COUNT(*) from payments p where p.projectId=projects.projectId AND txnStatus="TXN_SUCCESS") AS supportersCount FROM projects \
+					LEFT JOIN spendmoney ON (projects.projectId = spendmoney.projectId) \
+					LEFT JOIN projectsassets ON (projects.projectId = projectsassets.projectId) \
+					LEFT JOIN servicerewards ON (projects.projectId = servicerewards.projectId) \
+					LEFT JOIN supportrewards ON (projects.projectId = supportrewards.projectId) \
+					LEFT JOIN team ON (projects.projectId = team.projectId) \
+					LEFT JOIN (SELECT orderId, projectId, COALESCE(SUM(amount),0) as amount, count(orderId) as count FROM payments WHERE txnStatus="TXN_SUCCESS" GROUP BY projectId) payments ON (projects.projectId = payments.projectId) \
+					LEFT JOIN (SELECT projectId, likeId, count(likeId) as likeCount from likes WHERE projectId=?) likes ON (projects.projectId = likes.projectId) \
+					WHERE projects.projectId=?', nestTables: true}, [projectId, projectId], function (error, results, fields) {
 					var nestingOptions = [
 						{ tableName : 'projects', pkey: 'projectId', fkeys:[{table:'spendmoney',col:'projectId'}, {table:'projectsassets',col:'projectId'}, {table:'servicerewards',col:'projectId'}, {table:'supportrewards',col:'projectId'}, {table:'team',col:'projectId'}, {table:'remaindayshours',col:'projectId'}, {table:'payments',col:'projectId'}, {table:'likes',col:'projectId'}]},
 						{ tableName : 'spendmoney', pkey: 'spendId'},
@@ -457,6 +502,7 @@ exports.projectsAPI = function(app, dbConnection, validate, multer, path, nestin
 		var user = req.query;
 		try {
 			if(user.userId && user.status) {
+				if(user.status == 'ALL') user.status = '%';
 				dbConnection.query({sql: 'SELECT *, TIMESTAMPDIFF(HOUR,CURDATE(),endByDate) as remainHours, \
 					TIMESTAMPDIFF(DAY,CURDATE(),endByDate) as remainDays, TIMESTAMPDIFF(DAY,createdDate,endByDate) as totalDays, (SELECT COUNT(*) from likes l where l.projectId=projects.projectId) AS likesCount, (SELECT COUNT(*) from likes al where al.projectId=projects.projectId AND al.userId=?) AS alreadyLiked, (SELECT COUNT(*) from views v where v.projectId=projects.projectId) AS viewsCount, (SELECT COUNT(*) from comments c where c.projectId=projects.projectId) AS commentsCount, (SELECT COUNT(*) from payments p where p.projectId=projects.projectId AND txnStatus="TXN_SUCCESS") AS supportersCount FROM projects \
 					LEFT JOIN spendmoney ON projects.projectId = spendmoney.projectId \
@@ -466,7 +512,7 @@ exports.projectsAPI = function(app, dbConnection, validate, multer, path, nestin
 					LEFT JOIN team ON (projects.projectId = team.projectId) \
 					LEFT JOIN (SELECT orderId, projectId, COALESCE(SUM(amount),0) as amount, count(orderId) as count FROM payments WHERE txnStatus="TXN_SUCCESS" GROUP BY projectId) \
 					payments ON (projects.projectId = payments.projectId) \
-					WHERE projects.userId=? AND projects.status=?', nestTables: true}, [user.userId, user.userId, user.status], function (error, results, fields) {
+					WHERE projects.userId=? AND projects.status LIKE ? ORDER BY projects.projectId DESC', nestTables: true}, [user.userId, user.userId, user.status], function (error, results, fields) {
 					var nestingOptions = [
 						{ tableName : 'projects', pkey: 'projectId', fkeys:[{table:'spendmoney',col:'projectId'}, {table:'projectsassets',col:'projectId'}, {table:'servicerewards',col:'projectId'}, {table:'supportrewards',col:'projectId'}, {table:'team',col:'projectId'}, {table:'remaindayshours',col:'projectId'}, {table:'payments',col:'projectId'}]},
 						{ tableName : 'spendmoney', pkey: 'spendId'},

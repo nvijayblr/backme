@@ -1,11 +1,11 @@
 'use strict';
 backMe.controller('previewCtrl', ['$scope', 'BaseServices', '$timeout', '$state', 'Upload', 'appConstant', '$rootScope', '$sce', function(_scope, _services, _timeout, _state, _http, _appConstant, _rootScope, _sce){
 	_scope.step = 5;
-	_scope.stepsTitle = "Your Project Preview";
+	_scope.stepsTitle = "Actual representation of your project and submission";
 	_scope.projectId = _state.params.projectId;
 	_scope.pieColors = ["#4d9839", "#db4d0d", "#f18b17", "#ecca34", "#01779a"];
 	
-	console.log(_rootScope.images.length);
+	//console.log(_rootScope.images.length);
 
 	if(_rootScope.images.length==0) {
 		angular.forEach(_scope.project.projectsassets, function(_obj, _index){
@@ -63,8 +63,14 @@ backMe.controller('previewCtrl', ['$scope', 'BaseServices', '$timeout', '$state'
 			url: _appConstant.baseUrl + 'projects',
 			data: _scope.data
 		}).then(function (data) {
-			_services.toast.show('<img src="../assets/icons/checked.png" class="toast-tick"/>Project created successfully !!');
-			_state.go('dashboard');
+			if(_scope.edit){
+				_services.toast.show('<img src="../assets/icons/checked.png" class="toast-tick"/>Project updated successfully !!');
+				_rootScope.projectCreated = false;
+			}else{
+				_services.toast.show('<img src="../assets/icons/checked.png" class="toast-tick"/>Project created successfully !!');
+				_rootScope.projectCreated = true;
+			}
+			_state.go('dashboard', {userId:_appConstant.currentUser.userId});
 		}, function (err) {
 			_services.toast.show(err.data);
 			console.log(err);

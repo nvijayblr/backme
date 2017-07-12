@@ -4,6 +4,21 @@
 		<nav class="navbar navbar-default">
 		  <div class="container-fluidd">
 			<!-- Brand and toggle get grouped for better mobile display -->
+			  <div class="top-search-mobile">
+				  <a href="" class="ts-search-icon" ng-click="showSearchBar()"><i class="fa fa-search" aria-hidden="true"></i></a>
+					<div class="top-search active" ng-class="showSearch?'show':''">
+						<div class="serch-wrp">
+							<a href="" class="ts-search-icon" ng-click="startSearch()"><i class="fa fa-search" aria-hidden="true"></i></a>
+							<md-chips ng-model="searchKeywords" name="serchkey" readonly="false" md-removable="true" md-max-chips="5" placeholder="Search" class="ts-search-txt" ng-keypress="searchKeyPress($event)">
+								<md-chip-template>
+									<strong>{{$chip}}</strong>
+								</md-chip-template>
+							</md-chips>
+							<button ng-show="searchKeywords.length" class="btn btn-md btn-default btn-search" ng-click="startSearch()">Search</button>
+							<i ng-show="!searchKeywords.length" class="fa fa-times close-search" aria-hidden="true" ng-click="closeSearch()"></i>
+						</div>
+					</div>
+			  </div>
 			<div class="navbar-header">
 			  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#header-top-nav" aria-expanded="false">
 				<span class="sr-only">Toggle navigation</span>
@@ -49,7 +64,7 @@
 				   <div class="dropdown username">
 						<a href="" data-toggle="dropdown" class="dropdown-toggle">{{loggedUser.name}} <b class="caret"></b></a>
 						<ul class="dropdown-menu">
-							<li><a href="#dashboard">MY ACCOUNT</a></li>
+							<li><a href="#dashboard/{{loggedUser.userId}}">MY ACCOUNT</a></li>
 							<li><a href="" ng-click="doLogout()">LOGOUT</a></li>
 						</ul>
 					</div>

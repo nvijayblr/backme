@@ -20,6 +20,9 @@
 		<link rel="stylesheet" href="assets/angular-gallery/ng-image-gallery.css">
 		<link rel="stylesheet" href="assets/ng-crop/ng-img-crop.css">
 
+		<link rel="stylesheet" type="text/css" href="assets/ngDialog/ngDialog.min.css">
+		<link rel="stylesheet" type="text/css" href="assets/ngDialog/ngDialog-theme-default.min.css">
+		
 		<link rel="stylesheet" type="text/css" href="assets/css/style.css">
 		<link rel="stylesheet" type="text/css" href="assets/css/font-awesome.min.css">
 		
@@ -28,13 +31,17 @@
 	</head>
 	
 	<body ng-app="backMe" ng-controller="appCtrl as app" ng-cloak>
-		<md-content flex="100" id="backme-page">
+		<md-content flex="100" id="backme-page" ng-class="isAdmin?'admin-page':'user-page'">
 
-			<div ng-include="'templates/partials/headers.html'"></div>
+			<div ng-include="'templates/partials/headers.html'" ng-if="!isAdmin"></div>
+			
+			<div ng-include="'templates/admin/headers.html'" ng-if="isAdmin"></div>
 			
 			<div ui-view class="fade-view"></div>
 
-			<div ng-include="'templates/partials/footers.html'"></div>
+			<div ng-include="'templates/partials/footers.html'" ng-if="!isAdmin"></div>
+			
+			<div ng-include="'templates/admin/footers.html'" ng-if="isAdmin"></div>
 			
 			<div ng-include="'templates/partials/login-signup.html'"></div>
 
@@ -48,6 +55,7 @@
 	<script src="assets/angular/angular.min.js"></script>
 	<script src="assets/angular/angular-ui-router.js"></script>
 	<script src="assets/loading-bar/loading-bar.min.js"></script>
+	<script src="assets/ngDialog/ngDialog.min.js"></script>
 	
 	<script src="assets/moment/moment.js"></script>
 	
@@ -79,6 +87,8 @@
 	<script src="appJS/services/HttpServices.js"></script>
 	<script src="appJS/services/toastServices.js"></script>
 	<script src="appJS/services/paginationServices.js"></script>
+	<script src="appJS/services/PoupupServices.js"></script>
+	<script src="appJS/services/mainServices.js"></script>
 	<script src="appJS/services/BaseServices.js"></script>
 	
 	<!--begin factory-->
@@ -107,10 +117,22 @@
 	<script src="appJS/controllers/rewardsCtrl.js"></script>
 	<script src="appJS/controllers/profileCtrl.js"></script>
 	<script src="appJS/controllers/previewCtrl.js"></script>
+	<script src="appJS/controllers/editProjectCtrl.js"></script>
 	<script src="appJS/controllers/projectCtrl.js"></script>
 	<script src="appJS/controllers/checkoutCtrl.js"></script>
 	<script src="appJS/controllers/dashboardCtrl.js"></script>
 	<script src="appJS/controllers/paymentCtrl.js"></script>
+	<!--Admin controllers-->
+	<script src="appJS/controllers/admin/adminCtrl.js"></script>
+	<script src="appJS/controllers/admin/adminLoginCtrl.js"></script>
+	<script src="appJS/controllers/admin/adminDashboardCtrl.js"></script>
+	<script src="appJS/controllers/admin/adminAdminsCtrl.js"></script>
+	<script src="appJS/controllers/admin/adminUsersCtrl.js"></script>
+	<script src="appJS/controllers/admin/adminProjectsCtrl.js"></script>
+	<script src="appJS/controllers/admin/adminPaymentsCtrl.js"></script>
+	<script src="appJS/controllers/admin/adminCategoryCtrl.js"></script>
+	<script src="appJS/controllers/admin/adminBanksCtrl.js"></script>
+	<script src="appJS/controllers/admin/adminCitiesCtrl.js"></script>
 	<!--end controllers-->
 	
 	<!-- D3 chart lib -->

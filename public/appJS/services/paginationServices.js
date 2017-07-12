@@ -42,7 +42,7 @@ backMe
     
     this.init = function(_scope, data){
 		_scope.currentPage = 0;
-		_scope.pageSize = 6;
+		_scope.pageSize = _scope.pageSize ? _scope.pageSize : 20;
 		_scope.q = '';
 		_scope.getData = function () {
 			return _filter('filter')(data, _scope.q)

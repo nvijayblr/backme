@@ -16,7 +16,7 @@
 							 name="posterOriginalImg" 
 							 ngf-pattern="'image/*'"
 							 ngf-accept="'image/*'" 
-							 ngf-max-size="1MB" 
+							 ngf-max-size="15MB" 
 							 ngf-multiple="false"
 							 ngf-resize="true"
 							 ngf-model-invalid="errorFile">
@@ -171,7 +171,7 @@
 						<div class="poster">
 							<div class="p-img">
 								<img ng-if="!project.coverImage || posterOriginalImg" ng-src="{{myCroppedImage}}" width="{{myCroppedImageW}}"  height="{{myCroppedImageH}}"  />
-								<!--<img ng-if="!project.coverImage || posterOriginalImg" ngf-size="{width: 200, height: 120}" ngf-thumbnail="posterOriginalImg||'assets/images/img_not_available.png'">-->
+								<!--<img ng-if="!project.coverImage && !posterOriginalImg" ngf-size="{width: 200, height: 120}" ngf-thumbnail="posterOriginalImg||'assets/images/img_not_available.png'">-->
 								<img ng-if="project.coverImage && !posterOriginalImg" ng-src="uploads/{{project.coverImage}}">
 							</div>
 							<h5 class="poster-title">{{project.title?project.title:'Project title'}}</h5>
@@ -186,15 +186,15 @@
 								</div>
 							</div>
 							<div class="row proj-statistics">
-								<div class="col-md-4 col-sm-4 ps-fund">
+								<div class="col-md-4 col-sm-4 col-xs-4 ps-fund">
 									<h5>0</h5>
 									<p>Funded</p>
 								</div>
-								<div class="col-md-4 col-sm-4 ps-views">
+								<div class="col-md-4 col-sm-4 col-xs-4 ps-views">
 									<h5>0</h5>
 									<p>Views</p>
 								</div>
-								<div class="col-md-4 col-sm-4 ps-days">
+								<div class="col-md-4 col-sm-4 col-xs-4 ps-days">
 									<h5>0</h5>
 									<p>Days</p>
 								</div>
@@ -205,12 +205,12 @@
 			</div>
 			<div class="steps-footer">
 				<div class="row">
-					<div class="col-md-6 prev">
-						<a href="#/create/startproject" class="steps-back" style="margin-top:31px;">
+					<div class="col-md-6 col-sm-6 col-xs-6 prev">
+						<a ng-href="{{edit?'#dashboard':'#/create/startproject'}}" class="steps-back" style="margin-top:31px;">
 							<img src="assets/icons/left-arrow.svg" class="arrow-left"><span>Back</span>
 						</a>
 					</div>
-					<div class="col-md-6 next">
+					<div class="col-md-6 col-sm-6 col-xs-6 next">
 						<button class="btn btn-default btn-subscribe btn-login steps-back" id="basicNext" ng-click="basicInfoForm.submit()">
 							<p class="cont">Continue to</p>
 							<p><span>Project Details</span>

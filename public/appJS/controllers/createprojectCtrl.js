@@ -1,7 +1,8 @@
 'use strict';
 backMe.controller('createprojectCtrl', ['$scope', 'BaseServices', '$timeout', '$state', 'appConstant', '$rootScope', function(_scope, _services, _timeout, _state, _appConstant, _rootScope){
+	
 	console.log('createprojectCtrl');
-	console.log(_state);
+	console.log(_state.current.url, _scope.loggedIn);
 	
 	if(!_scope.loggedIn && _state.current.url != '/startproject' && _state.current.url != '/basicinfo/:projectId') {
 		_state.go('home');

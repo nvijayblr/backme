@@ -1176,7 +1176,7 @@ md-checkbox.social-cb.go-cb .md-label {
 }
 .create-proj-wrp, .payment-container .payment-wrp {
 	width: 73%;
-	min-height: 500px;
+	min-height: 300px;
 	background-color: #fff;
 	margin: auto;
 	padding: 80px 60px;
@@ -1656,6 +1656,9 @@ h5.f-label {
 .prev .steps-back {
     display: inline-block;
 }
+.steps-back:hover {
+	color: #fff;
+}
 .prev .steps-back span {
 	margin-left: 15px;
 }
@@ -1866,7 +1869,7 @@ a.delete-rewards .fa {
     height: 312px;
 }
 .team-box-add {
-	height: 334px;
+	height: 399px;
 	background-color: #f2f2f2;
 	border: 1px solid #e1e1e1;
 }
@@ -2006,7 +2009,7 @@ p {
 .team-add-bg {
 	background: url(../images/team-add-bg.png) no-repeat center center transparent;
 	width: 100%;
-    height: 332px;
+    height: 399px;
 }
 .team .team-bg {
 	width: 68px;
@@ -2224,14 +2227,15 @@ md-input-container .md-input.comment-txt {
 }
 .support-box.support .funded-wrp p.desc {
 	color: #727272;
-	font-size: 14px;
-	margin-top: 10px;
+    font-size: 15px;
+    margin-top: 10px;
+    text-align: center;
 }
 .support-box.support .funded-wrp .f-progress .p-completed {
-    border: 2px solid #b4b4b4;
+    border: 4px solid #00897b;
 }
 .support-box.support .funded-wrp .f-progress .p-process {
-    border:2px solid #ebebeb;
+    border:4px solid #ebebeb;
 }
 .s-proj-title {
 	color: #2a2a2a;
@@ -2262,6 +2266,9 @@ md-input-container .md-input.comment-txt {
 	border-radius: 0 4px 4px 0;
 	-webkit-border-radius: 0 4px 4px 0;
 
+}
+.support-me button.btn-default.btn-subscribe.full {
+	width: 100%;
 }
 .support-me .desc {
     color: #6c6c6c;
@@ -2574,6 +2581,7 @@ md-input-container.donation label{
 	height: 660px;
 	border: 1px solid #e2e2e2;
     border-radius: 50%;
+	-webkit-border-radius: 50%;
 	background-repeat: no-repeat;
 	background-position: center bottom;
 	background-color: transparent;
@@ -2703,7 +2711,6 @@ md-input-container.donation label{
 	text-transform: uppercase;
 	font-size: 16px;
 	color: #139386;
-	margin-top: 16px;
 	font-weight: 500;
 	background-color: #fff;
 	border: 3px solid #139386;
@@ -2757,7 +2764,11 @@ md-input-container.donation label{
 	color: #2b88b2;
 	text-decoration: none;
 }
-.my-project a.extend:hover {
+a.link {
+	color: #2b88b2;
+	text-decoration: none;
+}
+.my-project a.extend:hover, a.link:hover {
 	color: #33b5e9;
 	text-decoration: underline;
 }
@@ -2847,7 +2858,7 @@ md-tooltip .md-content {
 	background-color: transparent;
 	color: #616161;
 	font-size: 16px;
-	font-weight: 100;
+	font-weight: 300;
 	height: auto;
 	width: 210px;
 	display: block;
@@ -2955,8 +2966,8 @@ md-input-container.md-input-invalid .tick-green{
 	cursor: pointer;
 }
 .ng-image-gallery .ng-image-gallery-modal .ng-image-gallery-content .galleria {
-	left: 20px;
-    right: 20px;
+	left: 0;
+    right: 0;
 }
 .login .user-bg {
     width: 38px;
@@ -3005,13 +3016,25 @@ ul.cards-list {
 }
 .ng-image-gallery.inline .ng-image-gallery-modal .ng-image-gallery-content .prev, .ng-image-gallery.inline .ng-image-gallery-modal .ng-image-gallery-content .next {
 	z-index: 100;
-	right: 50px;
+	right: 30px;
 	margin-top: -67px;
 	width: 36px;
     height: 58px;
 }
 .ng-image-gallery.inline .ng-image-gallery-modal .ng-image-gallery-content .prev {
-	left: 50px;
+	left: 30px;
+}
+.ng-image-gallery.inline .ng-image-gallery-modal .ng-image-gallery-content .thumb.prev, .ng-image-gallery.inline .ng-image-gallery-modal .ng-image-gallery-content .thumb.next {
+	z-index: 100;
+	right: 30px;
+	margin-top: 228px;
+	width: 16px;
+    height: 20px;
+	background-image: url(../icons/thumb-next.png);
+}
+.ng-image-gallery.inline .ng-image-gallery-modal .ng-image-gallery-content .thumb.prev {
+	left: 30px;
+	background-image: url(../icons/thumb-prev.png);
 }
 .nav .open > a, .nav .open > a:hover, .nav .open > a:focus {
     background-color: transparent;
@@ -3324,6 +3347,38 @@ a.higlightPagination {
 .md-datepicker-calendar-pane {
 	z-index: 100000;
 }
+.poster-title .status {
+	font-size: 11px;
+    margin-left: 10px;
+    display: inline-block;
+}
+.team-box .f-label {
+	padding: 0;
+    margin-top: 0;
+}
+.dashboard .cropArea, .team-box .cropArea, .profile-page .cropArea {
+	background-color: #fff;
+	height: auto;
+	text-align: center;
+}
+.profile-page .cropArea {
+	background-color: transparent;
+}
+#thankyouModal p {
+	font-size: 20px;
+    padding: 30px;
+    line-height: 30px;
+}
+#thankyouModal .modal-title {
+    text-align: left;
+    font-size: 28px;
+}
+#thankyouModal .modal-header {
+    padding: 33px 28px;
+}
+.ng-image-gallery .ng-image-gallery-modal .ng-image-gallery-content .galleria .galleria-bubbles-wrapper {
+	width: 80% !important;
+}
 /*begin the styles for when showing/hiding the element */
 .ng-hide-remove, .ng-hide-remove, .ng-enter { 
     -webkit-transition : 0.5s ease-in-out opacity;
@@ -3388,8 +3443,213 @@ md-input-container.select.md-input-focused label.md-placeholder:not(.md-no-float
     height: 36px;
     top: -17px;
 }
-
+.top-search-mobile {
+	display: none;
+	position: absolute;
+    right: 80px;
+    top: 15px;	
+}
 /*begin the styles for when change the view*/
+
+
+
+/* Admin styles */
+
+li.login.admin {
+    margin-top: 20px;
+}
+.admin .loginModal .login-wrp {
+	padding: 10px 100px 100px;
+}
+.admin .loginModal {
+	width: 600px;
+}
+.admin .loginModal .login-section {
+    padding: 0;
+}
+.admin .loginModal .title {
+	font-weight: 300;
+    text-align: center;
+    padding: 30px 0;
+    border-bottom: 1px solid #ccc;
+}
+.admin .dashboard {
+	min-height: 500px;
+	font-weight: 400;
+}
+.admin .create-proj-cont {
+	padding: 13px 0;
+}
+.admin .panel {
+	background-color: #fff;
+	min-height: 665px;
+	margin-bottom: 0;
+}
+.admin .panel-left {
+	width: 15.66666667%;
+	margin-right: 1%;
+	height: 100vh;
+}
+.admin .panel-right {
+	padding: 20px;
+}
+.panel-left .left-nav {
+	margin: 0;
+	padding: 0;
+}
+.panel-left .left-nav li{
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+.panel-left .left-nav li a {
+	padding: 10px 0;
+    border-bottom: 1px solid #ededed;
+    color: #3f3f3f;
+    display: block;
+    font-size: 17px;
+    font-weight: 300;
+	padding-left: 10px;
+}
+.panel-left .left-nav li a:hover, .panel-left .left-nav li a.active {
+    color: #fff;
+	background-color: #00887a;
+}
+.admin .welcome {
+	text-align: center;
+	padding: 10px 0;
+    border-bottom: 1px solid #ededed;
+}
+.admin .welcome h3 {
+	color: #00887a;
+	font-weight: 300;
+}
+.table {
+	font-size: 14px;
+	font-weight: 400;
+}
+.center {
+	text-align: center;
+}
+.admin .filter {
+	margin-bottom: 20px;
+} 
+.admin .filter .search-txt {
+	float: left;
+    width: 50%;
+	border-radius: 5px 0 0 5px;
+	-webkit-border-radius: 5px 0 0 5px;
+	font-size: 18px;
+} 
+.admin .filter .search-txt:focus, .admin input:focus {
+	border-color: #a5a5a5;
+    outline: 0;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, 0);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, 0);
+} 
+.admin .filter .search-btn {
+	margin: 0;
+    padding: 4px 15px;
+    font-size: 14px;
+	border-radius: 0 5px 5px 0;
+	-webkit-border-radius: 0 5px 5px 0;
+	height: 34px;
+} 
+.admin .form-control {
+	padding: 6px 12px !important;
+}
+.admin select.form-control {
+	padding: 6px 8px !important;
+}
+.btn-xs.btn-primary, .btn-xs.btn-secondary {
+	font-size: 12px;
+	margin-top: 0;
+}
+.admin-page .fade-view.ng-enter,
+.admin-page .fade-view.ng-leave {
+    -webkit-transition: all 0.2s ease;
+    transition: all 0.5s ease;
+}
+.admin .fa-rupee {
+	padding-right: 4px;
+} 
+.table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+    padding: 8px 8px;
+    vertical-align: middle;
+}
+.sort-title {
+	cursor: pointer;
+}
+.sort-title:focus {
+	outline: none;
+}
+.sort-title .glyphicon{
+	font-size: 11px;
+    color: #717171;
+}
+.sort-title:hover .glyphicon{
+    color: #000;
+}
+.admin .filter.create {
+    margin-bottom: 5px;
+}
+.admin .filter .title {
+    margin: 0;
+    font-size: 13px;
+    vertical-align: text-bottom;
+    position: relative;
+    top: 8px;
+    font-weight: 500;
+}
+
+.admin .error-lable.valid {
+    margin-top: 0;
+    color: rgb(221,44,0);
+	visibility: hidden;
+	font-size: 12px;
+	-moz-transition: all 0.5s ease;
+   	-webkit-transition: all 0.5s ease;
+	transition: all 0.5s ease;
+	opacity: 0;
+	height: 0;
+	line-height: 0;
+	font-weight: 500;
+}
+
+.admin .error-lable.invalid {
+	visibility: visible;
+	-moz-transition: all 0.5s ease;
+   	-webkit-transition: all 0.5s ease;
+	transition: all 0.5s ease;
+	opacity: 1;
+	height: auto;
+	line-height: inherit;
+	position: relative;
+    top: 6px;
+	font-weight: 500;
+}
+.admin .extendProject label.f-label {
+	font-size: 17px;
+    color: #000;
+    font-weight: 400;
+    margin-bottom: 2px;
+}
+.ngdialog.ngdialog-theme-default .ngdialog-content {
+	background-color: #fff !important;
+}
+.ngdialog-content .title {
+	font-weight: 600;
+}
+.ngdialog-content .msg {
+	font-weight: 400;
+}
+.ngdialog-buttons {
+	text-align: right;
+	padding-top: 10px;
+}
+.md-virtual-repeat-container.md-autocomplete-suggestions-container {
+	z-index: 10000;
+}
 
 /*common responsive styles for all pages*/
 @media screen and (min-width:992px) {
@@ -3405,6 +3665,32 @@ md-input-container.select.md-input-focused label.md-placeholder:not(.md-no-float
 }
 
 @media screen and (max-width:992px) {
+	.top-search {
+		display: none !important;
+	}
+	.top-search-mobile, .top-search-mobile .top-search{
+		display: block !important;
+	}
+	.top-search-mobile .top-search.active.show {
+		top: -18px;
+		height: 37px;
+	}
+	.top-search-mobile .top-search.active {
+		top: -78px;
+	}
+	.top-search-mobile .md-chips .md-chip-input-container input:not([type]) {
+		padding: 0 !important;
+		font-size: 16px;
+		top: 2px;
+		position: relative;
+	}
+	.top-search-mobile .fa-search {
+		top: 0px;
+    	position: relative;
+	}
+	.top-search-mobile .top-search.active .close-search {
+		top: 7px;
+	}
 	.container-menu {
 		width: 100%;
 	}
@@ -3440,9 +3726,56 @@ md-input-container.select.md-input-focused label.md-placeholder:not(.md-no-float
 	.top-nav li.top-search {
 		display: none;
 	}
+	.highlights-wrp {
+		height: auto;
+	}
+	.db-highlights .desc {
+    	float: right;
+		text-align: right;
+	}
+	.db-banner .db-profile-pic {
+    	width: 100%;
+	}
+	.checkout-cont {
+    	width: 100%;
+	}
+	.checkout-wrp .steps-form {
+		padding: 20px;
+	}
 }
 
 @media screen and (max-width:540px) {
+	.loginModal .login-section, #signUpModal.loginModal .login-section, .admin .loginModal .login-wrp {
+		padding: 20px;
+	}
+	.admin .loginModal {
+		width: 95%;
+	}
+	.banner {
+    	height: 484px;
+	}
+	.banner h1 {
+		font-size: 42px;
+	}
+	.banner h3 {
+    	font-size: 27px;
+	}
+	.question-info {
+		right: -30px !important;
+	}
+	.steps-back {
+    	font-size: inherit;
+	}
+	.learn-more {
+		padding: 6px 10px;
+		font-size: 21px;
+		width: 172px;
+		height: 48px;
+		margin: 5px;
+	}	
+	.top-search-mobile .top-search.active {
+		width: 315px;
+	}
 	.or-label {
 		display: none;
 	}
@@ -3455,5 +3788,9 @@ md-input-container.select.md-input-focused label.md-placeholder:not(.md-no-float
 	}
 	.create-proj-wrp {
 		padding: 80px 20px;
+	}
+	.db-banner .db-profile-pic {
+		border-radius: 0%;
+		-webkit-border-radius: 0%;
 	}
 }

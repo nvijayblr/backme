@@ -23,8 +23,8 @@
       CurrencyMaskUtils.toFloatString = function(value) {
         if (value != null) {
           //return (Math.abs(value / 1)).toFixed(2);
-			console.log(Math.abs(parseInt(CurrencyMaskUtils.clearSeparators(value) * 1)));
-          return Math.abs(parseInt(CurrencyMaskUtils.clearSeparators(value) * 1));
+			var formated = Math.abs(parseInt(CurrencyMaskUtils.clearSeparators(value) * 1));
+          	return formated ? formated : '';
         }
       };
 
