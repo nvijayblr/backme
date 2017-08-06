@@ -13,7 +13,7 @@
 							<md-input-container class="rupees donation">
 								<label class="ph-label">500.00</label>
 								<i class="fa fa-rupee"></i>
-								<input type="text" ng-model="checkout.TXN_AMOUNT" required currency-mask>
+								<input type="text" ng-model="checkout.TXN_AMOUNT" required>
 								<div class="error-lable required">Donation text field empty.</div>
 								<div class="error-lable format">Entering the invalid format.</div>
 							</md-input-container>
@@ -62,6 +62,16 @@
 										<label class="ph-label">Your Mobile Number</label>
 										<input type="text" ng-model="checkout.mobileNumber" required ng-pattern="/^[0-9]{10}$/">
 										<div class="error-lable required">Mobile text field empty.</div>
+										<div class="error-lable format">Entering the invalid format.</div>
+									</md-input-container>
+								</div>
+
+								<div class="input-wrp">
+									<label class="f-label">Comment</label>
+									<md-input-container class="textarea">
+										<label class="ph-label">Your Comment</label>
+										<textarea ng-model="checkout.comment" required></textarea>
+										<div class="error-lable required">Comment text field empty.</div>
 										<div class="error-lable format">Entering the invalid format.</div>
 									</md-input-container>
 								</div>
@@ -128,7 +138,8 @@
 			<div class="checkout-wrp-right support-me col-md-3">
 				<div class="user-wrp prfile">
 					<h4 class="uname">Support {{project.name}}</h4>
-					<div class="user-img" style="background-image:url(uploads/{{project.userPhoto}})"></div>
+					<div class="user-img" ng-if="project.userPhoto.substr(0,4)!='http'" style="background-image:url(uploads/{{project.userPhoto}})"></div>
+					<div class="user-img" ng-if="project.userPhoto.substr(0,4)=='http'" style="background-image:url({{project.userPhoto}})"></div>
 					<h3 class="amount"><i class="fa fa-rupee" aria-hidden="true"></i>{{project.payments[0].amount|toLocale}}<sup>.00</sup></h3>
 					<div class="funded-wrp">
 						<div class="f-progress">
@@ -136,7 +147,7 @@
 							<div class="p-completed" style="width:{{project.achivedPercent | toAchivedPercent :project.payments[0].amount:project.moneyNeeded}}%;"></div>
 						</div>
 					</div>
-					<p class="fund">{{project.achivedPercent | toAchivedPercent :project.payments[0].amount:project.moneyNeeded}}% amount achievd of {{project.moneyNeeded|toLocale}}.00</p>
+					<p class="fund">{{project.achivedPercent | toAchivedPercent :project.payments[0].amount:project.moneyNeeded}}% amount achieved of {{project.moneyNeeded|toLocale}}.00</p>
 				</div>
 			</div>
 			
@@ -144,3 +155,5 @@
 	</div>
 </section>
 <div ng-bind-html='checkoutFrm'></div>
+
+

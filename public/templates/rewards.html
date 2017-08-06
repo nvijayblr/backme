@@ -5,15 +5,16 @@
 			<div ng-include="'templates/partials/steps.html'"></div>
 			<div class="steps-content">
 				<div class="row steps-content-basic">
-					<div class="title-wrp support">
-						<h5 style="margin-left:17px;">SUPPORT REWARDS</h5>
-						<span class="md-raised md-primary question-info" aria-label="Play">
+					<div class="title-wrp box support">
+						<h5 style="margin-left:17px;">Support Rewards</h5>
+						<p class="support-desc">Ask your supporter, a amount in multiples of 500/1000/2000, along with the title and description of the product, service etc that you would offer in return to them. Example: Rs 500 / Electronic Thank you card / Electronic thanks email and card delivered to your personal email.</p>
+						<!--<span class="md-raised md-primary question-info" aria-label="Play">
 							<md-tooltip md-direction="left">
 								<p>Ask your supporter, a amount in multiples of 500/1000/2000, along with the title and description of the product, service etc that you would offer in return to them. Example: Rs 500 / Electronic Thank you card / Electronic thanks email and card delivered to your personal email.</p>
 							</md-tooltip>
 						  <i class="fa fa-question-circle" aria-hidden="true"></i>
 						</span>
-						<span class="tick-green"></span>
+						<span class="tick-green"></span>-->
 					</div>
 					<div ng-repeat="support in project.supportrewards track by $index">
 						<div class="col-md-4 steps-form">
@@ -21,7 +22,7 @@
 								<div class="input-wrp">
 									<md-input-container>
 										<i class="fa fa-rupee"></i><label class="ph-label-amt"><span class="txt-amout">500</span></label>
-										<input type="text" class="txt-amout" ng-model="support.amount" name="amount" ng-pattern="/^[0-9]*$/" required currency-mask>
+										<input type="text" class="txt-amout" ng-model="support.amount" name="amount" ng-pattern="/^[0-9,]*$/" required>
 										<div class="error-lable required">Amount text field is empty.</div>
 										<div class="error-lable format">Entering the invalid format.</div>
 									</md-input-container>
@@ -53,15 +54,16 @@
 					</div>
 				</div>
 				<div class="row steps-content-basic rewards-content">
-					<div class="title-wrp service">
-						<h5 style="margin-left:17px;">SERVICE REWARDS<label class="f-label optional-label">(Optional)</label></h5>
-						<span class="md-raised md-primary question-info" aria-label="Play">
+					<div class="title-wrp box service">
+						<h5 style="margin-left:17px;">Service Rewards<label class="f-label optional-label">(Optional)</label></h5>
+						<p class="support-desc">Ask your supporter, a amount in multiples of 500/1000/2000, along with the title, time line and description of the service etc that you would offer in return to them. Example: Rs 5000 / an hour of singing performance / 3 months / will come to any event near by home or location to perform an hour.</p>
+						<!--<span class="md-raised md-primary question-info" aria-label="Play">
 							<md-tooltip md-direction="left">
 								<p>Ask your supporter, a amount in multiples of 500/1000/2000, along with the title, time line and description of the service etc that you would offer in return to them. Example: Rs 5000 / an hour of singing performance / 3 months / will come to any event near by home or location to perform an hour.</p>
 							</md-tooltip>
 						  <i class="fa fa-question-circle" aria-hidden="true"></i>
 						</span>
-						<span class="tick-green"></span>
+						<span class="tick-green"></span>-->
 					</div>
 					<div ng-repeat="service in project.servicerewards track by $index">
 						<div class="col-md-4 steps-form">
@@ -69,7 +71,7 @@
 								<div class="input-wrp">
 									<md-input-container>
 										<i class="fa fa-rupee"></i><label class="ph-label-amt"><span class="txt-amout">500</span></label>
-										<input type="text" class="txt-amout" ng-model="service.amount" name="amount" ng-pattern="/^[0-9]*$/" currency-mask required>
+										<input type="text" class="txt-amout" ng-model="service.amount" name="amount" ng-pattern="/^[0-9,]*$/"  required>
 										<div class="error-lable required">Amount text field is empty.</div>
 										<div class="error-lable format">Entering the invalid format.</div>
 									</md-input-container>
@@ -120,7 +122,7 @@
 					<div class="col-md-6 col-sm-6 col-xs-6 prev">
 						<a ng-href="{{edit?'#edit/projectdetails/':'#create/projectdetails/'}}{{projectId}}" class="steps-back">
 							<p class="cont">Back to</p>
-							<img src="assets/icons/left-arrow.svg" class="arrow-left"><span>Project Details</span>
+							<img src="assets/icons/left-arrow.svg" class="arrow-left"><span>Campaign Details</span>
 						</a>
 					</div>
 					<div class="col-md-6 col-sm-6 col-xs-6 next">

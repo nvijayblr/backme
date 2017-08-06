@@ -34,6 +34,32 @@ var route = {
 				console.log('Message %s sent: %s', info.messageId, info.response);
 			});
 		});
+	},
+	sendForgotPasswordEmails: function(app, transporter, _template, _email, _password, _subject, _callback) {
+		app.render(_template, {name: 'Vijay', password: _password}, function(err, template){
+			if (err) {
+				console.log('error rendering email template:', err) 
+				return
+			}
+			var mailOptions = {
+				from: '"BACKME" <nvijay.ooty@gmail.com>', 
+				to: _email, 
+				subject: _subject,
+				text: '', // plain text body
+				html: template
+			};
+
+			transporter.sendMail(mailOptions, (error, info) => {
+				if (error) {
+					if(_callback)
+						_callback(error);
+					return console.log(error);
+				}
+				if(_callback)
+					_callback(info);
+				console.log('Message %s sent: %s', info.messageId, info.response);
+			});
+		});
 	}
 };
 

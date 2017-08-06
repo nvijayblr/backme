@@ -1,9 +1,9 @@
 <!--Banner Section-->
-<section class="banner" ng-class="isSerchPage ? 'search-page':''">
+<section class="banner" id="banner" ng-class="isSerchPage ? 'search-page':''">
 	<div class="container">
 		<div class="carousel-wrapper">
 			<h1>Welcome to BackMe.</h1>
-			<h3>Best platform for you to start your project, Always.</h3>
+			<h3>Show your Talent &amp; Raise money for yourself, <br>others and charities</h3>
 			<div class="btn-wrp">
 				<a href="" class="btn btn-lg btn-md btn-sm btn-xs btn-default learn-more">Learn More</a>
 				<a href="" class="btn btn-lg btn-default learn-more" ng-click="startProject();">Get Started</a>
@@ -17,16 +17,18 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-md-10 proj-wrp">
-				
 				<section class="projects pc-wrp" ng-if="isSerchPage">
 					<div class="row btn-wrp first">
 						<h3 class="col-md-12 col-sm-6 col-xs-6 p-title" ng-if="!isSeeAll">Search results for {{searchKeywordsList}}</h3>
+						<h3 class="col-md-12 col-sm-6 col-xs-6 p-title" ng-if="isFavouritePage && isSeeAll">Favorites</h3>
 						<h3 class="col-md-12 col-sm-6 col-xs-6 p-title" ng-if="isSeeAll">{{title[type]}}</h3>
 					</div>
 					<div class="row poster-wrp">
-						
 						<div class="col-md-4 col-sm-6" ng-repeat="project in projects | paginationFilters_startFrom:currentPage*pageSize | limitTo:pageSize track by $index">
 							<div class="poster">
+								<a href="" class="add-to-fav" ng-if="loggedIn" ng-click="project.favCount>0?removeFromFavourite(project):addtoFavourite(project)" ng-class="project.favCount>0?'active':''">
+									<i class="fa fa-heart" aria-hidden="true"></i>
+								</a>
 								<a href="#project/{{project.projectId}}" class="poster-title">
 									<div class="p-img">
 										<div class="img" ng-if="project.coverImage" style="background-image:url(/uploads/{{project.coverImage}})"></div>
@@ -36,7 +38,12 @@
 								</a>
 								<div class="owner clearfix">
 									<a href="#dashboard/{{project.userId}}" class="poster-title">
-										<div class="owner-img"><div class="img" style="background-image:url(/uploads/{{project.userPhoto}})"></div></div>
+										<div class="owner-img" ng-if="project.userPhoto.substr(0,4)!='http'">
+											<div class="img" style="background-image:url(/uploads/{{project.userPhoto}})"></div>
+										</div>
+										<div class="owner-img" ng-if="project.userPhoto.substr(0,4)=='http'">
+											<div class="img" style="background-image:url({{project.userPhoto}})"></div>
+										</div>
 										<h5 class="owner-name pull-left">{{project.name}}</h5>
 									</a>
 								</div>
@@ -79,6 +86,9 @@
 						
 						<div class="col-md-4 col-sm-6" ng-repeat="project in projects track by $index">
 							<div class="poster">
+								<a href="" class="add-to-fav" ng-if="loggedIn" ng-click="project.favCount>0?removeFromFavourite(project):addtoFavourite(project)" ng-class="project.favCount>0?'active':''">
+									<i class="fa fa-heart" aria-hidden="true"></i>
+								</a>
 								<a href="#project/{{project.projectId}}" class="poster-title">
 									<div class="p-img">
 										<div class="img" ng-if="project.coverImage" style="background-image:url(/uploads/{{project.coverImage}})"></div>
@@ -88,7 +98,12 @@
 								</a>
 								<div class="owner clearfix">
 									<a href="#dashboard/{{project.userId}}" class="poster-title">
-										<div class="owner-img"><div class="img" style="background-image:url(/uploads/{{project.userPhoto}})"></div></div>
+										<div class="owner-img" ng-if="project.userPhoto.substr(0,4)!='http'">
+											<div class="img" style="background-image:url(/uploads/{{project.userPhoto}})"></div>
+										</div>
+										<div class="owner-img" ng-if="project.userPhoto.substr(0,4)=='http'">
+											<div class="img" style="background-image:url({{project.userPhoto}})"></div>
+										</div>
 										<h5 class="owner-name pull-left">{{project.name}}</h5>
 									</a>
 								</div>
@@ -119,17 +134,15 @@
 					</div>
 					</div>
 				</section>				
-				
-				
 			</div>
-			<div class="col-md-2 cat-wrp pc-wrp">
+			<div class="col-md-2 cat-wrp pc-wrp" ng-if="!isFavouritePage">
 				<section class="search">
-					<h4 class="cat-title" ng-click="init('')">Categories</h4>
+					<h4 class="cat-title" ng-click="loadCategory('')">Categories</h4>
 				</section>
 				<section class="proj-category">
 					<ul class="right-nav clearfix">
-						<li ng-repeat="category in categoryList"> 
-							<a href="" ng-class="categoryKey==category.name?'active':''" ng-click="init(category.name)">{{category.name}}</a>
+						<li ng-repeat="category in categoryList">
+							<a href="" ng-class="categoryKey==category.name?'active':''" ng-click="loadCategory(category.name)">{{category.name}}</a>
 						</li>
 					</ul>
 

@@ -7,6 +7,7 @@ backMe.controller('adminCategoryCtrl', ['$scope', 'BaseServices', 'appConstant',
 		search: ''
 	};
 	_scope.init = function() {
+		_scope.selectAll = false;
 		_scope.categories = [];
 		_services.http.serve({
 			method: 'GET',
@@ -30,7 +31,28 @@ backMe.controller('adminCategoryCtrl', ['$scope', 'BaseServices', 'appConstant',
 		_services.pagination.init(_scope, _scope.categories);
 	}
 	
+	_scope.selectAllCheck = function(_list, isChecked) {
+        angular.forEach(_list, function(_obj){
+            _obj.selected = isChecked;
+        });
+		_scope.cbSelected = _filter('filter')(_list, {selected: true}).length;
+	}
 	
+    _scope.unSelect = function(_list, isChecked) {
+		_scope.cbSelected = _filter('filter')(_list, {selected: true}).length;
+		if(!isChecked)
+			_scope.selectAll = false;
+		else {
+			_scope.selectAll = true;
+			angular.forEach(_list, function(_obj){
+            	if(!_obj.selected) {
+					_scope.selectAll = false;
+					return;
+				}
+        	});
+		}
+	}
+
 	_scope.category = {
 		name: '',
 		description: ''
@@ -70,12 +92,31 @@ backMe.controller('adminCategoryCtrl', ['$scope', 'BaseServices', 'appConstant',
 		});
 	}
 	
-	_scope.deleteCategory = function(_modal) {
+	_scope.deleteCategory = function(_modal, topButton) {
+		_scope.temp = {};
+		_scope.selectedItems = [];
+		if(topButton) {
+			angular.forEach(_modal, function(_obj){
+				if(_obj.selected)
+					_scope.selectedItems.push(_obj.categoryId)
+			});
+			if(!_scope.selectedItems.length){
+				_services.toast.show('Please select the category.');
+				return;
+			}
+			_scope.temp = {
+				categoryId: _scope.selectedItems.join(",")
+			}
+		} else {
+			_scope.temp = {
+				categoryId: _modal.categoryId
+			}
+		}
 		_services.popup.init("Delete", "Are you sure want delete?", function(){
 			_services.http.serve({
 				method: 'DELETE',
 				url: _appConstant.baseUrl + 'category',
-				inputData: _modal
+				inputData: _scope.temp
 			}, function(data){
 				_services.toast.show('<img src="../assets/icons/checked.png" class="toast-tick"/>Category deleted successfully !!');
 				_scope.init();

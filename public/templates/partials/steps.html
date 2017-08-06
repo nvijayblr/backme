@@ -1,5 +1,5 @@
 <div class="proj-steps">
-	<div class="steps-toast">Project details upated successfully !!</div>
+	<div class="steps-toast">Campaign details upated successfully !!</div>
 	<div class="steps-bar"></div>
 	<ul class="steps clearfix">
 		<li ng-class="step==1?'active':1<=project.stepsCompleted?'completed':''">
@@ -22,7 +22,7 @@
 				<span>2</span>
 				<span class="tickicon"></span>
 			</a>
-			<p>Project Details</p>
+			<p>Campaign Details</p>
 		</li>
 		<li ng-class="step==3?'active':3<=project.stepsCompleted?'completed':''">
 			<a ng-if="3<=(project.stepsCompleted+1)" ng-href="{{edit?'#edit/rewards/':'#create/rewards/'}}{{projectId}}" class="step">
@@ -61,5 +61,6 @@
 	<div class="septs-title">
 		<h2>{{stepsTitle}}</h2>
 		<p ng-if="step!=5 && step!=3 && step!=4">[ All fields are mandatory ]</p>
+		<p ng-if="step==5" class="run-campaign">[ You must click on Submit Button below to Run the campaign. ]</p>
 	</div>
 </div>

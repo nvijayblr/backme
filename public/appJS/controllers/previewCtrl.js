@@ -1,7 +1,7 @@
 'use strict';
 backMe.controller('previewCtrl', ['$scope', 'BaseServices', '$timeout', '$state', 'Upload', 'appConstant', '$rootScope', '$sce', function(_scope, _services, _timeout, _state, _http, _appConstant, _rootScope, _sce){
 	_scope.step = 5;
-	_scope.stepsTitle = "Actual representation of your project and submission";
+	_scope.stepsTitle = "Actual representation of your campaign and submission";
 	_scope.projectId = _state.params.projectId;
 	_scope.pieColors = ["#4d9839", "#db4d0d", "#f18b17", "#ecca34", "#01779a"];
 	

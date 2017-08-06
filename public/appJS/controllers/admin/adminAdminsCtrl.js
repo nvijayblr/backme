@@ -7,6 +7,7 @@ backMe.controller('adminAdminsCtrl', ['$scope', 'BaseServices', 'appConstant', '
 		search: ''
 	};
 	_scope.init = function() {
+		_scope.selectAll = false;
 		_scope.admins = [];
 		_services.http.serve({
 			method: 'GET',
@@ -30,6 +31,28 @@ backMe.controller('adminAdminsCtrl', ['$scope', 'BaseServices', 'appConstant', '
 		_services.pagination.init(_scope, _scope.admins);
 	}
 	
+	_scope.selectAllCheck = function(_list, isChecked) {
+        angular.forEach(_list, function(_obj){
+            _obj.selected = isChecked;
+        });
+		_scope.cbSelected = _filter('filter')(_list, {selected: true}).length;
+	}
+	
+    _scope.unSelect = function(_list, isChecked) {
+		_scope.cbSelected = _filter('filter')(_list, {selected: true}).length;
+		if(!isChecked)
+			_scope.selectAll = false;
+		else {
+			_scope.selectAll = true;
+			angular.forEach(_list, function(_obj){
+            	if(!_obj.selected) {
+					_scope.selectAll = false;
+					return;
+				}
+        	});
+		}
+	}
+
 	_scope.admin = {
 		name: '',
 		email: '',
@@ -72,7 +95,6 @@ backMe.controller('adminAdminsCtrl', ['$scope', 'BaseServices', 'appConstant', '
 	
 	_scope.querySearch = function (query) {
 		var results = query ? _scope.cityList.filter(_scope.createFilterFor(query) ) : _scope.cityList;
-		console.log(results);
 		var deferred = _q.defer();
 		_timeout(function () { 
 			deferred.resolve( results ); 
@@ -102,12 +124,32 @@ backMe.controller('adminAdminsCtrl', ['$scope', 'BaseServices', 'appConstant', '
 		});
 	}
 	
-	_scope.deleteAdmin = function(_modal) {
+	_scope.deleteAdmin = function(_modal, topButton) {
+		_scope.temp = {};
+		_scope.selectedItems = [];
+		if(topButton) {
+			angular.forEach(_modal, function(_obj){
+				if(_obj.selected)
+					_scope.selectedItems.push(_obj.adminId)
+			});
+			if(!_scope.selectedItems.length){
+				_services.toast.show('Please select the admin.');
+				return;
+			}
+			_scope.temp = {
+				adminId: _scope.selectedItems.join(",")
+			}
+		} else {
+			if(_state == _modal.status) return;
+			_scope.temp = {
+				adminId: _modal.adminId
+			}
+		}
 		_services.popup.init("Delete", "Are you sure want delete?", function(){
 			_services.http.serve({
 				method: 'DELETE',
 				url: _appConstant.baseUrl + 'admin',
-				inputData: _modal
+				inputData: _scope.temp
 			}, function(data){
 				_services.toast.show('<img src="../assets/icons/checked.png" class="toast-tick"/>admin deleted successfully !!');
 				_scope.init();
@@ -117,16 +159,33 @@ backMe.controller('adminAdminsCtrl', ['$scope', 'BaseServices', 'appConstant', '
 		}, function() {});
 	}	
 	
-	_scope.deActivateAdmin = function(_state, _modal) {
-		console.log(_state, _modal);
+	_scope.deActivateAdmin = function(_state, _modal, topButton) {
 		_scope.temp = {};
-		if(_state == _modal.status) return;
-		angular.copy(_modal, _scope.temp);
-		_scope.temp.status = _state;
+		_scope.selectedItems = [];
+		if(topButton) {
+			angular.forEach(_modal, function(_obj){
+				if(_obj.selected)
+					_scope.selectedItems.push(_obj.adminId)
+			});
+			if(!_scope.selectedItems.length){
+				_services.toast.show('Please select the admin.');
+				return;
+			}
+			_scope.temp = {
+				status: _state,
+				adminId: _scope.selectedItems.join(",")
+			}
+		} else {
+			if(_state == _modal.status) return;
+			_scope.temp = {
+				status: _state,
+				adminId: _modal.adminId
+			}
+		}
 		_services.popup.init(_scope.temp.status=='ACTIVE'? "Activate":"Deactivate", _scope.temp.status=='ACTIVE'?"Are you sure want Activate the admin?" : "Are you sure want Deactivate the admin?", function(){
 			_services.http.serve({
 				method: 'PUT',
-				url: _appConstant.baseUrl + 'admin',
+				url: _appConstant.baseUrl + 'admin/status',
 				inputData: _scope.temp
 			}, function(data){
 				if(_scope.temp.status=='ACTIVE')

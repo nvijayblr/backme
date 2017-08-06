@@ -1,8 +1,8 @@
 'use strict';
-var backMe = angular.module('backMe', ['ui.router', 'angular-loading-bar', 'ngMaterial', 'ngMessages', 'facebook', 'ngFileUpload', 'thatisuday.ng-image-gallery', '720kb.socialshare', 'ngImgCrop', 'vtex.ngCurrencyMask', 'uiCropper', 'ngDialog']);
+var backMe = angular.module('backMe', ['ui.router', 'angular-loading-bar', 'ngMaterial', 'ngMessages', 'facebook', 'ngFileUpload', 'thatisuday.ng-image-gallery', '720kb.socialshare', 'ngImgCrop', 'vtex.ngCurrencyMask', 'uiCropper', 'ngDialog', 'socialLogin']);
 
 backMe
-.config(['$stateProvider', '$urlRouterProvider', 'FacebookProvider', '$mdDateLocaleProvider', '$injector', function(_stateProvider, _urlRouterProvider, FacebookProvider, _mdDateLocaleProvider, _injector) {
+.config(['$stateProvider', '$urlRouterProvider', 'FacebookProvider', '$mdDateLocaleProvider', '$injector', 'socialProvider', 'appConstant', function(_stateProvider, _urlRouterProvider, FacebookProvider, _mdDateLocaleProvider, _injector, socialProvider, appConstant) {
     
     _urlRouterProvider.otherwise('/home');
     
@@ -171,11 +171,24 @@ backMe
 				templateUrl: 'templates/admin/cities.html',
 				controller: 'adminCitiesCtrl'
 		})
+		.state('admin.comments', {
+				url: '/comments',
+				templateUrl: 'templates/admin/comments.html',
+				controller: 'adminCommentsCtrl'
+		})
+		.state('admin.account', {
+				url: '/account',
+				templateUrl: 'templates/admin/account.html',
+				controller: 'adminAccountCtrl'
+		})
 		;
 		/*config facebook login button*/
-		var myAppId = '211137599382729';
-		FacebookProvider.init(myAppId);
-	
+		FacebookProvider.init(appConstant.fbKey);
+
+		//socialProvider.setGoogleKey(appConstant.googleClientId);
+		//socialProvider.setLinkedInKey("YOUR LINKEDIN CLIENT ID");
+		//socialProvider.setFbKey({appId: appConstant.fbKey, apiVersion: "v2.0"});
+
 		_mdDateLocaleProvider.formatDate = function(date) {
 		   return moment(date).format('MM/DD/YYYY');
 		};

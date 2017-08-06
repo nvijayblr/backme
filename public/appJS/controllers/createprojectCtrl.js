@@ -66,9 +66,9 @@ backMe.controller('createprojectCtrl', ['$scope', 'BaseServices', '$timeout', '$
 				}
 				_scope.project.endByDate = _scope.project.endByDate ? moment(_scope.project.endByDate).toDate() : moment().toDate();
 				_scope.project.endByDate = _scope.project.endByDate=='Invalid Date' ? moment().toDate() : _scope.project.endByDate;
-				_scope.project.facebook = Boolean(_scope.project.facebook);
-				_scope.project.twitter = Boolean(_scope.project.twitter);
-				_scope.project.googleplus = Boolean(_scope.project.googleplus);
+				_scope.project.facebook = _appConstant.currentUser.facebook;
+				_scope.project.twitter = _appConstant.currentUser.twitter;
+				_scope.project.googleplus = _appConstant.currentUser.googleplus;
 				_scope.project.email = _scope.project.email ? _scope.project.email : _appConstant.currentUser.email;
 				_scope.project.name = _scope.project.name ? _scope.project.name : _appConstant.currentUser.name;
 				_scope.project.name = _scope.project.mobileNumber ? _scope.project.name : _appConstant.currentUser.mobileNumber;

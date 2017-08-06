@@ -10,7 +10,7 @@
 						<!--<div class="upload-progress" style="width:{{uploadCompleted}}%"></div>-->
 						<div class="clearfix proj-assets">
 							<div class="image-toast">
-								<img src="../assets/icons/checked.png" class="toast-tick"/>Project Images/Videos updated successfully !!
+								<img src="../assets/icons/checked.png" class="toast-tick"/>Campaign Images/Videos updated successfully !!
 							</div>
 							<div class="col-md-3 asset-box" ng-repeat="g in tempAssets">
 								<div ng-if="!g.location">
@@ -33,7 +33,7 @@
 										<h4>DRAG &amp; DROP</h4>
 										<p>OR</p>
 										<h5>Browse</h5>
-										<p>Supported files: JPEG, PNG <br>Size upto 30MB</p>
+										<p>Supported files: JPEG, PNG, GIF, MOV4, AVI, MOV, MPEG <br>Size upto 30MB</p>
 									</div>
 								</div>
 							</div>
@@ -67,7 +67,7 @@
 								<md-input-container class="rupees" style="width:74%">
 									<label class="ph-label">Money needed</label>
 									<i class="fa fa-rupee"></i>
-									<input type="text" ng-model="project.moneyNeeded" ng-pattern="/^[0-9]*$/" required currency-mask>
+									<input type="text" ng-model="project.moneyNeeded" ng-pattern="/^[0-9,]*$/" required>
 									<div class="error-lable required">How much money I need text field empty.</div>
 									<div class="error-lable format">Entering the invalid format.</div>
 									<span class="md-raised md-primary question-info" aria-label="Play">
@@ -96,7 +96,7 @@
 											<md-input-container class="rupees" ng-class="spend.showAmtError?'md-input-invalid ':''">
 												<label class="ph-label">5000</label>
 												<i class="fa fa-rupee"></i>
-												<input type="text" ng-model="spend.amount" ng-pattern="/^[0-9]*$/" id="spendamount_{{$index}}" currency-mask>
+												<input type="text" ng-model="spend.amount" ng-pattern="/^[0-9,]*$/" id="spendamount_{{$index}}">
 												<div class="error-lable required">Amount is required!</div>
 												<div class="error-lable format">Entering the invalid format.</div>
 											</md-input-container>

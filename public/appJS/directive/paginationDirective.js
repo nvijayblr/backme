@@ -1,7 +1,7 @@
 backMe
 .directive("paginationDirective", [function() {
     return {
-        template : '<ul class="pagination pagination-md" ng-hide="numberOfPages() <= 1"><li ng-hide="currentPage < 10"><a href="" ng-click="currentPage=currentPage-1; firstSet();" >First</a></li><li ng-hide="currentPage < 10"><a href="" ng-click="prevSet()">❮</a></li><li ng-repeat="i in currentPageSeri  track by $index"><a class="{{currentPage+1 == i? \'higlightPagination\':\'\'}}" ng-click="changePage(i-1)">{{i}}</a></li><li ng-show="showLastBtn"><a href="" ng-click="nextSet()">❯</a></li><li ng-show="showLastBtn" ><a ng-click="currentPage=currentPage+1; lastSet();">Last</a></li></ul>'
+        template : '<ul class="pagination pagination-md" ng-hide="numberOfPages() <= 1"><li ng-hide="currentPage < 10"><a href="" ng-click="currentPage=currentPage-1; firstSet();" >First</a></li><li ng-hide="currentPage < 10"><a href="" ng-click="prevSet()">❮</a></li><li ng-repeat="i in currentPageSeri  track by $index"><a class="{{currentPage+1 == i? \'higlightPagination\':\'pagination-link\'}}" ng-click="changePage(i-1)">{{i}}</a></li><li ng-show="showLastBtn"><a href="" ng-click="nextSet()">❯</a></li><li ng-show="showLastBtn" ><a ng-click="currentPage=currentPage+1; lastSet();">Last</a></li></ul>'
     };
 }])
 .directive("paginationModalDirective", [function() {

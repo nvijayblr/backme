@@ -51,6 +51,8 @@
           }
           if (value != null) {
 			//$filter('currency')(Utils.clearSeparators(value), 'Rs', 2);
+			value = value.toString();
+			value = value.replace (/,/g, "");
 			return elem[0].value = $filter('currency')(Utils.clearSeparators(value), '', 0);
           }
         };

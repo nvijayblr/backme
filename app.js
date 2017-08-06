@@ -21,19 +21,19 @@ var youtube = require('./modules/youtube-upload');
 var nesting = require('./modules/mysql-nesting');
 
 var dbConnection = mysql.createConnection({
-	host: 'localhost',
+	/*host: 'localhost',
 	user: 'root',
 	password: '',
-	database: 'backme'
-  	/*host: 'localhost',
+	database: 'backme'*/
+  	host: 'localhost',
 	user: 'root',
 	password: 'Xcz?2oAffm',
 	database: 'backme',
 	port: 3306,
-	debug: true*/
+	debug: true
 });
 
-var host = 3001;
+var host = 80;
 
 /*
 backme.talent@gmail.com
@@ -48,11 +48,11 @@ https://www.twilio.com/blog/2015/02/building-your-own-personal-assistant-with-tw
 //Youtube config
 
 //Local Server
-var oAuthCredentials = {
+/*var oAuthCredentials = {
 	client_id: '47668821926-88cp2nt18qdvh525lm6gf509ug38c92d.apps.googleusercontent.com',
 	client_secret: 'aEmqEAy8x4m8J3W70N0Vo1Ip',
 	redirect_url: 'http://localhost:3001/auth'
-};
+};*/
 
 
 /*
@@ -60,11 +60,11 @@ https://accounts.google.com/o/oauth2/auth?access_type=offline&scope=https%3A%2F%
 */
 
 //Live server
-/*var oAuthCredentials = {
+var oAuthCredentials = {
 	client_id: '1022772628270-hbpvh5ooeub8h0bdfu4nsf895vtuifp1.apps.googleusercontent.com',
 	client_secret: '7KvmTlj8s-ribzsuplXbYzjH',
 	redirect_url: 'http://supportmytalent.in/auth'
-};*/
+};
 
 var server = app.listen(host, function (request, response) {
     var host = server.address().address,
@@ -384,6 +384,63 @@ app.get('/verifyAccount/:userId', function (req, res) {
 				return;
 			}
 			res.status(200).send('Your account verified successfully. <a href="'+host+'">Click here</a> to login BACKME account.');
+		});
+	} catch(e) {
+		res.status(500).send("Internal Server Error. Try again.");
+	}
+});
+
+
+/*generate forgot password(randomly)*/
+app.get('/forgotpassword/:emailId', function (req, res) {
+	var emailId = req.params.emailId;
+	if(!emailId) {
+		res.status(500).send('Email is required.');
+		return;
+	};
+	try {
+		var radomPassword = Math.random().toString(36).slice(-8);
+		dbConnection.query('UPDATE users SET password=? WHERE email=? AND loginType="CUSTOM"', [radomPassword, emailId], function (error, results, fields) {
+			if (error) {
+				res.status(500).send('Internal Server Error. Try again.');
+				return;
+			}
+			if(results.affectedRows == 1) {
+				emails.sendForgotPasswordEmails(app, transporter, 'forgot-password.ejs', emailId, radomPassword, 'Forgot Password', function(info) {
+					console.log(info);
+				});
+				res.status(200).send(results);
+			} else {
+				res.status(200).send('EMAILNOTFOUND');
+			}
+		});
+	} catch(e) {
+		res.status(500).send("Internal Server Error. Try again.");
+	}
+});
+
+
+/*changepassword password(randomly)*/
+app.put('/changepassword', function (req, res) {
+	var user = req.body;
+	if(!user.userId || !user.password || !user.newPassword) {
+		res.status(500).send('userId/password/new password is required.');
+		return;
+	};
+	try {
+		dbConnection.query('UPDATE users SET password=? WHERE userId=? AND password=?', [user.newPassword, user.userId, user.password], function (error, results, fields) {
+			if (error) {
+				res.status(500).send('Internal Server Error. Try again.');
+				return;
+			}
+			if(results.affectedRows == 1) {
+				/*emails.sendForgotPasswordEmails(app, transporter, 'forgot-password.ejs', emailId, radomPassword, 'Forgot Password', function(info) {
+					console.log(info);
+				});*/
+				res.status(200).send(results);
+			} else {
+				res.status(200).send('INVALID');
+			}
 		});
 	} catch(e) {
 		res.status(500).send("Internal Server Error. Try again.");

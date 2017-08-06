@@ -34,7 +34,7 @@ exports.socialAPI = function(app, dbConnection, validate, multer, path, nesting,
 		try {
 			dbConnection.query({sql: 'SELECT * FROM comments \
 				LEFT JOIN (SELECT userId, name, profilePicture, loginType FROM users) users ON (comments.userId = users.userId) \
-				WHERE comments.projectId = ?', nestTables: true}, projectId, function (error, results, fields) {
+				WHERE comments.projectId = ? AND comments.abused!="true"', nestTables: true}, projectId, function (error, results, fields) {
 				if (error) {
 					res.status(500).send('Internal Server Error.');
 					return;
@@ -87,5 +87,44 @@ exports.socialAPI = function(app, dbConnection, validate, multer, path, nesting,
 		}
 	});
 	
+	/* Create favourites */
+	app.put('/favourites', function (req, res) {
+		var favourite = req.body;
+		if(!favourite.userId || !favourite.projectId) {
+			res.status(400).send("Bad Request. Parameters mismatched.");
+			return;
+		};
+		try {
+			dbConnection.query('INSERT INTO favourites SET ?', favourite, function (error, results, fields) {
+				if (error) {
+					res.status(500).send('Internal Server Error.');
+					return;
+				}
+				res.status(200).send(results);
+			});
+		} catch(e) {
+			res.status(500).send("Internal Server Error.");
+		}
+	});
+	
+	/* delete favourite based on favouriteId */
+	app.delete('/favourites', function (req, res) {
+		var favourite = req.body;
+		if(!favourite.userId || !favourite.projectId) {
+			res.status(400).send("Bad Request. Parameters mismatched.");
+			return;
+		};
+		try {
+			dbConnection.query('DELETE FROM favourites WHERE userId = ? AND projectId = ?', [favourite.userId, favourite.projectId], function (error, results, fields) {
+				if (error) {
+					res.status(500).send('Internal Server Error.');
+					return;
+				}
+				res.status(200).send(results);
+			});
 
+		} catch(e) {
+			res.status(500).send("Internal Server Error.");
+		}
+	});
 }

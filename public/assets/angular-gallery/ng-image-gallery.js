@@ -101,7 +101,6 @@
 						scope._bubblesInView = bubblesInView;
 						scope._finalBubbleSpace = finalBubbleSpace;
 						scope._bubbleMargin = '0 ' + (bubbleMargin/2) + 'px';
-						console.log('HJaa', bubbleSize)
 
 						scope._safeApply(angular.noop);
 					};

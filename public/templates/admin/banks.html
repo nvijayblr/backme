@@ -1,22 +1,41 @@
 <section class="filter create">
-	<div class="input-wrp">
-		<div class="clearfix search-wrp">
-			<input type="text" ng-model="filter.search" class="form-control search-txt" placeholder="Search" />
-			<button type="button" class="btn btn-xs btn-primary search-btn" ng-click="applySearch(filter.search);">Search</button>
-		</div>		
+	<div class="row admin filter-wrp">
+		<div class="col-sm-6 col-md-5">
+			<div class="input-wrp">
+				<div class="clearfix search-wrp">
+					<input type="text" ng-model="filter.search" class="form-control search-txt" placeholder="Search" />
+					<button type="button" class="btn btn-xs btn-primary search-btn" ng-click="applySearch(filter.search);">Search</button>
+				</div>		
+			</div>
+		</div>
+		<div class="col-sm-6 col-md-7 pull-right">
+			<div class="clearfix">
+				<div class="pull-right">
+					<button type="button" class="btn btn-xs btn-secondary export">Export As XLS</button>
+				</div>
+				<div class="pull-right">
+					<button type="button" class="btn btn-xs btn-primary export">Apply</button>
+				</div>
+				<div class="pull-right">
+					<label class="d-label">To</label>
+					<md-datepicker name="endByDate" ng-model="filter.toDate" md-placeholder="" required></md-datepicker>
+				</div>
+				<div class="pull-right">
+					<label class="d-label">From</label>
+					<md-datepicker name="endByDate" ng-model="filter.fromDate" md-placeholder="" required></md-datepicker>
+				</div>
+			</div>
+		</div>
 	</div>
 	<div class="clearfix">
 		<p class="pull-left title">Total: {{banks.length}}</p>
 		<button type="button" class="btn btn-xs btn-primary pull-right" ng-click="showAddEditModal('POST');">Create</button>
+		<button type="button" class="btn btn-xs btn-primary pull-right" ng-disabled="!cbSelected" ng-click="deleteBank(banks, true)">Delete</button>
 	</div>
 </section>
 <table class="table table-hover table-responsive table-striped">
 	<tr>
-		<th ng-click="sortBy('bankId')" class="sort-title">
-			BankId
-			<i ng-show="sort_propertyName == 'bankId'" class="glyphicon glyphicon-triangle-{{sort_reverse? 'bottom':'top'}}"></i>
-			<i ng-hide="sort_propertyName == 'bankId'" class="glyphicon glyphicon-triangle-bottom"></i>
-		</th>
+		<th><input type="checkbox" ng-model="selectAll" ng-click="selectAllCheck(banks, selectAll)" /></th>
 		<th  ng-click="sortBy('name')" class="sort-title">
 			Name
 			<i ng-show="sort_propertyName == 'name'" class="glyphicon glyphicon-triangle-{{sort_reverse? 'bottom':'top'}}"></i>
@@ -31,7 +50,7 @@
 		</th>
 	</tr>
 	<tr ng-repeat="bank in banks | orderBy: sort_propertyName:sort_reverse | paginationFilters_startFrom:currentPage*pageSize | limitTo:pageSize track by $index">
-		<td>{{bank.bankId}}</td>
+		<td><input type="checkbox" ng-model="bank.selected" ng-click="unSelect(banks, bank.selected)"/></td>
 		<td>{{bank.name}}</td>
 		<td>{{bank.bankDesc}}</td>
 		<td>

@@ -7,10 +7,11 @@ backMe.controller('adminProjectsCtrl', ['$scope', 'BaseServices', 'appConstant',
 		search: ''
 	};
 	_scope.init = function() {
+		_scope.selectAll = false;
 		_scope.projects = [];
 		_services.http.serve({
 			method: 'GET',
-			url: _appConstant.baseUrl + 'admin/projects'
+			url: _appConstant.baseUrl + 'admin/projects?role='+_appConstant.currentAdmin.role+'&adminId='+_appConstant.currentAdmin.adminId
 		}, function(data){
 			_scope.projects = data;
 			_scope.projectsAll = data;
@@ -30,24 +31,61 @@ backMe.controller('adminProjectsCtrl', ['$scope', 'BaseServices', 'appConstant',
 		_services.pagination.init(_scope, _scope.projects);
 	}
 	
-	_scope.deActivateProjects = function(_state, _modal) {
-		_scope.temp = {};
-		if(_state == _modal.status) return;
-		//angular.copy(_modal, _scope.temp);
-		_scope.temp = {
-			status: _state,
-			projectId: _modal.projectId
+	_scope.selectAllCheck = function(_list, isChecked) {
+        angular.forEach(_list, function(_obj){
+            _obj.selected = isChecked;
+        });
+		_scope.cbSelected = _filter('filter')(_list, {selected: true}).length;
+	}
+	
+    _scope.unSelect = function(_list, isChecked) {
+		_scope.cbSelected = _filter('filter')(_list, {selected: true}).length;
+		if(!isChecked)
+			_scope.selectAll = false;
+		else {
+			_scope.selectAll = true;
+			angular.forEach(_list, function(_obj){
+            	if(!_obj.selected) {
+					_scope.selectAll = false;
+					return;
+				}
+        	});
 		}
-		_services.popup.init(_scope.temp.status=='ACTIVE'? "Activate":"Deactivate", _scope.temp.status=='ACTIVE'?"Are you sure want Activate the project?" : "Are you sure want Deactivate the project?", function(){
+	}
+
+	_scope.deActivateProjects = function(_state, _modal, topButton) {
+		_scope.selectedItems = [];
+		_scope.temp = {};
+		if(topButton) {
+			angular.forEach(_modal, function(_obj){
+				if(_obj.selected)
+					_scope.selectedItems.push(_obj.projectId)
+			});
+			if(!_scope.selectedItems.length){
+				_services.toast.show('Please select the projects.');
+				return;
+			}
+			_scope.temp = {
+				status: _state,
+				projectId: _scope.selectedItems.join(",")
+			}
+		} else {
+			if(_state == _modal.status) return;
+			_scope.temp = {
+				status: _state,
+				projectId: _modal.projectId
+			}
+		}
+		_services.popup.init(_scope.temp.status=='ACTIVE'? "Activate":"Deactivate", _scope.temp.status=='ACTIVE'?"Are you sure want Activate the campaign?" : "Are you sure want Deactivate the campaign?", function(){
 			_services.http.serve({
 				method: 'PUT',
 				url: _appConstant.baseUrl + 'admin/projects',
 				inputData: _scope.temp
 			}, function(data){
 				if(_scope.temp.status=='ACTIVE')
-					_services.toast.show('<img src="../assets/icons/checked.png" class="toast-tick"/>Project activated successfully !!');
+					_services.toast.show('<img src="../assets/icons/checked.png" class="toast-tick"/>Campaign activated successfully !!');
 				else 
-					_services.toast.show('<img src="../assets/icons/checked.png" class="toast-tick"/>Project deactivated successfully !!');
+					_services.toast.show('<img src="../assets/icons/checked.png" class="toast-tick"/>Campaign deactivated successfully !!');
 				_scope.init();
 			}, function(err) {
 				console.log(err)

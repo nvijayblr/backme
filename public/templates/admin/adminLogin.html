@@ -1,4 +1,4 @@
-<form name="basicInfoForm" ng-submit="startProjectDetails(basicInfoForm.$valid);" novalidate autocomplete="off">
+<form name="adminLoginFrom" ng-submit="adminLoginFrom.$valid && adminLogin(loginSettings);" novalidate autocomplete="off">
 	<section class="content admin">
 		<div class="create-proj-cont">
 			<div class="create-proj-wrp steps-wrp loginModal">
@@ -29,7 +29,7 @@
 							<div class="error-lable required">Password text field empty.</div>
 							<div class="error-lable format">Entering the invalid format.</div>
 						</md-input-container>							
-						<button class="btn btn-default btn-subscribe btn-login" ng-click="app.loginForm.submit()">Login</button>
+						<button class="btn btn-default btn-subscribe btn-login" ng-click="app.adminLoginFrom.submit()">Login</button>
 					</div>
 				</div>
 			</div>

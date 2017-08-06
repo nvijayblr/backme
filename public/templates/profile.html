@@ -25,7 +25,10 @@
 											<img ng-src="{{userCroppedImg}}" width="100%"  height="100%"/>
 										</div>
 										<div class="user-img" ng-if="project.userPhoto && !userImg">
-											<div class="user-photo" style="background-image:url(/uploads/{{project.userPhoto}})"></div>
+											<!--Local images-->
+											<div class="user-photo" ng-if="project.userPhoto.substr(0,4)!='http'" style="background-image:url(/uploads/{{project.userPhoto}})"></div>
+											<!--google/fb images-->
+											<div class="user-photo" ng-if="project.userPhoto.substr(0,4)=='http'" style="background-image:url({{project.userPhoto}})"></div>
 										</div>
 									</div>
 									<div ngf-drop ngf-pattern="image/*" class="cropArea" ng-show="userImg">
@@ -106,9 +109,28 @@
 								</div>
 								<div class="social-connect">
 									<div class="conenect-wrp">
-									  <md-checkbox md-no-ink ng-model="project.facebook" aria-label="F" class="fb-cb social-cb">f</md-checkbox>
-									  <md-checkbox md-no-ink ng-model="project.twitter" aria-label="T" class="tw-cb social-cb">t</md-checkbox>
-									  <md-checkbox md-no-ink ng-model="project.googleplus" aria-label="G" class="go-cb social-cb">g</md-checkbox>
+									<div class="md-checkbox fb-cb social-cb" fb-login ng-class="project.facebook ? 'md-checked':''">
+										<div class="md-icon"></div>	
+										<div class="md-label">f</div>	
+										<input type="hidden" ng-model="project.facebook">
+									</div>
+									<div class="md-checkbox tw-cb social-cb" ng-class="project.twitter ? 'md-checked':''">
+										<div class="md-icon"></div>	
+										<div class="md-label">t</div>	
+										<input type="hidden" ng-model="project.twitter">
+									</div>	
+									<div class="md-checkbox go-cb social-cb" g-login ng-class="project.googleplus ? 'md-checked':''">
+										<div class="md-icon"></div>	
+										<div class="md-label">g</div>
+										<input type="hidden" ng-model="project.googleplus">
+									</div>
+									<!--<button g-login type="button">Google Login</button>
+									<button linked-in type="button">LinkedIn Login</button>
+									<button fb-login type="button">facebook Login</button>-->
+
+									<!--<md-checkbox md-no-ink ng-model="project.facebook" aria-label="F" class="fb-cb social-cb">f</md-checkbox>
+									<md-checkbox md-no-ink ng-model="project.twitter" aria-label="T" class="tw-cb social-cb">t</md-checkbox>
+									<md-checkbox md-no-ink ng-model="project.googleplus" aria-label="G" class="go-cb social-cb">g</md-checkbox>-->
 									</div>
 								</div>
 							</div>

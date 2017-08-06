@@ -24,10 +24,10 @@ backMe.controller('projectCtrl', ['$scope', 'BaseServices', '$timeout', '$state'
 			method: 'GET',
 			url: _appConstant.baseUrl + 'projects/' + _scope.projectId +'?userId='+_scope.loggedUserId
 		}, function(data){
+			_scope.project = data;
 			if(_scope.project.length == 0) {
 				_state.go('home');
 			}
-			_scope.project = data;
             _scope.loadSimilarProjects(_scope.project.category);
 			angular.forEach(_scope.project.projectsassets, function(_obj, _index){
 				_scope.images.push({
@@ -49,7 +49,7 @@ backMe.controller('projectCtrl', ['$scope', 'BaseServices', '$timeout', '$state'
 				videoId: '',
 				videoUrl: ''
 			});
-			//generateRemainDaysGraph(_scope.project.remaindayshours[0].totalDays, _scope.project.remaindayshours[0].remainDays);
+			generateRemainDaysGraph(_scope.project.remaindayshours[0].totalDays, _scope.project.remaindayshours[0].remainDays);
 			_scope.spendData = [];
 			angular.forEach(_scope.project.spendmoney, function(obj, index){
 				_scope.spendData.push({
@@ -94,8 +94,10 @@ backMe.controller('projectCtrl', ['$scope', 'BaseServices', '$timeout', '$state'
     _scope.addViews(_scope.projectId, _scope.loggedUserId);
 
     _scope.addLike = function(_project) {
-        if(!_appConstant.currentUser.userId)
+        if(!_appConstant.currentUser.userId) {
+			_scope.showLogin();
             return;
+		}
 		_services.http.serve({
 			method: 'PUT',
 			url: _appConstant.baseUrl + 'likes',
@@ -127,13 +129,11 @@ backMe.controller('projectCtrl', ['$scope', 'BaseServices', '$timeout', '$state'
             inputData: {projectId: _projectId, userId: _scope.loggedUserId, comment: _comment}
 		}, function(data){
            _services.toast.show('Comment added successfully.');
-            _scope.comments.unshift({comments:{comment:_comment, commentedOn: new Date()}, 
-                                     users:{name:_appConstant.currentUser.name, profilePicture:_appConstant.currentUser.profilePicture, loginType:_appConstant.currentUser.loginType}});
-            _scope.comment.commentInput = "";
+           _scope.getComments();
+           _scope.comment.commentInput = "";
 		}, function(err) {
 		});
     }
-    console.log('_scope.loggedUserId', _scope.loggedUserId);
     
     
 	_scope.showSupportMe = true;
@@ -144,6 +144,33 @@ backMe.controller('projectCtrl', ['$scope', 'BaseServices', '$timeout', '$state'
 
 	_scope.supportMeContinue = function(_amt) {
 		_state.go('checkout', {projectId: _scope.projectId, amount: _amt});
+	}
+	_scope.abuse = {
+		option: 'SPAMCONTENT'
+	};
+	_scope.abusedComment = {};
+	_scope.showAbuseModel = function(_comment) {
+		_scope.abusedComment = _comment;
+		$('#AbuseModel').modal('show');
+	}
+	
+	_scope.submitAbuse = function(_option) {
+		_scope.abusedComment.abusedType = _option;
+		_scope.abusedComment.abusedBy = _appConstant.currentUser.userId;
+		_scope.abusedComment.abusedOn = moment().format('YYYY-MM-DD HH:mm:ss');
+		_scope.abusedComment.abused = 'true';
+		console.log(_scope.abusedComment);
+		_services.http.serve({
+			method: 'PUT',
+			url: _appConstant.baseUrl + 'admin/comments/abused',
+			inputData: _scope.abusedComment
+		}, function(data) {
+			_services.toast.show('Abuse submitted successfully.');
+			$('#AbuseModel').modal('hide');
+			_scope.getComments();
+		}, function(err) {
+			$('#AbuseModel').modal('hide');
+		});
 	}
 	
 	function generateRemainDaysGraph(totaldays, remaindays) {

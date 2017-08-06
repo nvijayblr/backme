@@ -7,6 +7,7 @@ backMe.controller('adminBanksCtrl', ['$scope', 'BaseServices', 'appConstant', '$
 		search: ''
 	};
 	_scope.init = function() {
+		_scope.selectAll = false;
 		_scope.banks = [];
 		_services.http.serve({
 			method: 'GET',
@@ -30,6 +31,28 @@ backMe.controller('adminBanksCtrl', ['$scope', 'BaseServices', 'appConstant', '$
 		_services.pagination.init(_scope, _scope.banks);
 	}
 	
+	_scope.selectAllCheck = function(_list, isChecked) {
+        angular.forEach(_list, function(_obj){
+            _obj.selected = isChecked;
+        });
+		_scope.cbSelected = _filter('filter')(_list, {selected: true}).length;
+	}
+	
+    _scope.unSelect = function(_list, isChecked) {
+		_scope.cbSelected = _filter('filter')(_list, {selected: true}).length;
+		if(!isChecked)
+			_scope.selectAll = false;
+		else {
+			_scope.selectAll = true;
+			angular.forEach(_list, function(_obj){
+            	if(!_obj.selected) {
+					_scope.selectAll = false;
+					return;
+				}
+        	});
+		}
+	}
+
 	_scope.bank = {
 		name: '',
 		bankDesc: ''
@@ -69,12 +92,31 @@ backMe.controller('adminBanksCtrl', ['$scope', 'BaseServices', 'appConstant', '$
 		});
 	}
 	
-	_scope.deleteBank = function(_modal) {
+	_scope.deleteBank = function(_modal, topButton) {
+		_scope.temp = {};
+		_scope.selectedItems = [];
+		if(topButton) {
+			angular.forEach(_modal, function(_obj){
+				if(_obj.selected)
+					_scope.selectedItems.push(_obj.bankId)
+			});
+			if(!_scope.selectedItems.length){
+				_services.toast.show('Please select the bank.');
+				return;
+			}
+			_scope.temp = {
+				bankId: _scope.selectedItems.join(",")
+			}
+		} else {
+			_scope.temp = {
+				bankId: _modal.bankId
+			}
+		}
 		_services.popup.init("Delete", "Are you sure want delete?", function(){
 			_services.http.serve({
 				method: 'DELETE',
 				url: _appConstant.baseUrl + 'banks',
-				inputData: _modal
+				inputData: _scope.temp
 			}, function(data){
 				_services.toast.show('<img src="../assets/icons/checked.png" class="toast-tick"/>Bank deleted successfully !!');
 				_scope.init();

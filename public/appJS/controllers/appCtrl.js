@@ -1,8 +1,9 @@
 'use strict';
-backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope', '$window', '$state', '$mdToast', 'appConstant', 'Facebook', '$http',   function(_scope, _services, _timeout, _rootScope, _window, _state, _mdToast, _appConstant, Facebook, _http){
-
+backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope', '$window', '$state', '$mdToast', 'appConstant', 'Facebook', '$http', '$anchorScroll', '$location', 'socialLoginService', function(_scope, _services, _timeout, _rootScope, _window, _state, _mdToast, _appConstant, Facebook, _http, _anchorScroll, _location, _socialLoginService){
+	console.log('appCtrl');
 	_scope.appConstant = _appConstant;
 	_scope.isAdmin = false;
+	_rootScope.isAdminLoginPage = false;	
 	_scope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams){
 		_scope.isAdmin = false;
 		if(toState.name.substr(0,5) == 'admin') {
@@ -175,9 +176,10 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 		_scope.projects = [];
 		_services.http.serve({
 			method: 'GET',
-			url: _appConstant.baseUrl + 'search?q=' + _query
+			url: _appConstant.baseUrl + 'search?q=' + _query+'&userId='+_appConstant.currentUser.userId
 		}, function(data){
 			_scope.projects = data;
+			_scope.pageSize = 6;
 			_services.pagination.init(_scope, _scope.projects);
 		}, function(err) {
 			console.log(err)
@@ -193,9 +195,28 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 		_scope.category = '';
 		_services.http.serve({
 			method: 'GET',
-			url: _appConstant.baseUrl + 'bySocial?q='+_type+'&limit=1000000&category='+_scope.category
+			url: _appConstant.baseUrl + 'bySocial?q='+_type+'&limit=1000000&category='+_scope.category+'&userId='+_appConstant.currentUser.userId
 		}, function(data){
 			_scope.projects = data[_type];
+			_scope.pageSize = 6;
+			_services.pagination.init(_scope, _scope.projects);
+			/*_location.hash('banner');
+			_anchorScroll();*/
+			$('#backme-page').scrollTop(0);
+		}, function(err) {
+			console.log(err)
+		});
+
+	}
+	_scope.loadFaouriteProjects = function() {
+		_scope.isSerchPage = true;
+		_scope.isSeeAll = true;
+		_scope.projects = [];
+		_services.http.serve({
+			method: 'GET',
+			url: _appConstant.baseUrl + 'favProjects?userId=' + _appConstant.currentUser.userId
+		}, function(data){
+			_scope.projects = data;
 			_scope.pageSize = 6;
 			_services.pagination.init(_scope, _scope.projects);
 		}, function(err) {
@@ -203,9 +224,6 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 		});
 
 	}
-
-	
-	
 	
 	_scope.location = {
 		projects: {}
@@ -239,10 +257,8 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 	
 	_scope.searchKeywordsList = '';
 	_scope.searchKeyPress = function(_keyEvent) {
-		if (_keyEvent.which == 13 && _scope.searchKeywords) {
-			_scope.isSerchPage = true;
-			_scope.searchKeywordsList = _scope.searchKeywords.join(', ')
-			_scope.searchProjects(_scope.searchKeywords.join('|'));
+		if (_keyEvent.which == 13) {
+			_scope.startSearch();
 		}
 	}
 	_scope.showSearchBar = function() {
@@ -257,17 +273,50 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 		_scope.isSerchPage = false;
 		_scope.searchKeywords = [];
 	}
-
 	_scope.startSearch = function() {
-		if(_scope.searchKeywords) {
+		if($(".md-chip-input-container input.md-input").eq(0).val()) {
+			_scope.searchKeywords.push($(".md-chip-input-container input.md-input").eq(0).val());
+			$(".md-chip-input-container input.md-input").eq(0).val('');
+		}
+		if(_scope.searchKeywords.length) {
 			if(_state.current.url != '/home') {
 				_state.go('home');
 			}
+			location.href="/#/home?search="+_scope.searchKeywords.join(',')
 			_scope.isSerchPage = true;
 			_scope.searchKeywordsList = _scope.searchKeywords.join(', ')
 			_scope.searchProjects(_scope.searchKeywords.join('|'));
 		}
 	}
+	if(location.href.split('?search=')[1]) {
+		_scope.showSearchBar()
+		_scope.searchKeywords = location.href.split('?search=')[1].split(',');
+		_scope.startSearch();
+	}
+	
+	_scope.gotoHome = function() {
+		if(_scope.isSerchPage) {
+			_scope.closeSearch();
+			location.href="/#/home";
+			_scope.$broadcast('loadInitProjects');
+		} else {
+			_state.go('home');
+			_scope.$broadcast('loadInitProjects');
+		}
+		_scope.isFavouritePage = false;
+	}
+	_scope.isFavouritePage = false;
+	_scope.gotoFavourites = function() {
+		if(_state.current.name == 'home') {
+			location.href="/#/home?favourites";
+			_scope.loadFaouriteProjects();
+		} else {
+			_scope.isSerchPage = false;
+			location.href="/#/home?favourites";
+		}
+		_scope.isFavouritePage = true;
+	}
+
 	//End of the Search related functions
 	
 	_scope.showLogin = function() {
@@ -388,11 +437,33 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 		});
 	}
 	
-
 	_scope.appSignup = function(_email, _pass, _name) {
 		_scope.finishSignup(_email, _pass, _name);
 		//$('#signUpModal').modal('hide');
 		//$('#signUpFinishModal').modal('show');
+	}
+
+	_scope.showForgetPassword = function() {
+		_scope.signUpSettings.email = '';
+		$('#loginModal').modal('hide');
+		$('#signUpModal').modal('hide');
+		$('#forgetPasswordModal').modal('show');
+	}
+
+	_scope.appForgetPassword = function(_email) {
+		if(!_email) return;
+		_services.http.serve({
+			method: 'GET',
+			url: _appConstant.baseUrl + 'forgotpassword/'+_email
+		}, function(res){
+			$('#forgetPasswordModal').modal('hide');
+			if(res=='EMAILNOTFOUND')
+				_services.toast.show('Email not found.');
+			else
+				_services.toast.show('Temporary password has been sent to your email.');
+		}, function(err) {
+			_services.toast.show(err.data);
+		});
 	}
 	
 	/*Begin the google sign in*/
@@ -430,14 +501,14 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 			_services.toast.show('Please enter the Email/login type.');
 			return;
 		}
-		_scope.socialLogin = {
+		_scope.socialLoginData = {
 			email: _email,
 			loginType: _type
 		}
 		_services.http.serve({
 			method: 'POST',
 			url: _appConstant.baseUrl + 'loginsocial',
-			inputData: _scope.socialLogin
+			inputData: _scope.socialLoginData
 		}, function(data){
 			_appConstant.currentUser = data[0];
 			_appConstant.currentUser.name = _appConstant.currentUser.name?_appConstant.currentUser.name:_email;
@@ -453,13 +524,16 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 	}
 	
 	_scope.googleLoginSuccess = function(_googleUser) {
-		console.log(_googleUser);
 		_scope.accessToken = _googleUser.Zi.access_token;
 		_scope.profile = _googleUser.getBasicProfile();
-		_scope.googleUser.name = _scope.profile.getName();
-		_scope.googleUser.email = _scope.profile.getEmail();
-		_scope.googleUser.profilePicture = _scope.profile.getImageUrl();
-		
+		_scope.googleUser = {
+			name: _scope.profile.getName(),
+			email: _scope.profile.getEmail(),
+			profilePicture: _scope.profile.getImageUrl(),
+			loginType: 'GOOGLE',
+			googleplus: _scope.profile.getId()
+		}
+		console.log(_scope.googleUser);
 		_services.http.serve({
 			method: 'POST',
 			url: _appConstant.baseUrl + 'signupsocial',
@@ -477,17 +551,13 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 			$('#signUpModal').modal('hide');
 			$('#loginModal').modal('hide');
 		}, function(err) {
-			console.log(err);
+			console.log(_scope.googleUser.email);
 			if(err.data == 'ER_DUP_ENTRY') {
 				_scope.socialLogin(_scope.googleUser.email, 'GOOGLE');
 			} else {
 				_services.toast.show(err.data);
 			}
 		});
-		/*console.log('ID: ' + _scope.profile.getId()); 
-		console.log('Name: ' + _scope.profile.getName());
-		console.log('Image URL: ' + _scope.profile.getImageUrl());
-		console.log('Email: ' + _scope.profile.getEmail());*/ 
 	}
 	
 	_scope.googleLoginFailure = function(obj) {
@@ -527,6 +597,38 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 	/*End the google sign in*/
 	
 	/*begin the facebook login*/
+	_scope.facebookLoginSuccess = function(_fbUser) {
+		_scope.fbUser = {
+			name: _fbUser.name,
+			email: _fbUser.email ? _fbUser.email : _fbUser.id,
+			loginType: 'FACEBOOK',
+			profilePicture: _fbUser.picture.data.url ? _fbUser.picture.data.url : '',
+			facebook: _fbUser.id
+		}
+		_services.http.serve({
+			method: 'POST',
+			url: _appConstant.baseUrl + 'signupsocial',
+			inputData: _scope.fbUser
+		}, function(res){
+			_appConstant.currentUser.name = _fbUser.name;
+			_appConstant.currentUser.email = _fbUser.id;
+			_appConstant.currentUser.userId = res.insertId;
+			_appConstant.currentUser.loginType = 'FACEBOOK';
+			_scope.loggedUser = _appConstant.currentUser;
+			localStorage.setItem('backMeUser', JSON.stringify(_appConstant.currentUser));
+			_scope.loggedIn = true;
+			_services.toast.show('<img src="../assets/icons/checked.png" class="toast-tick"/>Your account has created successfully.');
+			$('#signUpModal').modal('hide');
+			$('#loginModal').modal('hide');
+		}, function(err) {
+			if(err.data == 'ER_DUP_ENTRY') {
+				_scope.socialLogin(_scope.fbUser.email, 'FACEBOOK');
+			} else {
+				_services.toast.show(err.data);
+			}
+		});
+	}
+
 	_scope.$watch(
 		function() {
 		  return Facebook.isReady();
@@ -540,16 +642,9 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 	_scope.userIsConnectedInFB = false;
 
 	_scope.getFacebookUser = function() {
-		Facebook.api('/me', function(response) {
-			_scope.$apply(function() {
-				_appConstant.currentUser.name = response.name;
-				_appConstant.currentUser.email = response.name;
-				_scope.loggedUser = _appConstant.currentUser;
-				localStorage.setItem('backMeUser', JSON.stringify(_appConstant.currentUser));
-				_scope.loggedIn = true;
-				$('#signUpModal').modal('hide');
-				$('#loginModal').modal('hide');
-			});
+		Facebook.api('/me', {fields: ['name', 'link', 'email', 'picture']}, function(response) {
+			console.log(response);
+			_scope.facebookLoginSuccess(response);
 		});
 	}
 	
@@ -558,7 +653,7 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 			_scope.$apply(function() {
 				_scope.userIsConnectedInFB = true;
 			});
-			_scope.getFacebookUser();
+			_scope.getFacebookUser(response);
 		}
 	});
       
@@ -566,7 +661,7 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 		if(!_scope.userIsConnectedInFB) {
 			Facebook.login(function(response) {
 				if (response.status == 'connected') {
-					_scope.getFacebookUser();
+					_scope.getFacebookUser(response);
 				}
 			});
 		}
@@ -584,6 +679,9 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 	});
 	
 	_rootScope.$on("$locationChangeSuccess", function (event, currentRoute, previousRoute) {
+		$('#backme-page').scrollTop(0);
+	});
+	$("body").on('click', '.pagination-link', function() {
 		$('#backme-page').scrollTop(0);
 	});
 	/*End the common functions for the application*/

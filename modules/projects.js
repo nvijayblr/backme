@@ -181,7 +181,6 @@ exports.projectsAPI = function(app, dbConnection, validate, multer, path, nestin
 		}
 	});
 	
-
 	/*Update project*/
 	app.post('/projects', function (req, res) {
 		var upload = multer({
@@ -254,6 +253,32 @@ exports.projectsAPI = function(app, dbConnection, validate, multer, path, nestin
 					project.location = project.location.display;
 				}
 				async.waterfall([
+					function (wCB) {
+						if(project.status == 'ACTIVE') {
+							console.log('project', project.projectId);
+							var adminId = 1;
+							var currentTimestamp = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
+							dbConnection.query('SELECT a.adminId, COUNT(ap.assignId) as assignCount from admin a LEFT JOIN assignprojects ap ON a.adminId = ap.adminId WHERE a.role="ADMIN" GROUP BY a.adminId ORDER BY assignCount LIMIT 1', function (error, results, fields) {
+								if (error) {
+									return wCB(error);
+								}
+								console.log('results', results[0].adminId);
+								if(results && results[0].adminId) {
+									adminId = results[0].adminId;
+								}
+								dbConnection.query("INSERT INTO assignprojects (projectId, userId, adminId, status, reviewedDate, comments) VALUES (?,?,?,?,?,?)", [project.projectId, project.userId, adminId, 'ACTIVE', currentTimestamp, 'project is LIVE without the admin approval.'], function (error, results, fields) {
+									if (error) {
+										return wCB(error);
+									}
+									console.log('Project assigned to admin.')
+									wCB();
+								});
+							});
+							
+						} else {
+							wCB();
+						}
+					},
 					function (wCB) {
 						dbConnection.query('UPDATE projects SET ? WHERE projectId=?', [project, project.projectId], function (error, results, fields) {
 							if (error) {
@@ -544,7 +569,8 @@ exports.projectsAPI = function(app, dbConnection, validate, multer, path, nestin
 	/*Get projects list based on keywords*/
 	app.get('/search', function (req, res) {
 		var query = '%';
-		var sql = "SELECT p.projectId, p.title, p.category, p.coverImage, p.moneyNeeded, p.endByDate, p.createdDate, p.userId, p.name, p.userPhoto, TIMESTAMPDIFF(DAY,CURDATE(),p.endByDate) as remainDays, (SELECT COUNT(*) from likes l where l.projectId=p.projectId) AS likesCount, (SELECT COUNT(*) from views v where v.projectId=p.projectId) AS viewsCount, (SELECT COUNT(*) from shares s where s.projectId=p.projectId) AS sharesCount, (SELECT COALESCE(SUM(amount),0) from payments pay where pay.projectId=p.projectId AND txnStatus='TXN_SUCCESS') AS funded FROM projects p WHERE p.STATUS = 'ACTIVE' AND p.endByDate >= CURDATE() AND ("
+		var userId = req.query.userId || '';
+		var sql = "SELECT p.projectId, p.title, p.category, p.coverImage, p.moneyNeeded, p.endByDate, p.createdDate, p.userId, p.name, p.userPhoto, TIMESTAMPDIFF(DAY,CURDATE(),p.endByDate) as remainDays, (SELECT COUNT(*) from likes l where l.projectId=p.projectId) AS likesCount, (SELECT COUNT(*) from views v where v.projectId=p.projectId) AS viewsCount, (SELECT COUNT(*) from shares s where s.projectId=p.projectId) AS sharesCount, (SELECT COUNT(*) from favourites f where f.projectId=p.projectId AND f.userId='"+userId+"') AS favCount, (SELECT COALESCE(SUM(amount),0) from payments pay where pay.projectId=p.projectId AND pay.txnStatus='TXN_SUCCESS') AS funded FROM projects p WHERE p.STATUS = 'ACTIVE' AND p.endByDate >= CURDATE() AND ("
 		var q = req.query.q.split('|');
 		for(var i=0; i<q.length; i++) {
 			sql = sql + " p.title LIKE '%"+q[i]+"%'  OR";
@@ -568,11 +594,33 @@ exports.projectsAPI = function(app, dbConnection, validate, multer, path, nestin
 			res.status(500).send("Internal Server Error.");
 		}
 	});
+	
+	/*Get favourites projects list*/
+	app.get('/favProjects', function (req, res) {
+		var userId = req.query.userId;
+		if(!userId) {
+			res.status(400).send("Bad Request. UserId should not be empty.");
+		}
+		var sql = "SELECT p.projectId, p.title, p.category, p.coverImage, p.moneyNeeded, p.endByDate, p.createdDate, p.userId, p.name, p.userPhoto, TIMESTAMPDIFF(DAY,CURDATE(),p.endByDate) as remainDays, (SELECT COUNT(*) from likes l where l.projectId=p.projectId) AS likesCount, (SELECT COUNT(*) from views v where v.projectId=p.projectId) AS viewsCount, (SELECT COUNT(*) from shares s where s.projectId=p.projectId) AS sharesCount, (SELECT COUNT(*) from favourites f where f.projectId=p.projectId) AS favCount, (SELECT COALESCE(SUM(amount),0) from payments pay where pay.projectId=p.projectId AND pay.txnStatus='TXN_SUCCESS') AS funded FROM projects p WHERE p.STATUS = 'ACTIVE' AND p.endByDate >= CURDATE() AND (SELECT COUNT(*) from favourites f where f.projectId=p.projectId AND f.userId=?)";
+		try {
+			dbConnection.query(sql, [userId], function (error, results, fields) {
+				if (error) {
+					console.log(error);
+					res.status(500).send("Internal Server Error.");
+					return;
+				}
+				res.status(200).send(results);
+			});				
+		} catch(e) {
+			res.status(500).send("Internal Server Error.");
+		}
+	});
 
 	/*Get projects list for home page*/
 	app.get('/bySocial', function (req, res) {
 		var q = req.query.q || '';
 		var limit = req.query.limit || '6';
+		var userId = req.query.userId || '';
 		var category = req.query.category || '';
 		var projects = {
 			latest: '',
@@ -586,7 +634,7 @@ exports.projectsAPI = function(app, dbConnection, validate, multer, path, nestin
 		async.waterfall([
 			function (wCB) {
 				if(q=='all' || q=='' || q=='latest') {
-					var sql = "SELECT p.projectId, p.title, p.category, p.coverImage, p.moneyNeeded, p.endByDate, p.createdDate, p.userId, p.name, p.userPhoto, TIMESTAMPDIFF(DAY,CURDATE(),p.endByDate) as remainDays, (SELECT COUNT(*) from likes l where l.projectId=p.projectId) AS likesCount, (SELECT COUNT(*) from views v where v.projectId=p.projectId) AS viewsCount, (SELECT COUNT(*) from shares s where s.projectId=p.projectId) AS sharesCount, (SELECT COALESCE(SUM(amount),0) from payments pay where pay.projectId=p.projectId AND txnStatus='TXN_SUCCESS') AS funded FROM projects p WHERE p.STATUS = 'ACTIVE' AND p.endByDate >= CURDATE() AND category LIKE '%"+category+"' ORDER BY p.projectId DESC LIMIT 0, " + limit;
+					var sql = "SELECT p.projectId, p.title, p.category, p.coverImage, p.moneyNeeded, p.endByDate, p.createdDate, p.userId, p.name, p.userPhoto, TIMESTAMPDIFF(DAY,CURDATE(),p.endByDate) as remainDays, (SELECT COUNT(*) from likes l where l.projectId=p.projectId) AS likesCount, (SELECT COUNT(*) from views v where v.projectId=p.projectId) AS viewsCount, (SELECT COUNT(*) from shares s where s.projectId=p.projectId) AS sharesCount, (SELECT COALESCE(SUM(amount),0) from payments pay where pay.projectId=p.projectId AND pay.txnStatus='TXN_SUCCESS') AS funded, (SELECT COUNT(*) from favourites f where f.projectId=p.projectId AND f.userId='"+userId+"') AS favCount FROM projects p WHERE p.STATUS = 'ACTIVE' AND p.endByDate >= CURDATE() AND category LIKE '%"+category+"' ORDER BY p.projectId DESC LIMIT 0, " + limit;
 					dbConnection.query(sql, function (error, results, fields) {
 						if (error) {
 							return wCB(error);
@@ -600,7 +648,7 @@ exports.projectsAPI = function(app, dbConnection, validate, multer, path, nestin
 			},
 			function (wCB) {
 				if(q=='all' || q=='' || q=='trending') {
-					var sql = "SELECT p.projectId, p.title, p.category, p.coverImage, p.moneyNeeded, p.endByDate, p.createdDate, p.userId, p.name, p.userPhoto, TIMESTAMPDIFF(DAY,CURDATE(),p.endByDate) as remainDays, (SELECT COUNT(*) from likes l where l.projectId=p.projectId) AS likesCount, (SELECT COUNT(*) from views v where v.projectId=p.projectId) AS viewsCount, (SELECT COUNT(*) from shares s where s.projectId=p.projectId) AS sharesCount, (SELECT COALESCE(SUM(amount),0) from payments pay where pay.projectId=p.projectId AND txnStatus='TXN_SUCCESS') AS funded, (SELECT count(amount) from payments paycount where paycount.projectId=p.projectId AND txnStatus='TXN_SUCCESS') AS fundedCount, (SELECT SUM(likesCount+viewsCount)) AS socialCount FROM projects p WHERE p.STATUS = 'ACTIVE' AND p.endByDate >= CURDATE() AND DATE(p.createdDate)<=DATE(NOW() - INTERVAL 15 DAY) AND category LIKE '%"+category+"' HAVING socialCount>0 ORDER BY socialCount DESC LIMIT 0, " + limit;
+					var sql = "SELECT p.projectId, p.title, p.category, p.coverImage, p.moneyNeeded, p.endByDate, p.createdDate, p.userId, p.name, p.userPhoto, TIMESTAMPDIFF(DAY,CURDATE(),p.endByDate) as remainDays, (SELECT COUNT(*) from likes l where l.projectId=p.projectId) AS likesCount, (SELECT COUNT(*) from views v where v.projectId=p.projectId) AS viewsCount, (SELECT COUNT(*) from shares s where s.projectId=p.projectId) AS sharesCount, (SELECT COALESCE(SUM(amount),0) from payments pay where pay.projectId=p.projectId AND pay.txnStatus='TXN_SUCCESS') AS funded, (SELECT count(amount) from payments paycount where paycount.projectId=p.projectId AND paycount.txnStatus='TXN_SUCCESS') AS fundedCount, (SELECT SUM(likesCount+viewsCount)) AS socialCount, (SELECT COUNT(*) from favourites f where f.projectId=p.projectId AND f.userId='"+userId+"') AS favCount FROM projects p WHERE p.STATUS = 'ACTIVE' AND p.endByDate >= CURDATE() AND DATE(p.createdDate)<=DATE(NOW() - INTERVAL 15 DAY) AND category LIKE '%"+category+"' HAVING socialCount>0 ORDER BY socialCount DESC LIMIT 0, " + limit;
 					dbConnection.query(sql, function (error, results, fields) {
 						if (error) {
 							return wCB(error);
@@ -614,7 +662,7 @@ exports.projectsAPI = function(app, dbConnection, validate, multer, path, nestin
 			},
 			function (wCB) {
 				if(q=='all' || q=='' || q=='popular') {
-					var sql = "SELECT p.projectId, p.title, p.category, p.coverImage, p.moneyNeeded, p.endByDate, p.createdDate, p.userId, p.name, p.userPhoto, TIMESTAMPDIFF(DAY,CURDATE(),p.endByDate) as remainDays, (SELECT COUNT(*) from likes l where l.projectId=p.projectId) AS likesCount, (SELECT COUNT(*) from views v where v.projectId=p.projectId) AS viewsCount, (SELECT COUNT(*) from shares s where s.projectId=p.projectId) AS sharesCount, (SELECT COALESCE(SUM(amount),0) from payments pay where pay.projectId=p.projectId AND txnStatus='TXN_SUCCESS') AS funded, (SELECT count(amount) from payments paycount where paycount.projectId=p.projectId AND txnStatus='TXN_SUCCESS') AS fundedCount, (SELECT SUM(likesCount+viewsCount+sharesCount+fundedCount)) AS socialCount FROM projects p WHERE p.STATUS = 'ACTIVE' AND p.endByDate >= CURDATE() AND category LIKE '%"+category+"' HAVING socialCount>0 ORDER BY socialCount DESC LIMIT 0, " + limit;
+					var sql = "SELECT p.projectId, p.title, p.category, p.coverImage, p.moneyNeeded, p.endByDate, p.createdDate, p.userId, p.name, p.userPhoto, TIMESTAMPDIFF(DAY,CURDATE(),p.endByDate) as remainDays, (SELECT COUNT(*) from likes l where l.projectId=p.projectId) AS likesCount, (SELECT COUNT(*) from views v where v.projectId=p.projectId) AS viewsCount, (SELECT COUNT(*) from shares s where s.projectId=p.projectId) AS sharesCount, (SELECT COALESCE(SUM(amount),0) from payments pay where pay.projectId=p.projectId AND pay.txnStatus='TXN_SUCCESS') AS funded, (SELECT count(amount) from payments paycount where paycount.projectId=p.projectId AND paycount.txnStatus='TXN_SUCCESS') AS fundedCount, (SELECT SUM(likesCount+viewsCount+sharesCount+fundedCount)) AS socialCount, (SELECT COUNT(*) from favourites f where f.projectId=p.projectId AND f.userId='"+userId+"') AS favCount FROM projects p WHERE p.STATUS = 'ACTIVE' AND p.endByDate >= CURDATE() AND category LIKE '%"+category+"' HAVING socialCount>0 ORDER BY socialCount DESC LIMIT 0, " + limit;
 					dbConnection.query(sql, function (error, results, fields) {
 						if (error) {
 							return wCB(error);
@@ -628,7 +676,7 @@ exports.projectsAPI = function(app, dbConnection, validate, multer, path, nestin
 			},
 			function (wCB) {
 				if(q=='all' || q=='' || q=='topfunded') {
-					var sql = "SELECT p.projectId, p.title, p.category, p.coverImage, p.moneyNeeded, p.endByDate, p.createdDate, p.userId, p.name, p.userPhoto, TIMESTAMPDIFF(DAY,CURDATE(),p.endByDate) as remainDays, (SELECT COUNT(*) from likes l where l.projectId=p.projectId) AS likesCount, (SELECT COUNT(*) from views v where v.projectId=p.projectId) AS viewsCount, (SELECT COUNT(*) from shares s where s.projectId=p.projectId) AS sharesCount, (SELECT COALESCE(SUM(amount),0) from payments pay where pay.projectId=p.projectId AND txnStatus='TXN_SUCCESS') AS funded, (SELECT count(amount) from payments paycount where paycount.projectId=p.projectId AND txnStatus='TXN_SUCCESS') AS fundedCount, (SELECT SUM(likesCount+viewsCount+sharesCount+fundedCount)) AS socialCount FROM projects p WHERE p.STATUS = 'ACTIVE' AND p.endByDate >= CURDATE() AND category LIKE '%"+category+"' HAVING funded>0 ORDER BY funded DESC LIMIT 0, " + limit;
+					var sql = "SELECT p.projectId, p.title, p.category, p.coverImage, p.moneyNeeded, p.endByDate, p.createdDate, p.userId, p.name, p.userPhoto, TIMESTAMPDIFF(DAY,CURDATE(),p.endByDate) as remainDays, (SELECT COUNT(*) from likes l where l.projectId=p.projectId) AS likesCount, (SELECT COUNT(*) from views v where v.projectId=p.projectId) AS viewsCount, (SELECT COUNT(*) from shares s where s.projectId=p.projectId) AS sharesCount, (SELECT COALESCE(SUM(amount),0) from payments pay where pay.projectId=p.projectId AND pay.txnStatus='TXN_SUCCESS') AS funded, (SELECT count(amount) from payments paycount where paycount.projectId=p.projectId AND paycount.txnStatus='TXN_SUCCESS') AS fundedCount, (SELECT SUM(likesCount+viewsCount+sharesCount+fundedCount)) AS socialCount, (SELECT COUNT(*) from favourites f where f.projectId=p.projectId AND f.userId='"+userId+"') AS favCount FROM projects p WHERE p.STATUS = 'ACTIVE' AND p.endByDate >= CURDATE() AND category LIKE '%"+category+"' HAVING funded>0 ORDER BY funded DESC LIMIT 0, " + limit;
 					dbConnection.query(sql, function (error, results, fields) {
 						if (error) {
 							return wCB(error);
@@ -642,7 +690,7 @@ exports.projectsAPI = function(app, dbConnection, validate, multer, path, nestin
 			},
 			function (wCB) {
 				if(q=='all' || q=='' || q=='hot') {
-					var sql = "SELECT p.projectId, p.title, p.category, p.coverImage, p.moneyNeeded, p.endByDate, p.createdDate, p.userId, p.name, p.userPhoto, TIMESTAMPDIFF(DAY,CURDATE(),p.endByDate) as remainDays, (SELECT COUNT(*) from likes l where l.projectId=p.projectId) AS likesCount, (SELECT COUNT(*) from views v where v.projectId=p.projectId) AS viewsCount, (SELECT COUNT(*) from shares s where s.projectId=p.projectId) AS sharesCount, (SELECT COALESCE(SUM(amount),0) from payments pay where pay.projectId=p.projectId AND txnStatus='TXN_SUCCESS') AS funded FROM projects p WHERE p.STATUS = 'ACTIVE' AND p.endByDate >= CURDATE() AND category LIKE '%"+category+"' HAVING likesCount>0 ORDER BY likesCount DESC LIMIT 0, " + limit;
+					var sql = "SELECT p.projectId, p.title, p.category, p.coverImage, p.moneyNeeded, p.endByDate, p.createdDate, p.userId, p.name, p.userPhoto, TIMESTAMPDIFF(DAY,CURDATE(),p.endByDate) as remainDays, (SELECT COUNT(*) from likes l where l.projectId=p.projectId) AS likesCount, (SELECT COUNT(*) from views v where v.projectId=p.projectId) AS viewsCount, (SELECT COUNT(*) from shares s where s.projectId=p.projectId) AS sharesCount, (SELECT COALESCE(SUM(amount),0) from payments pay where pay.projectId=p.projectId AND pay.txnStatus='TXN_SUCCESS') AS funded, (SELECT COUNT(*) from favourites f where f.projectId=p.projectId AND f.userId='"+userId+"') AS favCount FROM projects p WHERE p.STATUS = 'ACTIVE' AND p.endByDate >= CURDATE() AND category LIKE '%"+category+"' HAVING likesCount>0 ORDER BY likesCount DESC LIMIT 0, " + limit;
 					dbConnection.query(sql, function (error, results, fields) {
 						if (error) {
 							return wCB(error);
@@ -656,7 +704,7 @@ exports.projectsAPI = function(app, dbConnection, validate, multer, path, nestin
 			},
 			function (wCB) {
 				if(q=='all' || q=='' || q=='recommended') {
-					var sql = "SELECT p.projectId, p.title, p.category, p.coverImage, p.moneyNeeded, p.endByDate, p.createdDate, p.userId, p.name, p.userPhoto, TIMESTAMPDIFF(DAY,CURDATE(),p.endByDate) as remainDays, (SELECT COUNT(*) from likes l where l.projectId=p.projectId) AS likesCount, (SELECT COUNT(*) from views v where v.projectId=p.projectId) AS viewsCount, (SELECT COUNT(*) from shares s where s.projectId=p.projectId) AS sharesCount, (SELECT COALESCE(SUM(amount),0) from payments pay where pay.projectId=p.projectId AND txnStatus='TXN_SUCCESS') AS funded, (SELECT count(amount) from payments paycount where paycount.projectId=p.projectId AND txnStatus='TXN_SUCCESS') AS fundedCount, (SELECT SUM(likesCount+viewsCount+sharesCount+fundedCount)) AS socialCount FROM projects p WHERE p.STATUS = 'ACTIVE' AND p.endByDate >= CURDATE() AND category LIKE '%"+category+"' HAVING sharesCount>0 ORDER BY sharesCount DESC LIMIT 0, " + limit;
+					var sql = "SELECT p.projectId, p.title, p.category, p.coverImage, p.moneyNeeded, p.endByDate, p.createdDate, p.userId, p.name, p.userPhoto, TIMESTAMPDIFF(DAY,CURDATE(),p.endByDate) as remainDays, (SELECT COUNT(*) from likes l where l.projectId=p.projectId) AS likesCount, (SELECT COUNT(*) from views v where v.projectId=p.projectId) AS viewsCount, (SELECT COUNT(*) from shares s where s.projectId=p.projectId) AS sharesCount, (SELECT COALESCE(SUM(amount),0) from payments pay where pay.projectId=p.projectId AND pay.txnStatus='TXN_SUCCESS') AS funded, (SELECT count(amount) from payments paycount where paycount.projectId=p.projectId AND paycount.txnStatus='TXN_SUCCESS') AS fundedCount, (SELECT SUM(likesCount+viewsCount+sharesCount+fundedCount)) AS socialCount, (SELECT COUNT(*) from favourites f where f.projectId=p.projectId AND f.userId='"+userId+"') AS favCount FROM projects p WHERE p.STATUS = 'ACTIVE' AND p.endByDate >= CURDATE() AND category LIKE '%"+category+"' HAVING sharesCount>0 ORDER BY sharesCount DESC LIMIT 0, " + limit;
 					dbConnection.query(sql, function (error, results, fields) {
 						if (error) {
 							return wCB(error);
@@ -670,7 +718,7 @@ exports.projectsAPI = function(app, dbConnection, validate, multer, path, nestin
 			},
 			function (wCB) {
 				if(q=='all' || q=='' || q=='currentlywatched') {
-					var sql = "SELECT p.projectId, p.title, p.category, p.coverImage, p.moneyNeeded, p.endByDate, p.createdDate, p.userId, p.name, p.userPhoto, TIMESTAMPDIFF(DAY,CURDATE(),p.endByDate) as remainDays, (SELECT COUNT(*) from likes l where l.projectId=p.projectId) AS likesCount, (SELECT COUNT(*) from views v where v.projectId=p.projectId) AS viewsCount, (SELECT COUNT(*) from shares s where s.projectId=p.projectId) AS sharesCount, (SELECT COALESCE(SUM(amount),0) from payments pay where pay.projectId=p.projectId AND txnStatus='TXN_SUCCESS') AS funded, (SELECT count(amount) from payments paycount where paycount.projectId=p.projectId AND txnStatus='TXN_SUCCESS') AS fundedCount, (SELECT SUM(likesCount+viewsCount+sharesCount+fundedCount)) AS socialCount, v.viewedOn FROM projects p, views v WHERE p.STATUS = 'ACTIVE' AND p.endByDate >= CURDATE() AND category LIKE '%"+category+"' AND p.projectId = v.projectId GROUP BY p.projectId ORDER BY v.viewedOn,viewsCount DESC LIMIT 0, " + limit;
+					var sql = "SELECT p.projectId, p.title, p.category, p.coverImage, p.moneyNeeded, p.endByDate, p.createdDate, p.userId, p.name, p.userPhoto, TIMESTAMPDIFF(DAY,CURDATE(),p.endByDate) as remainDays, (SELECT COUNT(*) from likes l where l.projectId=p.projectId) AS likesCount, (SELECT COUNT(*) from views v where v.projectId=p.projectId) AS viewsCount, (SELECT COUNT(*) from shares s where s.projectId=p.projectId) AS sharesCount, (SELECT COALESCE(SUM(amount),0) from payments pay where pay.projectId=p.projectId AND pay.txnStatus='TXN_SUCCESS') AS funded, (SELECT count(amount) from payments paycount where paycount.projectId=p.projectId AND paycount.txnStatus='TXN_SUCCESS') AS fundedCount, (SELECT SUM(likesCount+viewsCount+sharesCount+fundedCount)) AS socialCount, v.viewedOn, (SELECT COUNT(*) from favourites f where f.projectId=p.projectId AND f.userId='"+userId+"') AS favCount FROM projects p, views v WHERE p.STATUS = 'ACTIVE' AND p.endByDate >= CURDATE() AND category LIKE '%"+category+"' AND p.projectId = v.projectId GROUP BY p.projectId ORDER BY v.viewedOn,viewsCount DESC LIMIT 0, " + limit;
 					dbConnection.query(sql, function (error, results, fields) {
 						if (error) {
 							return wCB(error);
@@ -745,3 +793,5 @@ exports.projectsAPI = function(app, dbConnection, validate, multer, path, nestin
 
 }
 //dbConnection.query("SELECT projectId, title, category, coverImage, moneyNeeded, endByDate, createdDate, userId, name, userPhoto, TIMESTAMPDIFF(DAY,CURDATE(),endByDate) as remainDays FROM projects WHERE STATUS = 'ACTIVE' AND endByDate >= CURDATE() AND (title LIKE ? OR category LIKE ?  OR name LIKE ?  OR location LIKE ?  OR description LIKE ?)", q, function (error, results, fields) {
+
+//CREATE TABLE `backme`.`favourites` ( `favId` INT NOT NULL AUTO_INCREMENT , `userId` INT NOT NULL , `projectId` INT NOT NULL , `createdOn` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() , `status` VARCHAR(255) NOT NULL , PRIMARY KEY (`favId`)) ENGINE = InnoDB;

@@ -24,7 +24,7 @@
 							<h4>DRAG &amp; DROP</h4>
 							<p>OR</p>
 							<h5>Browse</h5>
-							<p>Supported files: JPEG, PNG <br>Size upto 15MB</p>
+							<p>Supported files: JPEG, PNG, GIF <br>Size upto 15MB</p>
 						</div>
 					
 						<div ngf-drop ng-model="posterOriginalImg" ngf-pattern="image/*" class="cropArea" ng-show="posterOriginalImg">
@@ -40,25 +40,43 @@
 						</div>
 
 						<div class="steps-form">
-							<div class="input-wrp">
-								<label class="f-label" style="padding-top:25px;">Location</label>
-								<!--<md-input-container class="md-block" flex-gt-sm>
-									<label class="ph-label">Select Your City</label>
-									<md-select ng-model="project.location" required>
-										<md-option ng-repeat="city in cityList" value="{{city.city}}">
-											{{city.city}}
-										</md-option>
-									</md-select>
-									<div class="error-lable select">Your city is required!</div>
+							<div class="input-wrp title">
+								<label class="f-label">Campaign Title</label>
+								<md-input-container>
+									<label class="ph-label">Give a title</label>
+									<input class="title" type="text" ng-model="project.title" required>
+									<div class="error-lable required">Campaign title text field empty.</div>
 									<span class="md-raised md-primary question-info" aria-label="Play">
 										<md-tooltip md-direction="left">
-											<p>Test tooltip description.</p>
+											<p>Campaign Name which short,meaningful and represent the actual campaign</p>
 										</md-tooltip>
 									  <i class="fa fa-question-circle" aria-hidden="true"></i>
 									</span>
 									<span class="tick-green"></span>
-								</md-input-container>-->
-								<md-autocomplete flex required
+								</md-input-container>
+								<!--<i class="fa fa-question-circle" aria-hidden="true"></i>-->
+							</div>
+							
+							<div class="input-wrp">
+								<label class="f-label">Campaign Owner Name</label>
+								<md-input-container>
+									<label class="ph-label">Your name</label>
+									<input class="name" type="text" ng-model="project.name" required>
+									<div class="error-lable required">Name text field empty.</div>
+									<div class="error-lable format">Entering the invalid format.</div>
+									<span class="md-raised md-primary question-info" aria-label="Play">
+										<md-tooltip md-direction="left">
+											<p>Enter your complete name.</p>
+										</md-tooltip>
+									  <i class="fa fa-question-circle" aria-hidden="true"></i>
+									</span>
+									<span class="tick-green"></span>
+								</md-input-container>
+							</div>
+
+							<div class="input-wrp">
+								<label class="f-label" style="padding-top:25px;">Location</label>
+								<md-autocomplete class="location" flex required
 									md-input-name="autocompleteField"
 									md-input-minlength="2"
 									md-input-maxlength="18"
@@ -90,7 +108,7 @@
 							</div>
 
 							<div class="input-wrp">
-								<label class="f-label">Project Cateogy</label>
+								<label class="f-label">Campaign Cateogy</label>
 								<md-input-container class="md-block select" flex-gt-sm>
 									<label class="ph-label">Select Any</label>
 									<md-select ng-model="project.category" required>
@@ -99,10 +117,10 @@
 										</md-option>
 										<md-option value="Others">Others</md-option>
 									</md-select>
-									<div class="error-lable required select">Project Category dropdown field empty.</div>
+									<div class="error-lable required select">Campaign Category dropdown field empty.</div>
 									<span class="md-raised md-primary question-info" aria-label="Play">
 										<md-tooltip md-direction="left">
-											<p>Select your project category. If you do not find your prefered category above then create a new category.</p>
+											<p>Select your campaign category. If you do not find your prefered category above then create a new category.</p>
 										</md-tooltip>
 									  <i class="fa fa-question-circle" aria-hidden="true"></i>
 									</span>
@@ -111,36 +129,19 @@
 								<md-input-container ng-if="project.category=='Others'" class="others">
 									<label class="ph-label">Suggest a Category</label>
 									<input type="text" ng-model="project.otherCategory" required>
-									<div class="error-lable required">Project category is required!</div>
+									<div class="error-lable required">Campaign category is required!</div>
 								</md-input-container>
-							</div>
-
-							<div class="input-wrp title">
-								<label class="f-label">Project Title</label>
-								<md-input-container>
-									<label class="ph-label">Give a title</label>
-									<input type="text" ng-model="project.title" required>
-									<div class="error-lable required">Project title text field empty.</div>
-									<span class="md-raised md-primary question-info" aria-label="Play">
-										<md-tooltip md-direction="left">
-											<p>Project Name which short,meaningful and represent the actual project</p>
-										</md-tooltip>
-									  <i class="fa fa-question-circle" aria-hidden="true"></i>
-									</span>
-									<span class="tick-green"></span>
-								</md-input-container>
-								<!--<i class="fa fa-question-circle" aria-hidden="true"></i>-->
 							</div>
 
 							<div class="input-wrp">
-								<label class="f-label">Project Description</label>
+								<label class="f-label">Campaign Description</label>
 								<md-input-container class="textarea">
 									<label class="ph-label">Describe here</label>
 									<textarea ng-model="project.description" required></textarea>
-									<div class="error-lable required">Project description text field empty.</div>
+									<div class="error-lable required">Campaign description text field empty.</div>
 									<span class="md-raised md-primary question-info" aria-label="Play">
 										<md-tooltip md-direction="left">
-											<p>Short paragraph about your project mentioning your plan and goals.</p>
+											<p>Short paragraph about your campaign mentioning your plan and goals.</p>
 										</md-tooltip>
 									  <i class="fa fa-question-circle" aria-hidden="true"></i>
 									</span>
@@ -151,7 +152,7 @@
 							<div class="input-wrp">
 								<label class="f-label">About</label>
 								<md-input-container class="textarea">
-									<label class="ph-label">My one-liner about project</label>
+									<label class="ph-label">My one-liner about campaign</label>
 									<textarea ng-model="project.about" required></textarea>
 									<div class="error-lable required">About text field empty.</div>
 									<span class="md-raised md-primary question-info" aria-label="Play">
@@ -170,16 +171,16 @@
 						<span class="error-lable" ng-show="basicInfoForm.posterOriginalImg.$error.maxSize">Large size image(more than 15MB).</span>
 						<div class="poster">
 							<div class="p-img">
+								<img ng-if="!project.coverImage && !posterOriginalImg" ngf-size="{width: 200, height: 120}" ngf-thumbnail="posterOriginalImg||'assets/images/poster-cartoon-bg.png'">
 								<img ng-if="!project.coverImage || posterOriginalImg" ng-src="{{myCroppedImage}}" width="{{myCroppedImageW}}"  height="{{myCroppedImageH}}"  />
-								<!--<img ng-if="!project.coverImage && !posterOriginalImg" ngf-size="{width: 200, height: 120}" ngf-thumbnail="posterOriginalImg||'assets/images/img_not_available.png'">-->
 								<img ng-if="project.coverImage && !posterOriginalImg" ng-src="uploads/{{project.coverImage}}">
 							</div>
-							<h5 class="poster-title">{{project.title?project.title:'Project title'}}</h5>
+							<h5 class="poster-title" ng-click="focusField('title')">{{project.title?project.title:'Campaign title'}}</h5>
 							<div class="owner clearfix">
 								<div class="owner-img"><img src="assets/images/owner-bg.png"></div>
-								<h5 class="owner-name pull-left">Project Owner Name</h5>
+								<h5 class="owner-name pull-left" ng-click="focusField('name')">{{project.name?project.name:'Campaign Owner Name'}}</h5>
 							</div>
-							<p class="s-loc"><i class="fa fa-map-marker" aria-hidden="true"></i>{{project.location.display?project.location.display:project.location?project.location:'Location'}}</p>
+							<p class="s-loc" ng-click="focusField('location')"><i class="fa fa-map-marker" aria-hidden="true"></i>{{project.location.display?project.location.display:project.location?project.location:'Location'}}</p>
 							<div class="funded-wrp">
 								<div class="f-progress">
 									<div class="p-process"></div>
@@ -213,7 +214,7 @@
 					<div class="col-md-6 col-sm-6 col-xs-6 next">
 						<button class="btn btn-default btn-subscribe btn-login steps-back" id="basicNext" ng-click="basicInfoForm.submit()">
 							<p class="cont">Continue to</p>
-							<p><span>Project Details</span>
+							<p><span>Campaign Details</span>
 								<img src="assets/icons/right-arrow.svg" class="arrow-right">
 							</p>
 						</button>

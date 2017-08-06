@@ -58,6 +58,9 @@ backMe.controller('profileCtrl', ['$scope', 'BaseServices', '$timeout', '$state'
 						name: _scope.project.name,
 						profilePicture: _scope.project.userPhoto,
 						mobileNumber: _scope.project.mobileNumber,
+						facebook: _scope.project.facebook,
+						twitter: _scope.project.twitter,
+						googleplus: _scope.project.googleplus,
 						city: _scope.project.location.display ? _scope.project.location.display : _scope.project.location,
 						country: 'India'
 					}
@@ -136,6 +139,19 @@ backMe.controller('profileCtrl', ['$scope', 'BaseServices', '$timeout', '$state'
 			_scope.startPreview();
 		});
 	}
+	_scope.$on('event:social-sign-in-success', function(event, userDetails){
+		if(userDetails.provider == 'google') {
+			_scope.project.googleplus = userDetails.uid;
+			_scope.$apply();
+		}
+		if(userDetails.provider == 'facebook')
+			_scope.project.facebook = userDetails.uid;
+	});
+	
+	_scope.$on('event:social-sign-out-success', function(event, logoutStatus){
+		console.log('logoutStatus', logoutStatus)
+	})
+	
 
 	_scope.addTeam = function (_team) {
 		_team.push({

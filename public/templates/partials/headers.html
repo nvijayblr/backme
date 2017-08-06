@@ -4,21 +4,7 @@
 		<nav class="navbar navbar-default">
 		  <div class="container-fluidd">
 			<!-- Brand and toggle get grouped for better mobile display -->
-			  <div class="top-search-mobile">
-				  <a href="" class="ts-search-icon" ng-click="showSearchBar()"><i class="fa fa-search" aria-hidden="true"></i></a>
-					<div class="top-search active" ng-class="showSearch?'show':''">
-						<div class="serch-wrp">
-							<a href="" class="ts-search-icon" ng-click="startSearch()"><i class="fa fa-search" aria-hidden="true"></i></a>
-							<md-chips ng-model="searchKeywords" name="serchkey" readonly="false" md-removable="true" md-max-chips="5" placeholder="Search" class="ts-search-txt" ng-keypress="searchKeyPress($event)">
-								<md-chip-template>
-									<strong>{{$chip}}</strong>
-								</md-chip-template>
-							</md-chips>
-							<button ng-show="searchKeywords.length" class="btn btn-md btn-default btn-search" ng-click="startSearch()">Search</button>
-							<i ng-show="!searchKeywords.length" class="fa fa-times close-search" aria-hidden="true" ng-click="closeSearch()"></i>
-						</div>
-					</div>
-			  </div>
+			  
 			<div class="navbar-header">
 			  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#header-top-nav" aria-expanded="false">
 				<span class="sr-only">Toggle navigation</span>
@@ -31,40 +17,45 @@
 			<!-- Collect the nav links, forms, and other content for toggling -->
 			<div class="collapse navbar-collapse" id="header-top-nav">
 			  <ul class="nav navbar-nav top-nav">
-				<li><a href="" ng-click="startProject();">START A PROJECT</a></li>
+				<li><a href="" ng-click="startProject();">START A CAMPAIGN</a></li>
 				<li><a href="#about">ABOUT US</a></li>
 			  </ul>
 			  <ul class="nav navbar-nav navbar-right top-nav">
-				<!--<li class="top-search" ng-class="showSearch?'active':''">
-					<a href="" class="ts-search-icon" ng-click="startSearch()"><i class="fa fa-search" aria-hidden="true"></i></a>
-				  	<input type="text" class="ts-search-txt" ng-model="serach.serachBox" placeholder="Try searching locations & campaigns"  ng-keypress="searchKeyPress($event, serach.serachBox)"/>
-					<button ng-show="serach.serachBox.length>2" href="" class="btn btn-md btn-default btn-search" ng-click="startSearch()">Search</button>
-					<i ng-show="serach.serachBox.length<3" class="fa fa-times close-search" aria-hidden="true" ng-click="closeSearch()"></i>
-			    </li>-->
-			  <li class="top-search">
+			 <!-- <li class="top-search">
 				  <a href="" class="ts-search-icon" ng-click="showSearchBar()"><i class="fa fa-search" aria-hidden="true"></i></a>
-			  </li>
+			  </li>-->
 				<li class="top-search active" ng-class="showSearch?'show':''">
 					<div class="serch-wrp">
-						<a href="" class="ts-search-icon" ng-click="startSearch()"><i class="fa fa-search" aria-hidden="true"></i></a>
-						<md-chips ng-model="searchKeywords" name="serchkey" readonly="false" md-removable="true" md-max-chips="5" placeholder="Search" class="ts-search-txt" ng-keypress="searchKeyPress($event)">
+						<!--<a href="" class="ts-search-icon" ng-click="startSearch()"><i class="fa fa-search" aria-hidden="true"></i></a>-->
+						<md-chips ng-model="searchKeywords" name="serchkey" readonly="false" md-removable="true" md-max-chips="5" placeholder="Try searching campaign titles and locations" class="ts-search-txt scrollbar-inner" ng-keypress="searchKeyPress($event)">
 							<md-chip-template>
 								<strong>{{$chip}}</strong>
 							</md-chip-template>
+							<button md-chip-remove class="md-primary vegetablechip">
+								<md-icon><i class="fa fa-times close-search" aria-hidden="true"></i></md-icon>
+							</button>
 						</md-chips>
-						<button ng-show="searchKeywords.length" class="btn btn-md btn-default btn-search" ng-click="startSearch()">Search</button>
-						<i ng-show="!searchKeywords.length" class="fa fa-times close-search" aria-hidden="true" ng-click="closeSearch()"></i>
+						<button class="btn btn-md btn-primary btn-search" ng-click="startSearch()">
+							<i class="fa fa-search" aria-hidden="true"></i>
+						</button>
+						<!--<i ng-show="!searchKeywords.length" class="fa fa-times close-search" aria-hidden="true" ng-click="closeSearch()"></i>-->
 					</div>
 			    </li>
-				<li class="singup" ng-if="!loggedIn && !showSearch"><a href="" ng-click="showLogin()"><span class="glyphicon glyphicon-lock"></span>LOGIN/SIGNUP</a></li>
+				  <!--<span class="glyphicon glyphicon-lock"></span>-->
+				<li class="singup" ng-if="!loggedIn && !showSearch">
+					<span class="separator">|</span>
+					<a href="" ng-click="showLogin()">Login</a>
+				  </li>
 				<li ng-if="loggedIn && !showSearch" class="login">
+					
 					<div ng-if="!loggedUser.profilePicture" class="user-bg-div bg-name">{{loggedUser.name|getFirstLetter:loggedUser.name:loggedUser.email}}</div>
 					<div ng-if="loggedUser.profilePicture && loggedUser.loginType=='CUSTOM'" style="background-image:url(uploads/{{loggedUser.profilePicture}})" class="user-bg-div"></div>
-					<div ng-if="loggedUser.profilePicture && loggedUser.loginType=='GOOGLE'" style="background-image:url({{loggedUser.profilePicture}})" class="user-bg-div"></div>
+					<div ng-if="loggedUser.profilePicture && (loggedUser.loginType=='GOOGLE' || loggedUser.loginType=='FACEBOOK')" style="background-image:url({{loggedUser.profilePicture}})" class="user-bg-div"></div>
 				   <div class="dropdown username">
 						<a href="" data-toggle="dropdown" class="dropdown-toggle">{{loggedUser.name}} <b class="caret"></b></a>
 						<ul class="dropdown-menu">
 							<li><a href="#dashboard/{{loggedUser.userId}}">MY ACCOUNT</a></li>
+							<li><a href="" ng-click="gotoFavourites()">FAVOURITES</a></li>
 							<li><a href="" ng-click="doLogout()">LOGOUT</a></li>
 						</ul>
 					</div>
@@ -75,6 +66,11 @@
 		</nav>
 	</div>
 	<div class="logo">
-		<a href="#home"><img src="assets/images/logo.png"></a>
+		<a ng-click="gotoHome()" class="logo-bg"><img src="assets/images/logo.png"></a>
 	</div>
 </section>
+<script type="text/javascript">
+	jQuery(document).ready(function(){
+		 jQuery('.scrollbar-inner').scrollbar();
+	});
+</script>
