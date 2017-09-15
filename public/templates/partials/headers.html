@@ -16,14 +16,11 @@
 
 			<!-- Collect the nav links, forms, and other content for toggling -->
 			<div class="collapse navbar-collapse" id="header-top-nav">
-			  <ul class="nav navbar-nav top-nav">
+			  <ul class="nav navbar-nav top-nav about-nav">
 				<li><a href="" ng-click="startProject();">START A CAMPAIGN</a></li>
 				<li><a href="#about">ABOUT US</a></li>
 			  </ul>
 			  <ul class="nav navbar-nav navbar-right top-nav">
-			 <!-- <li class="top-search">
-				  <a href="" class="ts-search-icon" ng-click="showSearchBar()"><i class="fa fa-search" aria-hidden="true"></i></a>
-			  </li>-->
 				<li class="top-search active" ng-class="showSearch?'show':''">
 					<div class="serch-wrp">
 						<!--<a href="" class="ts-search-icon" ng-click="startSearch()"><i class="fa fa-search" aria-hidden="true"></i></a>-->
@@ -38,16 +35,19 @@
 						<button class="btn btn-md btn-primary btn-search" ng-click="startSearch()">
 							<i class="fa fa-search" aria-hidden="true"></i>
 						</button>
-						<!--<i ng-show="!searchKeywords.length" class="fa fa-times close-search" aria-hidden="true" ng-click="closeSearch()"></i>-->
 					</div>
 			    </li>
+				<li class="top-search">
+				  <a href="" class="ts-search-icon" ng-click="showSearchBar()">
+					  <i class="fa fa-search" aria-hidden="true"></i> Search
+					</a>
+				</li>
 				  <!--<span class="glyphicon glyphicon-lock"></span>-->
-				<li class="singup" ng-if="!loggedIn && !showSearch">
+				<li class="singup" ng-if="!loggedIn">
 					<span class="separator">|</span>
 					<a href="" ng-click="showLogin()">Login</a>
 				  </li>
-				<li ng-if="loggedIn && !showSearch" class="login">
-					
+				<li ng-if="loggedIn" class="login">
 					<div ng-if="!loggedUser.profilePicture" class="user-bg-div bg-name">{{loggedUser.name|getFirstLetter:loggedUser.name:loggedUser.email}}</div>
 					<div ng-if="loggedUser.profilePicture && loggedUser.loginType=='CUSTOM'" style="background-image:url(uploads/{{loggedUser.profilePicture}})" class="user-bg-div"></div>
 					<div ng-if="loggedUser.profilePicture && (loggedUser.loginType=='GOOGLE' || loggedUser.loginType=='FACEBOOK')" style="background-image:url({{loggedUser.profilePicture}})" class="user-bg-div"></div>

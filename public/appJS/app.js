@@ -100,7 +100,7 @@ backMe
 				controller: 'paymentCtrl'
 		})
 		.state('checkout', {
-				url: '/checkout/:projectId/:amount',
+				url: '/checkout/:projectId/:amount/:type',
 				templateUrl: 'templates/checkout.html',
 				controller: 'checkoutCtrl'
 		})

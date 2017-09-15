@@ -38,7 +38,46 @@
 								result-height="myCroppedImageH">
 							</img-crop>
 						</div>
-
+					</div>
+					<div class="col-md-4">
+						<h5 class="f-label">Preview</h5>
+						<span class="error-lable" ng-show="basicInfoForm.posterOriginalImg.$error.maxSize">Large size image(more than 15MB).</span>
+						<div class="poster">
+							<div class="p-img">
+								<img ng-if="!project.coverImage && !posterOriginalImg" ngf-size="{width: 200, height: 120}" ngf-thumbnail="posterOriginalImg||'assets/images/poster-cartoon-bg.png'">
+								<img ng-if="!project.coverImage || posterOriginalImg" ng-src="{{myCroppedImage}}" width="{{myCroppedImageW}}"  height="{{myCroppedImageH}}"  />
+								<img ng-if="project.coverImage && !posterOriginalImg" ng-src="uploads/{{project.coverImage}}">
+							</div>
+							<h5 class="poster-title" ng-click="focusField('title')">{{project.title?project.title:'Campaign title'}}</h5>
+							<div class="owner clearfix">
+								<div class="owner-img"><img src="assets/images/owner-bg.png"></div>
+								<h5 class="owner-name pull-left" ng-click="focusField('name')">{{project.name?project.name:'Campaign Owner Name'}}</h5>
+							</div>
+							<p class="s-loc" ng-click="focusField('location')"><i class="fa fa-map-marker" aria-hidden="true"></i>{{project.location.display?project.location.display:project.location?project.location:'Location'}}</p>
+							<div class="funded-wrp">
+								<div class="f-progress">
+									<div class="p-process"></div>
+								</div>
+							</div>
+							<div class="row proj-statistics">
+								<div class="col-md-4 col-sm-4 col-xs-4 ps-fund">
+									<h5>0</h5>
+									<p>Funded</p>
+								</div>
+								<div class="col-md-4 col-sm-4 col-xs-4 ps-views">
+									<h5>0</h5>
+									<p>Views</p>
+								</div>
+								<div class="col-md-4 col-sm-4 col-xs-4 ps-days">
+									<h5>0</h5>
+									<p>Days</p>
+								</div>
+							</div>										
+						</div>
+					</div>
+				</div>
+				<div class="row steps-content-basic">
+					<div class="col-md-8">
 						<div class="steps-form">
 							<div class="input-wrp title">
 								<label class="f-label">Campaign Title</label>
@@ -166,42 +205,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-md-4">
-						<h5 class="f-label">Preview</h5>
-						<span class="error-lable" ng-show="basicInfoForm.posterOriginalImg.$error.maxSize">Large size image(more than 15MB).</span>
-						<div class="poster">
-							<div class="p-img">
-								<img ng-if="!project.coverImage && !posterOriginalImg" ngf-size="{width: 200, height: 120}" ngf-thumbnail="posterOriginalImg||'assets/images/poster-cartoon-bg.png'">
-								<img ng-if="!project.coverImage || posterOriginalImg" ng-src="{{myCroppedImage}}" width="{{myCroppedImageW}}"  height="{{myCroppedImageH}}"  />
-								<img ng-if="project.coverImage && !posterOriginalImg" ng-src="uploads/{{project.coverImage}}">
-							</div>
-							<h5 class="poster-title" ng-click="focusField('title')">{{project.title?project.title:'Campaign title'}}</h5>
-							<div class="owner clearfix">
-								<div class="owner-img"><img src="assets/images/owner-bg.png"></div>
-								<h5 class="owner-name pull-left" ng-click="focusField('name')">{{project.name?project.name:'Campaign Owner Name'}}</h5>
-							</div>
-							<p class="s-loc" ng-click="focusField('location')"><i class="fa fa-map-marker" aria-hidden="true"></i>{{project.location.display?project.location.display:project.location?project.location:'Location'}}</p>
-							<div class="funded-wrp">
-								<div class="f-progress">
-									<div class="p-process"></div>
-								</div>
-							</div>
-							<div class="row proj-statistics">
-								<div class="col-md-4 col-sm-4 col-xs-4 ps-fund">
-									<h5>0</h5>
-									<p>Funded</p>
-								</div>
-								<div class="col-md-4 col-sm-4 col-xs-4 ps-views">
-									<h5>0</h5>
-									<p>Views</p>
-								</div>
-								<div class="col-md-4 col-sm-4 col-xs-4 ps-days">
-									<h5>0</h5>
-									<p>Days</p>
-								</div>
-							</div>										
-						</div>
-					</div>
+					
 				</div>
 			</div>
 			<div class="steps-footer">

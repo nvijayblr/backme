@@ -60,7 +60,30 @@ var route = {
 				console.log('Message %s sent: %s', info.messageId, info.response);
 			});
 		});
+	},
+	sendSugirEmails: function(app, transporter, _template, _fromEmail, _toEmail, _subject, _data) {
+		app.render(_template, {data: _data}, function(err, template){
+			if (err) {
+				console.log('error rendering email template:', err) 
+				return
+			}
+			var mailOptions = {
+				from: _fromEmail, 
+				to: _toEmail, 
+				subject: _subject,
+				text: '', // plain text body
+				html: template
+			};
+			transporter.sendMail(mailOptions, (error, info) => {
+				if (error) {
+                     console.log(error);
+					return;
+				}
+				console.log('Message %s sent: %s', info.messageId, info.response);
+			});
+		});
 	}
+	
 };
 
 module.exports = route;

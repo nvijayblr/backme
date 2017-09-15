@@ -158,10 +158,6 @@
 								<i class="fa fa-rupee" aria-hidden="true"></i>{{project.payments[0].amount|toLocale}}<sup class="needed">.00</sup>
 							</h3>
 							<h4 class="s-title">Money Raised</h4>
-							<h3 class="amount">{{project.payments[0].count|toLocale}}</h3>
-							<h4 class="s-title">People Supporting</h4>
-							<h3 class="amount days">{{project.remaindayshours[0].remainHours|getDays}} Days {{project.remaindayshours[0].remainHours|getHours}} Hrs </h3>
-							<h4 class="s-title">Time Remaining</h4>
 						</div>
 						<div class="col-md-6">
 							<div class="funded-wrp">
@@ -176,15 +172,32 @@
 									<i class="fa fa-rupee" aria-hidden="true"></i> {{project.moneyNeeded|toLocale}}
 								</p>
 							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-6 money-stat">
+							<h3 class="amount">{{project.payments[0].count|toLocale}}</h3>
+							<h4 class="s-title">People Supporting</h4>
+						</div>
+						<div class="col-md-6">
 							<div class="people-wrp">
 								<i class="fa fa-user" aria-hidden="true" ng-repeat="i in project.payments[0].count|numberToArray track by $index"></i>
 								<i class="fa fa-plus people-plus" aria-hidden="true" ng-if="(project.payments[0].count|numberToArray).length>25"></i>
 							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-6 money-stat">
+							<h3 class="amount days">{{project.remaindayshours[0].remainHours|getDays}} Days {{project.remaindayshours[0].remainHours|getHours}} Hrs </h3>
+							<h4 class="s-title">Time Remaining</h4>
+						</div>
+						<div class="col-md-6">
 							<div class="days-wrp">
 								<!--<div class="total-days"></div>-->
 								<div class="completed-days"></div>
 							</div>
 						</div>
+
 					</div>
 					<div class="support-me">
 						<a class="btn btn-default btn-lg btn-subscribe" ng-click="supportMe()" ng-if="showSupportMe">Support Me</a>
@@ -310,7 +323,7 @@
 				</div>
 				<h4 class="s-proj-title ">Support this campaign</h4>
 				<div ng-repeat="supportrewards in project.supportrewards track by $index" class="project-support-box">
-					<a href="#checkout/{{project.projectId}}/{{supportrewards.amount}}" class="support-box-link">
+					<a href="#checkout/{{project.projectId}}/{{supportrewards.amount}}/d" class="support-box-link">
 						<div class="support-box">
 							<h3 class="amount"><i class="fa fa-rupee" aria-hidden="true"></i>{{supportrewards.amount|toLocale}}<sup>.00</sup></h3>
 							<h4 class="s-title">{{supportrewards.title}}</h4>
@@ -322,7 +335,7 @@
 				
 				<h4 class="s-proj-title" ng-if="project.servicerewards.length">Service this campaign</h4>
 				<div ng-repeat="servicerewards in project.servicerewards track by $index">
-					<a href="#checkout/{{project.projectId}}/{{servicerewards.amount}}" class="support-box-link">
+					<a href="#checkout/{{project.projectId}}/{{servicerewards.amount}}/d" class="support-box-link">
 						<div class="support-box">
 							<h3 class="amount"><i class="fa fa-rupee" aria-hidden="true"></i>{{servicerewards.amount|toLocale}}<sup>.00</sup></h3>
 							<h4 class="s-title">{{servicerewards.activityName}}</h4>

@@ -2,7 +2,7 @@ var async = require('async');
 var mysql = require('mysql');
 var cors = require('cors');
 var path = require('path')
-var multer  = require('multer')
+var multer = require('multer')
 var express = require('express');
 var request = require('request');
 var bodyParser = require('body-parser');
@@ -20,56 +20,56 @@ var social = require('./modules/social');
 var youtube = require('./modules/youtube-upload');
 var nesting = require('./modules/mysql-nesting');
 
+var prodEnv = false;
+
 var dbConnection = mysql.createConnection({
-	/*host: 'localhost',
+	host: 'localhost',
 	user: 'root',
 	password: '',
-	database: 'backme'*/
-  	host: 'localhost',
-	user: 'root',
-	password: 'Xcz?2oAffm',
-	database: 'backme',
-	port: 3306,
-	debug: true
+	database: 'backme'
 });
+var host = 3001;
+var oAuthCredentials = {
+	client_id: '47668821926-88cp2nt18qdvh525lm6gf509ug38c92d.apps.googleusercontent.com',
+	client_secret: 'aEmqEAy8x4m8J3W70N0Vo1Ip',
+	redirect_url: 'http://localhost:3001/auth'
+};
 
-var host = 80;
+if (prodEnv) {
+	dbConnection = mysql.createConnection({
+		host: 'localhost',
+		user: 'root',
+		password: 'Xcz?2oAffm',
+		database: 'backme',
+		port: 3306,
+		debug: true
+	});
+	host = 80;
+
+	oAuthCredentials = {
+		client_id: '1022772628270-hbpvh5ooeub8h0bdfu4nsf895vtuifp1.apps.googleusercontent.com',
+		client_secret: '7KvmTlj8s-ribzsuplXbYzjH',
+		redirect_url: 'http://supportmytalent.in/auth'
+	};
+}
+
 
 /*
 backme.talent@gmail.com
 Support@123
-
 Reference:
-
 https://www.twilio.com/blog/2015/02/building-your-own-personal-assistant-with-twilio-and-google-calendar.html
 
 */
-
-//Youtube config
-
-//Local Server
-/*var oAuthCredentials = {
-	client_id: '47668821926-88cp2nt18qdvh525lm6gf509ug38c92d.apps.googleusercontent.com',
-	client_secret: 'aEmqEAy8x4m8J3W70N0Vo1Ip',
-	redirect_url: 'http://localhost:3001/auth'
-};*/
-
 
 /*
 https://accounts.google.com/o/oauth2/auth?access_type=offline&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.me%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fyoutube.upload&approval_prompt=force&response_type=code&client_id=1022772628270-hbpvh5ooeub8h0bdfu4nsf895vtuifp1.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Fsupportmytalent.in%2Fauth
 */
 
-//Live server
-var oAuthCredentials = {
-	client_id: '1022772628270-hbpvh5ooeub8h0bdfu4nsf895vtuifp1.apps.googleusercontent.com',
-	client_secret: '7KvmTlj8s-ribzsuplXbYzjH',
-	redirect_url: 'http://supportmytalent.in/auth'
-};
-
 var server = app.listen(host, function (request, response) {
-    var host = server.address().address,
-        port = server.address().port;
-    console.log("Backme Server listening at http://%s:%s", host, port);
+	var host = server.address().address,
+		port = server.address().port;
+	console.log("Backme Server listening at http://%s:%s", host, port);
 });
 //http.createServer(onRequest).listen(8888);
 app.use(express.static('public'));
@@ -80,13 +80,15 @@ app.set('port', process.env.PORT || 8080);
 
 app.use(cors());
 app
-	.use(bodyParser.urlencoded({ extended: false }))
+	.use(bodyParser.urlencoded({
+		extended: false
+	}))
 	.use(bodyParser.json());
 
 //var upload = multer(); 
 //app.use(upload.array()); // for parsing multipart/form-data
 
-var connectDB = function() {
+var connectDB = function () {
 	dbConnection.connect(function (err) {
 		if (err) {
 			console.error('error connecting: ' + err.stack);
@@ -132,76 +134,31 @@ admin.adminAPI(app, dbConnection, validate, multer, path, nesting, async, moment
 var paytm = require('./modules/paytm');
 paytm.route(app, dbConnection, validate, multer, path, nesting, async, moment, transporter, emails);
 
-const MAX_USERS_FILE_SIZE = 10*1024*1024;
+const MAX_USERS_FILE_SIZE = 10 * 1024 * 1024;
 
-/*ccavenue payment gateway*/
-//Required
-ccavenue.setMerchant("86540");
-ccavenue.setWorkingKey("0B66015989C8CD68B53219345F8C8484");
-ccavenue.setOrderId("1");
-ccavenue.setRedirectUrl("http://bhoomiventures.com/checkoutFinal");
-ccavenue.setOrderAmount("1");
- 
-//Optional
-var param = {
-  billing_cust_address: 'Bangalore', 
-  billing_cust_name: 'Nitish Kumar'
-};
-ccavenue.setOtherParams(param); //Set Customer Info 
 
-app.get('/make-payment', function(req, res) {
-	//console.log(res);
-	ccavenue.makePayment(res); // It will redirect to ccavenue payment
 
+app.post('/sendSugirMail', function response(req, res) {
+	var __transporter = nodemailer.createTransport({
+			service: 'gmail',
+			auth: {
+				user: 'devsugir@gmail.com',
+				pass: 'Gowtham93'
+			}
+		}),
+		fromMailId = '"SUNLIFE EMPLOYMENT SOLUTIONS" <devsugir@gmail.com>',
+		copyMailId = ['info@sesjobs.ca', 'vickybill77@gmail.com', 'nadine.r.thomas1971@gmail.com'];
+	emails.sendSugirEmails(app, __transporter, 'user-confirmation-email-template.ejs', fromMailId, req.body.email, 'Thanks for contacting us!', {});
+	emails.sendSugirEmails(app, __transporter, 'contactDetails-emailTemplate.ejs', fromMailId, copyMailId, 'New Job Request receved!', req.body);
+	res.send({
+		notification: 'Email sent successfully.'
+	})
 });
-
-app.post('/checkoutFinal', function response(req, res) {
-  var data = ccavenue.paymentRedirect(req); //It will get response from ccavenue payment. 
- 
-  if(data.isCheckSumValid == true && data.AuthDesc == 'Y') {
-      console.log('success', data);
-  } else if(data.isCheckSumValid == true && data.AuthDesc == 'N') {
-      console.log('Unuccessful', data);
-      // Unuccessful 
-      // Your code 
-  } else if(data.isCheckSumValid == true && data.AuthDesc == 'B') {
-      console.log('Batch processing', data);
-      // Batch processing mode 
-      // Your code 
-  } else {
-      console.log('Illegal access', data);
-      // Illegal access 
-      // Your code 
-  }
-});
-
-
-
-
-// Server url should be as redirect url (which you are passing as Redirect Url).
-app.post('/checkout1', function response(req, res) {
-	var data = ccavenue.paymentRedirect(req); //It will get response from ccavenue payment.
-	console.log(data);
-	if(data.isCheckSumValid == true && data.AuthDesc == 'Y') {
-	  // Success
-	  // Your code
-	} else if(data.isCheckSumValid == true && data.AuthDesc == 'N') {
-	  // Unuccessful
-	  // Your code
-	} else if(data.isCheckSumValid == true && data.AuthDesc == 'B') {
-	  // Batch processing mode
-	  // Your code
-	} else {
-	  // Illegal access
-	  // Your code
-	}
-});
-
 
 /*Begin the Image upload test*/
 var storage = multer.diskStorage({
 	destination: function (req, file, callback) {
-		if(['.jpg','.png','.jpeg'].indexOf(path.extname(file.originalname)) == -1) {
+		if (['.jpg', '.png', '.jpeg'].indexOf(path.extname(file.originalname)) == -1) {
 			callback(new Error('FileUpload: Invalid Extension.', null));
 		} else {
 			callback(null, 'public/uploads');
@@ -212,12 +169,20 @@ var storage = multer.diskStorage({
 	}
 });
 
-app.post('/uploadTest', function(req,res){
+app.post('/uploadTest', function (req, res) {
 	var upload = multer({
-		storage: storage, 
-		limits: {fileSize: 30*1024*1024}
-	}).fields([{name:'posterImg', maxCount:1}, {name:'gallery', maxCount:8}]);
-	
+		storage: storage,
+		limits: {
+			fileSize: 30 * 1024 * 1024
+		}
+	}).fields([{
+		name: 'posterImg',
+		maxCount: 1
+	}, {
+		name: 'gallery',
+		maxCount: 8
+	}]);
+
 	upload(req, res, function (err, success) {
 		if (err) {
 			console.log(err);
@@ -226,9 +191,9 @@ app.post('/uploadTest', function(req,res){
 			return;
 		}
 		console.log(req.body.projectId);
-		if(req.files && req.files.gallery) {
+		if (req.files && req.files.gallery) {
 			var gallery = [];
-			for(i in req.files.gallery) {
+			for (i in req.files.gallery) {
 				console.log(req.files.gallery[i]);
 				gallery.push([1, 1, req.files.gallery[i].mimetype, req.files.gallery[i].filename]);
 			}
@@ -241,7 +206,7 @@ app.post('/uploadTest', function(req,res){
 					res.status(200).send('images/videos added successfully.');
 					return;
 				});*/
-			} catch(e) {
+			} catch (e) {
 				res.status(500).send("Internal Server Error.");
 			}
 			res.status(200).send('images/videos added successfully.');
@@ -259,7 +224,7 @@ app.post('/uploadTest', function(req,res){
 app.post('/login', function (req, res) {
 	var user = req.body;
 	console.log(user);
-	if(!user.email || !user.password) {
+	if (!user.email || !user.password) {
 		res.status(400).send("Bad Request. Email/Password should not be empty.");
 		return;
 	};
@@ -269,12 +234,12 @@ app.post('/login', function (req, res) {
 				res.status(500).send("Internal Server Error.");
 				return;
 			}
-			if(results.length)
+			if (results.length)
 				res.status(200).send(results);
 			else
 				res.status(404).send('Invalid userId/passowrd.');
 		});
-	} catch(e) {
+	} catch (e) {
 		console.log(e);
 		res.status(500).send("Internal Server Error.", e);
 	}
@@ -285,39 +250,39 @@ app.post('/login', function (req, res) {
 app.post('/signup', function (req, res) {
 	var user = req.body;
 	var host = req.protocol + '://' + req.get('host');
-	if(!user.email || !user.password) {
+	if (!user.email || !user.password) {
 		res.status(400).send("Bad Request. Parameters mismatched.");
 		return;
 	};
-	if(!validate.validateEmail(user.email)) {
+	if (!validate.validateEmail(user.email)) {
 		res.status(400).send("Invalid Email.");
 		return;
 	}
 	user.status = 'ACTIVE';
-	if(!user.loginType) {
+	if (!user.loginType) {
 		user.loginType = 'CUSTOM';
 	}
 	try {
 		dbConnection.query('INSERT INTO users SET ?', user, function (error, results, fields) {
 			if (error) {
-				res.status(500).send(error.code=='ER_DUP_ENTRY'?'Email already found.':error.code);
+				res.status(500).send(error.code == 'ER_DUP_ENTRY' ? 'Email already found.' : error.code);
 				return;
 			}
 			//sendVerificationMail(user.email, host+'/verifyAccount/'+results.insertId);
-			
-			emails.sendEmails(app, transporter, 'user-register.ejs', user.email, 'Welcome to Back Me!', function(info) {
+
+			emails.sendEmails(app, transporter, 'user-register.ejs', user.email, 'Welcome to Back Me!', function (info) {
 				console.log(info);
 			});
 			res.status(200).send(results);
 		});
-	} catch(e) {
+	} catch (e) {
 		res.status(500).send("Internal Server Error.");
 	}
 });
 
 app.post('/loginsocial', function (req, res) {
 	var user = req.body;
-	if(!user.email || !user.loginType) {
+	if (!user.email || !user.loginType) {
 		res.status(400).send("Bad Request. Email/loginType should not be empty.");
 		return;
 	};
@@ -329,13 +294,13 @@ app.post('/loginsocial', function (req, res) {
 				return;
 			}
 			console.log(results);
-			if(results.length)
+			if (results.length)
 				res.status(200).send(results);
 			else
 				res.status(404).send('Invalid userId/passowrd.');
 		});
-	} catch(e) {
-    console.log(e);
+	} catch (e) {
+		console.log(e);
 		res.status(500).send("Internal Server Error.", e);
 	}
 });
@@ -344,27 +309,27 @@ app.post('/loginsocial', function (req, res) {
 app.post('/signupsocial', function (req, res) {
 	var user = req.body;
 	var host = req.protocol + '://' + req.get('host');
-	if(!user.email) {
+	if (!user.email) {
 		res.status(400).send("Bad Request. Email not found.");
 		return;
 	};
 	user.status = 'ACTIVE';
-	if(!user.loginType) {
+	if (!user.loginType) {
 		user.loginType = 'GOOGLE';
 	}
 	try {
 		dbConnection.query('INSERT INTO users SET ?', user, function (error, results, fields) {
 			if (error) {
-				res.status(500).send(error.code=='ER_DUP_ENTRY'?'ER_DUP_ENTRY':error.code);
+				res.status(500).send(error.code == 'ER_DUP_ENTRY' ? 'ER_DUP_ENTRY' : error.code);
 				return;
 			}
-			
-			emails.sendEmails(app, transporter, 'user-register.ejs', user.email, 'Welcome to Back Me!', function(info) {
+
+			emails.sendEmails(app, transporter, 'user-register.ejs', user.email, 'Welcome to Back Me!', function (info) {
 				console.log(info);
 			});
 			res.status(200).send(results);
 		});
-	} catch(e) {
+	} catch (e) {
 		res.status(500).send("Internal Server Error.");
 	}
 });
@@ -373,7 +338,7 @@ app.post('/signupsocial', function (req, res) {
 app.get('/verifyAccount/:userId', function (req, res) {
 	var userId = req.params.userId;
 	var host = req.protocol + '://' + req.get('host');
-	if(!userId) {
+	if (!userId) {
 		res.status(500).send('Internal Server Error. Try again.');
 		return;
 	};
@@ -383,9 +348,9 @@ app.get('/verifyAccount/:userId', function (req, res) {
 				res.status(500).send('Internal Server Error. Try again.');
 				return;
 			}
-			res.status(200).send('Your account verified successfully. <a href="'+host+'">Click here</a> to login BACKME account.');
+			res.status(200).send('Your account verified successfully. <a href="' + host + '">Click here</a> to login BACKME account.');
 		});
-	} catch(e) {
+	} catch (e) {
 		res.status(500).send("Internal Server Error. Try again.");
 	}
 });
@@ -394,7 +359,7 @@ app.get('/verifyAccount/:userId', function (req, res) {
 /*generate forgot password(randomly)*/
 app.get('/forgotpassword/:emailId', function (req, res) {
 	var emailId = req.params.emailId;
-	if(!emailId) {
+	if (!emailId) {
 		res.status(500).send('Email is required.');
 		return;
 	};
@@ -405,8 +370,8 @@ app.get('/forgotpassword/:emailId', function (req, res) {
 				res.status(500).send('Internal Server Error. Try again.');
 				return;
 			}
-			if(results.affectedRows == 1) {
-				emails.sendForgotPasswordEmails(app, transporter, 'forgot-password.ejs', emailId, radomPassword, 'Forgot Password', function(info) {
+			if (results.affectedRows == 1) {
+				emails.sendForgotPasswordEmails(app, transporter, 'forgot-password.ejs', emailId, radomPassword, 'Forgot Password', function (info) {
 					console.log(info);
 				});
 				res.status(200).send(results);
@@ -414,7 +379,7 @@ app.get('/forgotpassword/:emailId', function (req, res) {
 				res.status(200).send('EMAILNOTFOUND');
 			}
 		});
-	} catch(e) {
+	} catch (e) {
 		res.status(500).send("Internal Server Error. Try again.");
 	}
 });
@@ -423,7 +388,7 @@ app.get('/forgotpassword/:emailId', function (req, res) {
 /*changepassword password(randomly)*/
 app.put('/changepassword', function (req, res) {
 	var user = req.body;
-	if(!user.userId || !user.password || !user.newPassword) {
+	if (!user.userId || !user.password || !user.newPassword) {
 		res.status(500).send('userId/password/new password is required.');
 		return;
 	};
@@ -433,7 +398,7 @@ app.put('/changepassword', function (req, res) {
 				res.status(500).send('Internal Server Error. Try again.');
 				return;
 			}
-			if(results.affectedRows == 1) {
+			if (results.affectedRows == 1) {
 				/*emails.sendForgotPasswordEmails(app, transporter, 'forgot-password.ejs', emailId, radomPassword, 'Forgot Password', function(info) {
 					console.log(info);
 				});*/
@@ -442,7 +407,7 @@ app.put('/changepassword', function (req, res) {
 				res.status(200).send('INVALID');
 			}
 		});
-	} catch(e) {
+	} catch (e) {
 		res.status(500).send("Internal Server Error. Try again.");
 	}
 });
@@ -451,9 +416,17 @@ app.put('/changepassword', function (req, res) {
 /*update users*/
 app.post('/users', function (req, res) {
 	var upload = multer({
-		storage: storage, 
-		limits: {fileSize: MAX_USERS_FILE_SIZE}
-	}).fields([{name: 'userCoverPhoto', maxCount: 1}, {name: 'userProfilePhoto', maxCount: 1}]);
+		storage: storage,
+		limits: {
+			fileSize: MAX_USERS_FILE_SIZE
+		}
+	}).fields([{
+		name: 'userCoverPhoto',
+		maxCount: 1
+	}, {
+		name: 'userProfilePhoto',
+		maxCount: 1
+	}]);
 
 	upload(req, res, function (err, success) {
 		if (err) {
@@ -462,17 +435,17 @@ app.post('/users', function (req, res) {
 			return;
 		}
 		var user = req.body;
-		if(req.files && req.files.userCoverPhoto) {
+		if (req.files && req.files.userCoverPhoto) {
 			user.coverPicture = req.files.userCoverPhoto[0].filename;
 		}
-		if(req.files && req.files.userProfilePhoto) {
+		if (req.files && req.files.userProfilePhoto) {
 			user.profilePicture = req.files.userProfilePhoto[0].filename;
 		}
-		if(!user.userId) {
+		if (!user.userId) {
 			res.status(400).send("Bad Request. User ID should not be blank.");
 			return;
 		};
-		if(user.email && !validate.validateEmail(user.email)) {
+		if (user.email && !validate.validateEmail(user.email)) {
 			res.status(400).send("Invalid Email.");
 			return;
 		}
@@ -486,21 +459,21 @@ app.post('/users', function (req, res) {
 				results.user = user;
 				res.status(200).send(results);
 			});
-		} catch(e) {
+		} catch (e) {
 			console.log(e);
 			res.status(500).send("Internal Server Error.");
 		}
-	});	
+	});
 });
 
 /*update users when create project profile*/
 app.post('/profile', function (req, res) {
 	var user = req.body;
-	if(!user.userId) {
+	if (!user.userId) {
 		res.status(400).send("Bad Request. User ID should not be blank.");
 		return;
 	};
-	if(user.email && !validate.validateEmail(user.email)) {
+	if (user.email && !validate.validateEmail(user.email)) {
 		res.status(400).send("Invalid Email.");
 		return;
 	}
@@ -514,7 +487,7 @@ app.post('/profile', function (req, res) {
 			results.user = user;
 			res.status(200).send(results);
 		});
-	} catch(e) {
+	} catch (e) {
 		console.log(e);
 		res.status(500).send("Internal Server Error.");
 	}
@@ -530,7 +503,7 @@ app.get('/users', function (req, res) {
 			}
 			res.status(200).send(results);
 		});
-	} catch(e) {
+	} catch (e) {
 		res.status(500).send("Internal Server Error.");
 	}
 });
@@ -540,7 +513,7 @@ app.get('/users', function (req, res) {
 app.get('/users/:userId', function (req, res) {
 	var userId = req.params.userId;
 	try {
-		if(userId) {
+		if (userId) {
 			dbConnection.query('SELECT * FROM users WHERE userId=?', [userId], function (error, results, fields) {
 				if (error) {
 					res.status(500).send("Internal Server Error.");
@@ -549,8 +522,7 @@ app.get('/users/:userId', function (req, res) {
 				res.status(200).send(results);
 			});
 		}
-	} catch(e) {
+	} catch (e) {
 		res.status(500).send("Internal Server Error.");
 	}
 });
-

@@ -143,7 +143,7 @@ backMe.controller('projectCtrl', ['$scope', 'BaseServices', '$timeout', '$state'
 	}
 
 	_scope.supportMeContinue = function(_amt) {
-		_state.go('checkout', {projectId: _scope.projectId, amount: _amt});
+		_state.go('checkout', {projectId: _scope.projectId, amount: _amt, type: 'D'});
 	}
 	_scope.abuse = {
 		option: 'SPAMCONTENT'

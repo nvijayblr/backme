@@ -8,7 +8,7 @@ exports.route = function(app, dbConnection, validate, multer, path, nesting, asy
 	
 	app.post('/paytmCallback', function(request, response) {
 		console.log('request', request.body.STATUS);
-		var payments;
+		var payments, resData = {};
 		try {
 			async.waterfall([
 				function (wCB) {
@@ -36,9 +36,38 @@ exports.route = function(app, dbConnection, validate, multer, path, nesting, asy
 								console.log(info);
 							});
 						}
-						response.render('paytm-complete.ejs', {'restdata':results[0]});
+						resData = results[0];
+						wCB();
 					});
+				},
+				function (wCB) {
+					if(resData.purpose == 'HOME_PROMOTION' && resData.txnStatus == 'TXN_SUCCESS') {
+						dbConnection.query('UPDATE projects SET homePagePromotion="YES" WHERE projectId = ?', resData.projectId, function (error, results, fields) {
+							if (error) {
+								return wCB(error);
+							}
+							wCB();
+						});
+					} else {
+						wCB();
+					}
+				},
+				function (wCB) {
+					if(resData.purpose == 'SOCIAL_PROMOTION' && resData.txnStatus == 'TXN_SUCCESS') {
+						dbConnection.query('UPDATE projects SET socialPromotion="YES" WHERE projectId = ?', resData.projectId, function (error, results, fields) {
+							if (error) {
+								return wCB(error);
+							}
+							wCB();
+						});
+					} else {
+						wCB();
+					}
+				},
+				function (wCB) {
+					response.render('paytm-complete.ejs', {'restdata':resData});
 				}
+				
 			], function (err) {
 				// If we pass first paramenter as error this function will execute.
 				response.status(500).send(err);
@@ -51,10 +80,67 @@ exports.route = function(app, dbConnection, validate, multer, path, nesting, asy
 		
 	});
 
+	app.post('/registerPayment', function(request, response) {
+		var payments = request.body;
+		var orderId = '';
+		try {
+			async.waterfall([
+				function (wCB) {
+					dbConnection.query('INSERT INTO payments SET ?', payments, function (error, results, fields) {
+						if (error) {
+							return wCB(error);
+						}
+						orderId = results.insertId;
+						if(payments.email) {
+							emails.sendEmails(app, transporter, 'payment.ejs', payments.email, 'Thanks for your support!', function(info) {
+								console.log(info);
+							});
+						}
+						wCB();
+					});
+				},
+				function (wCB) {
+					if(payments.purpose == 'HOME_PROMOTION') {
+						dbConnection.query('UPDATE projects SET homePagePromotion="YES" WHERE projectId = ?', payments.projectId, function (error, results, fields) {
+							if (error) {
+								return wCB(error);
+							}
+							wCB();
+						});
+					} else {
+						wCB();
+					}
+				},
+				function (wCB) {
+					if(payments.purpose == 'SOCIAL_PROMOTION') {
+						dbConnection.query('UPDATE projects SET socialPromotion="YES" WHERE projectId = ?', payments.projectId, function (error, results, fields) {
+							if (error) {
+								return wCB(error);
+							}
+							wCB();
+						});
+					} else {
+						wCB();
+					}
+				},
+				function (wCB) {
+					response.status(200).send({orderId:orderId});
+				}
+			], function (err) {
+				// If we pass first paramenter as error this function will execute.
+				response.status(500).send(err);
+			});
+
+		} catch(e) {
+			console.log(e);
+			response.status(500).send("Internal Server Error.");
+		}	
+	
+	});
+
 	app.post('/pay-paytm', function(request, response){
 		
 		var params = request.body;
-		console.log(params);
 		if(!params.projectId || !params.userId || !params.TXN_AMOUNT || !params.firstName || !params.email || !params.mobileNumber) {
 			response.status(500).send("Bad Request: ProjectId/userId/Amount/firstName/Email/Mobile is required.");
 			return;
@@ -63,8 +149,8 @@ exports.route = function(app, dbConnection, validate, multer, path, nesting, asy
 		try {
 			async.waterfall([
 				function (wCB) {
-					var payments = [params.projectId, params.userId, params.TXN_AMOUNT, 'Paytm', 'INR', params.firstName, params.lastName, params.email, params.mobileNumber];
-					dbConnection.query('INSERT INTO payments (projectId, userId, amount, payThrough, currency, firstName, lastName, email, mobileNumber) VALUES (?,?,?,?,?,?,?,?,?)', payments, function (error, results, fields) {
+					var payments = [params.projectId, params.userId, params.TXN_AMOUNT, 'Paytm', 'INR', params.firstName, params.lastName, params.email, params.mobileNumber, params.purpose];
+					dbConnection.query('INSERT INTO payments (projectId, userId, amount, payThrough, currency, firstName, lastName, email, mobileNumber, purpose) VALUES (?,?,?,?,?,?,?,?,?,?)', payments, function (error, results, fields) {
 						if (error) {
 							return wCB(error);
 						}

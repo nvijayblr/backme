@@ -76,7 +76,7 @@
 									</md-input-container>
 								</div>
 
-								<h4 class="credit-title">Credit Card Details</h4>
+								<!--<h4 class="credit-title">Credit Card Details</h4>
 
 								<div class="input-wrp">
 									<label class="f-label">Name on Card</label>
@@ -119,13 +119,27 @@
 									<label class="f-label">Zip Code</label>
 									<md-input-container>
 										<label class="ph-label">Enter zip code</label>
-										<input type="email">
+										<input type="text">
+									</md-input-container>
+								</div>-->
+
+								<div class="input-wrp">
+									<label class="f-label">Pay Through</label>
+									<md-input-container class="md-block select" flex-gt-sm>
+										<label class="ph-label">Pay Through</label>
+										<md-select ng-model="checkout.paythrough">
+											<md-option value="Paytm">Paytm</md-option>
+											<md-option value="Razorpay">Razorpay</md-option>
+										</md-select>
+										<div class="error-lable select">Pay Through is required!</div>
 									</md-input-container>
 								</div>
 
 								<div class="support-me">
 									<button class="btn btn-default btn-lg btn-subscribe btn-checkout" ng-click="checkoutForm.submit()">Donate</button>
-								</div>							
+									
+									<!--<button class="btn btn-default btn-lg btn-subscribe btn-checkout" ng-click="rzpPayment($event)">RZP Donate</button>-->
+								</div>					
 								<ul class="cards-list clearfix">
 									<li><img src="assets/images/payment-options.png" width="" /></li>
 								</ul>

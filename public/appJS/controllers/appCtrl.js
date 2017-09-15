@@ -261,10 +261,15 @@ backMe.controller('appCtrl', ['$scope', 'BaseServices', '$timeout', '$rootScope'
 			_scope.startSearch();
 		}
 	}
+	$(document).on('keyup', ".md-chip-input-container input.md-input", function(e) {
+		if(e.which == 27) {
+			_scope.gotoHome();
+		}
+	});
 	_scope.showSearchBar = function() {
 		_scope.searchKeywords = [];
 		_scope.showSearch = true;
-		$(".ts-search-txt").focus();
+		$(".md-chip-input-container input.md-input").eq(0).focus();
 	}
 	
 	_scope.closeSearch = function() {

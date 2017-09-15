@@ -25,6 +25,20 @@ backMe.controller('homeCtrl', ['$scope', 'BaseServices', '$timeout', 'appConstan
 		});
 	}
 	
+	_scope.homePagePromotion = function() {
+		_scope.homePromotion = {};
+		_services.http.serve({
+			method: 'GET',
+			url: _appConstant.baseUrl + 'homePagePromotion'
+		}, function(data){
+			_scope.homePromotion = data;
+			console.log(_scope.homePromotion);
+		}, function(err) {
+			console.log(err)
+		});
+	}
+	_scope.homePagePromotion();
+	
 	_scope.loadCategory = function(_category) {
 		if(_category)
 			location.href="/#/home?search-category="+_category;
@@ -44,7 +58,7 @@ backMe.controller('homeCtrl', ['$scope', 'BaseServices', '$timeout', 'appConstan
 			url: _appConstant.baseUrl + 'favourites',
 			inputData: _scope.data
 		}, function(data){
-			_services.toast.show('Project added into your favourites.');
+			_services.toast.show('Campaign added into your favourites.');
 			_project.favCount = 1;
 		}, function(err) {
 			console.log(err)
@@ -62,7 +76,7 @@ backMe.controller('homeCtrl', ['$scope', 'BaseServices', '$timeout', 'appConstan
 			url: _appConstant.baseUrl + 'favourites',
 			inputData: _scope.data
 		}, function(data){
-			_services.toast.show('Project removed from your favourites.');
+			_services.toast.show('Campaign removed from your favourites.');
 			_project.favCount = 0;
 		}, function(err) {
 			console.log(err)
