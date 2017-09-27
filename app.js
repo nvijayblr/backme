@@ -20,7 +20,7 @@ var social = require('./modules/social');
 var youtube = require('./modules/youtube-upload');
 var nesting = require('./modules/mysql-nesting');
 
-var prodEnv = false;
+var prodEnv = true;
 
 var dbConnection = mysql.createConnection({
 	host: 'localhost',

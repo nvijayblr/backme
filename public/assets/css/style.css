@@ -3688,6 +3688,85 @@ md-input-container.textarea.fixed textarea.md-input {
 	height: 83px !important;
 	overflow-y: auto;
 }
+.pay-method-wrp {
+	background-color: #fff;
+    padding: 10px 20px 10px 10px;
+	border: 1px solid #ccc;
+}
+.pay-method-wrp p {
+	color: #a6a6a6;
+	font-size: 16px;
+	padding: 10px 0;
+	font-weight: 300;
+}
+.pay-method-wrp .razorpay {
+	border-bottom: 1px solid #ccc;
+}
+.pay-method-wrp .paytm {
+	margin-top: 15px;
+}
+.pay-method-wrp .razorpay .btn-donate, .pay-method-wrp .paytm .btn-donate {
+	width: 100%;
+}
+.btn-default.btn-donate, .btn-default.btn-donate:visited, .btn-default.btn-donate:active, .btn-default.btn-donate:focus {
+	margin: 0;
+	margin-top: 30px;
+	text-transform: inherit;
+}
+md-input-container textarea.md-input.fixed.checkout {
+	height: 80px;
+	min-height: 80px;
+}
+.proj-report .p-section {
+	margin-bottom: 20px;
+}
+.proj-report h3.title {
+	color: #5a5a5a;
+	font-size: 22px;
+	font-weight: 400;
+}
+.admin.report.filter-wrp {
+	border-bottom: 1px solid #e0e0e0;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+}
+.proj-report h3.title span, .proj-report h3.value span {
+	font-size: 14px;
+	text-decoration: none;
+}
+.proj-report h3.value {
+	color: #3f3f3f;
+	font-size: 24px;
+	font-weight: 500;
+}
+.proj-report .scroll-wrp {
+	background-color: #fafafa;
+    padding: 20px 10px;
+    border: 1px solid #e0e0e0;
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+.proj-report .ds-wrp .ds-amount {
+    font-size: 19px;
+}
+.proj-report .ds-wrp .ds-img.ds-txt {
+	text-align: center;
+    text-transform: uppercase;
+    vertical-align: middle;
+    padding-top: 14px;
+    font-weight: 500;
+}
+.proj-report .ds-wrp .ds-img {
+	width: 50px;
+	height: 50px;
+	border-radius: 50px;
+	-webkit-border-radius: 50px;
+	background-size: cover;
+}
+.proj-report .supporters-scroll {
+	height: 170px;
+}
+
 /*begin the styles for when change the view*/
 
 
@@ -3875,6 +3954,9 @@ li.login.admin {
     font-weight: 400;
     margin-bottom: 2px;
 }
+.admin .dashboard .container {
+	width: auto;
+}
 .projects-location {
 	padding-top: 30px;
 }
@@ -3982,6 +4064,74 @@ canvas.graph {
 }
 .radio-inline {
 	display: inline-block !important;
+}
+.modal-body.reports {
+	padding: 10px 60px 20px;
+}
+.modal-body.reports.proj-report .supporters-scroll {
+	height: 400px;
+}
+.duration-tabs {
+	margin-bottom: 20px;
+}
+.duration-tabs .d-tab {
+	padding: 0;
+}
+.duration-tabs .d-tab a, .duration-tabs .d-tab a:link{
+	display: inline-block;
+	width: 100%;
+	text-align: center;
+	text-transform: uppercase;
+	text-decoration: none;
+	color: #7b7b7b;
+	background-color: #fff;
+	border:1px solid #ccc;
+	font-weight: 400;
+	font-size: 17px;
+	padding: 10px 0;
+}
+.duration-tabs .d-tab a:hover, .duration-tabs .d-tab a.active{
+	color: #fff;
+	background-color: #00887a;
+}
+.sel-dt-range {
+	font-size: 18px;
+    margin-top: 13px;
+    text-align: right;
+}
+.admin .d-title {
+	font-size: 20px;
+}
+.admin .support-box.user {
+	padding: 20px 15px;
+}
+.admin .support-box .supporters-scroll {
+	height: 220px;
+}
+.fa-calendar.a-marker {
+	font-size: 24px;
+    margin-top: 3px;
+    text-align: left;
+	color: #a0a0a0;
+}
+.ds-img.td-txtt {
+	text-align: center;
+    padding-top: 14px;
+    font-size: 33px;
+    font-weight: 500;
+	color: #787878;
+}
+#weeklyDatePicker .bootstrap-datetimepicker-widget tr:hover {
+    background-color: #808080;
+}
+#weeklyDatePicker, #monthDatePicker {
+	padding: 0 !important;
+    font-size: 16px;
+    border: 0;
+	margin-top: 12px;
+}
+.showHide {
+	display: none;
 }
 /*common responsive styles for all pages*/
 @media screen and (min-width:992px) {
@@ -4190,7 +4340,7 @@ canvas.graph {
 		font-size: 15px;
 	}
 	.carousel-indicators {
-		bottom: -15px;
+		bottom: 5px;
 	}
 	.banner .how-it-works .btn-wrp {
 		margin-top: 140px;
@@ -4280,6 +4430,10 @@ canvas.graph {
 	}
 	.navbar-toggle {
 		margin-top: 14px;
+	}
+	#header-top-nav .md-chip-input-container input {
+    	font-size: 14px;
+		left: -4px;
 	}
 }
 

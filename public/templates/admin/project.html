@@ -1,4 +1,4 @@
-<section class="proj-content">
+<section class="proj-content admin">
 	<div class="container projects-det">
 		<div class="row">
 			<div class="col-md-8 pd">
@@ -117,17 +117,7 @@
 					</div>
 					
 					<h4 class="btn-title">Comments ({{comments.length}})</h4>
-					<h3 style="font-size:20px;" ng-if="!loggedUserId">Please login to add a comment.</h3>
 					<div class="comments">
-						<div class="cmt-box" ng-if="loggedUserId">
-                            <md-input-container>
-                                <label class="ph-label cmt-label">Comments here</label>
-                                <textarea ng-model="comment.commentInput" required class="comment-txt"></textarea>
-                                <div style="text-align:right">
-                                    <button class="btn btn-default btn-lg btn-alternate sm-btn add-comment" ng-click="addComment(comment.commentInput, projectId);" ng-disabled="!comment.commentInput.length">POST</button>
-                                </div>
-                            </md-input-container>
-						</div>
 						<div class="cmt-wrp">
 							<div class="c-wrp clearfix" ng-repeat="c in comments track by $index">
 								<img ng-if="c.users.loginType=='CUSTOM' && c.users.profilePicture" ng-src="uploads/{{c.users.profilePicture}}" class="cmt-bg">
@@ -137,14 +127,14 @@
 									<h5>{{c.users.name}}<span class="day">{{c.comments.commentedOn|toDayMonth}}</span></h5>
 									<p>{{c.comments.comment}}</p>
 								</div>
-								<div class="abuse-cmt-wrp" ng-if="loggedUserId">
+								<!--<div class="abuse-cmt-wrp" ng-if="loggedUserId">
 									<a href="" data-toggle="dropdown" class="dropdown-toggle dots">
 										<i class="fa fa-ellipsis-v" aria-hidden="true"></i>
 									</a>
 									<ul class="dropdown-menu">
 										<li><a href="" ng-click="showAbuseModel(c.comments);">REPORT SPAM OR ABUSE</a></li>
 									</ul>
-								</div>
+								</div>-->
 							</div>
 						</div>
 					</div>
@@ -200,14 +190,6 @@
 
 					</div>
 					<div class="support-me">
-						<a class="btn btn-default btn-lg btn-subscribe" ng-click="supportMe()" ng-if="showSupportMe">Support Me</a>
-						<div class="sm-group clearfix" ng-if="!showSupportMe">
-							<i class="fa fa-rupee" aria-hidden="true"></i>
-							<input type="text" class="sm-txt" placeholder="500" ng-model="support.amount" required>
-							<!--<div class="error-lable required">Password text field empty.</div>
-							<div class="error-lable format">Entering the invalid format.</div>-->
-							<button class="btn btn-default btn-lg btn-subscribe sm-btn" ng-disabled="!support.amount" ng-click="supportMeContinue(support.amount);">Continue</button>
-						</div>
 						<p class="desc">{{project.about}}</p>
 					</div>
 				</div>
@@ -236,100 +218,130 @@
 					</div>
 				</div>
 				
+				<h4 class="d-title">Money Raised</h4>
 				<div class="support-box user">
-					<h4 class="d-title">Top Donors</h4>
-					<div class="row d-wrp {{$index>2?'showHide':''}}" ng-repeat="td in topDonors track by $index" >
-						<div class="col-xs-6 col-sm-6 col-md-6 d-name">{{td.firstName}} {{td.lastName}}</div>
-						<div class="col-xs-6 col-sm-6 col-md-6 d-amount"><i class="fa fa-rupee" aria-hidden="true"></i>{{td.amount}}</div>
-					</div>
-					<div class="show-more" ng-show="{{topDonors.length > 3}}">
-						<div class="d-amount"><a href="" class="link" ng-click='showMoreHide()'>{{showMore?'Show More +':'Show Less -'}}</a></div>
-					</div>
-				</div>
-				<!--<div class="support-box user">
-					<h4 class="d-title">Most Raised from Social Sharing</h4>
-					<div class="row d-wrp">
-						<div class="col-xs-6 col-sm-6 col-md-6 d-name">Sugirtharaj</div>
-						<div class="col-xs-6 col-sm-6 col-md-6 d-amount"><i class="fa fa-rupee" aria-hidden="true"></i>4,000</div>
-					</div>
-					<div class="row d-wrp">
-						<div class="col-xs-6 col-sm-6 col-md-6 d-name">Amith Ashoak</div>
-						<div class="col-xs-6 col-sm-6 col-md-6 d-amount"><i class="fa fa-rupee" aria-hidden="true"></i>4,000</div>
-					</div>
-					<div class="show-more">
-						<div class="d-amount"><a href="" class="link">Show More +</a></div>
-					</div>
-				</div>-->
-				<div class="support-box user">
-					<h4 class="d-title">{{supporters.length}} Supporters</h4>
 					<div class="scrollbar-inner supporters-scroll">
-						<div class="clearfix ds-wrp" ng-repeat="s in supporters track by $index">
-							<div class="col-xs-4 col-sm-4 col-md-4 ds-img" style="background-image:url(/assets/images/supporter-user-bg.png);"></div>
+						<div class="clearfix ds-wrp" ng-repeat="m in moneyRaised track by $index">
+							<div class="col-xs-4 col-sm-4 col-md-4 ds-img td-txtt">
+								{{td.firstName|getFirstLetter:td.firstName:'V'}}
+							</div>
 							<div class="col-xs-8 col-sm-8 col-md-8 col-md-8 ds-user">
-								<div class="ds-amount"><i class="fa fa-rupee" aria-hidden="true"></i>{{s.amount}}</div>
-								<div class="ds-name">{{s.firstName}} {{s.lastName}}</div>
-								<div class="ds-time" am-time-ago="s.txnDate">s</div>
+								<div class="ds-amount"><i class="fa fa-rupee" aria-hidden="true"></i>{{m.amount}}</div>
+								<div class="ds-name">{{m.firstName}}</div>
+								<div class="ds-time">{{m.transDate}}</div>
 							</div>
 						</div>
 					</div>
 				</div>
-				<h4 class="s-proj-title ">Support this campaign</h4>
-				<div ng-repeat="supportrewards in project.supportrewards track by $index" class="project-support-box">
-					<a href="#checkout/{{project.projectId}}/{{supportrewards.amount}}/d" class="support-box-link">
-						<div class="support-box">
-							<h3 class="amount"><i class="fa fa-rupee" aria-hidden="true"></i>{{supportrewards.amount|toLocale}}<sup>.00</sup></h3>
-							<h4 class="s-title">{{supportrewards.title}}</h4>
-							<p class="s-desc">{{supportrewards.description}}</p>
-							<p class="s-support-cnt">5 People Supporting</p>
-						</div>
-					</a>
-				</div>				
 				
-				<h4 class="s-proj-title" ng-if="project.servicerewards.length">Service this campaign</h4>
-				<div ng-repeat="servicerewards in project.servicerewards track by $index">
-					<a href="#checkout/{{project.projectId}}/{{servicerewards.amount}}/d" class="support-box-link">
-						<div class="support-box">
-							<h3 class="amount"><i class="fa fa-rupee" aria-hidden="true"></i>{{servicerewards.amount|toLocale}}<sup>.00</sup></h3>
-							<h4 class="s-title">{{servicerewards.activityName}}</h4>
-							<p class="s-desc">{{servicerewards.description}}</p>
-							<p class="s-desc">{{servicerewards.availableDate}}</p>
-						</div>
-					</a>
-				</div>
-
-				
-				<h4 class="s-proj-title"><i class="fa fa-shield" aria-hidden="true"></i>Trustworthy Partners</h4>
-				<div class="clearfix partners">
-					<div class="p-logo"><img src="assets/images/paypal.png"/></div>
-					<div class="p-logo"><img src="assets/images/paytm.png"/></div>
-					<div class="p-logo last"><img src="assets/images/netbanking.png"/></div>
-				</div>
-                
-				<div class="sim-proj-wrp">
-					<h4 class="s-proj-title">Similar Campaigns</h4>
-					<h4 class="s-proj-title" style="text-transform:initial;" ng-if="similarProjects.length<2">Similar projects not found.</h4>
-
-					<div class="row sim-proj" ng-repeat="sp in similarProjects track by $index">
-						<div ng-if="sp.projectId != projectId">
-							<a href="#project/{{sp.projectId}}" class="poster-title">
-								<div class="col-md-5">
-									<img ng-if="sp.coverImage" style="background-image:url(uploads/{{sp.coverImage}})">
-									<img ng-if="!sp.coverImage" src="assets/images/poster-bg.png">
-								</div>
-							</a>
-							<div class="col-md-7">
-								<a href="#project/{{sp.projectId}}" class="poster-title">
-									<h5 class="title">{{sp.title}}</h5>
-								</a>
-								<p class="desc">{{sp.viewsCount}} Views</p>
-								<p class="desc">{{sp.remainDays}} Days to go</p>
+				<h4 class="d-title">Payments</h4>
+				<div class="support-box user">
+					<div class="scrollbar-inner supporters-scroll">
+						<div class="clearfix ds-wrp" ng-repeat="p in payments track by $index">
+							<div class="col-xs-2 col-sm-2 col-md-1">
+								<i class="fa fa-calendar a-marker" aria-hidden="true"></i>
+							</div>
+							<div class="col-xs-8 col-sm-8 col-md-8 col-md-8 ds-user">
+								<div class="ds-name">{{p.DateRange}}</div>
+								<div class="ds-time">₹. {{p.total}}</div>
 							</div>
 						</div>
 					</div>
-
 				</div>
+				
+				
+				<h4 class="d-title">{{likes.count.total}} Likes</h4>
+				<div class="support-box user">
+					<div class="scrollbar-inner supporters-scroll">
+						<div class="clearfix ds-wrp" ng-repeat="l in likes.weekly track by $index">
+							<div class="col-xs-2 col-sm-2 col-md-1">
+								<i class="fa fa-calendar a-marker" aria-hidden="true"></i>
+							</div>
+							<div class="col-xs-8 col-sm-8 col-md-8 col-md-8 ds-user">
+								<div class="ds-name">{{l.DateRange}}</div>
+								<div class="ds-time">{{l.count}} Likes</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				
+				<h4 class="d-title">{{views.count.total}} Views</h4>
+				<div class="support-box user">
+					<div class="scrollbar-inner supporters-scroll">
+						<div class="clearfix ds-wrp" ng-repeat="v in views.weekly track by $index">
+							<div class="col-xs-2 col-sm-2 col-md-1">
+								<i class="fa fa-calendar a-marker" aria-hidden="true"></i>
+							</div>
+							<div class="col-xs-8 col-sm-8 col-md-8 col-md-8 ds-user">
+								<div class="ds-name">{{v.DateRange}}</div>
+								<div class="ds-time">{{v.count}} Views</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				
 				
 			</div>
+		</div>
+	</div>
+</section>
+<section class="proj-report pd" style="padding:0 30px;">
+	<h4 class="btn-title">Accouting Section</h4>
+	<div class="row p-section">
+		<div class="col-md-6">
+			<h3 class="title">Total funds received till now</h3>
+			<h3 class="value">₹. {{accounting.totalFunds}}</h3>
+		</div>
+		<div class="col-md-6">
+			<h3 class="title">User Share</h3>
+			<h3 class="value">₹. {{accounting.userShare}}</h3>
+		</div>
+	</div>
+	<div class="row p-section">
+		<div class="col-md-6">
+			<h3 class="title">Company Share</h3>
+			<h3 class="value">₹. {{accounting.companyShare}} <span>(7% including)</span></h3>
+		</div>
+		<div class="col-md-6">
+			<h3 class="title">Actual Company share after processing charges</h3>
+			<h3 class="value">₹. {{accounting.acutualCompanyShare}}</h3>
+		</div>
+	</div>
+	<div class="row p-section">
+		<div class="col-md-6">
+			<h3 class="title">Additional purchase</h3>
+			<h3 class="value">₹. {{accounting.homePromotionPurchase}} <span>(Featured Section)</span></h3>
+		</div>
+		<div class="col-md-6">
+			<h3 class="title">Additional purchase</h3>
+			<h3 class="value">₹. {{accounting.socialPromotionPurchase}} <span>(Social Media Section)</span></h3>
+		</div>
+	</div>
+	<div class="row p-section">
+		<div class="col-md-6">
+			<h3 class="title">Total Company Earning</h3>
+			<h3 class="value">₹. {{accounting.totalCompanyEarning}} <span>(Actual Company Share Amount + Purchase Amount)</span></h3>
+		</div>
+		<div class="col-md-6">
+			<h3 class="title">Applicable taxes for users</h3>
+			<h3 class="value">₹. {{accounting.taxesForUser}}</h3>
+		</div>
+	</div>
+	<div class="row p-section">
+		<div class="col-md-6">
+			<h3 class="title">Balance funds after all deductions</h3>
+			<h3 class="value">₹. {{accounting.balanceFund}} <span>(Total fund received - Compnay share - Processing charges - Taxes)</span></h3>
+		</div>
+		<div class="col-md-6">
+			<h3 class="title">Fund dispresed till now</h3>
+			<h3 class="value">₹. {{accounting.fundDispersed}}</h3>
+		</div>
+	</div>
+	<div class="row p-section">
+		<div class="col-md-6">
+			<h3 class="title">Remaining balance with the compnay</h3>
+			<h3 class="value">Rs. {{accounting.balanceWithTheCompany}}</h3>
 		</div>
 	</div>
 </section>

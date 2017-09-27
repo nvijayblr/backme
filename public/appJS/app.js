@@ -1,5 +1,5 @@
 'use strict';
-var backMe = angular.module('backMe', ['ui.router', 'angular-loading-bar', 'ngMaterial', 'ngMessages', 'facebook', 'ngFileUpload', 'thatisuday.ng-image-gallery', '720kb.socialshare', 'ngImgCrop', 'vtex.ngCurrencyMask', 'uiCropper', 'ngDialog', 'socialLogin']);
+var backMe = angular.module('backMe', ['ui.router', 'angular-loading-bar', 'ngMaterial', 'ngMessages', 'facebook', 'ngFileUpload', 'thatisuday.ng-image-gallery', '720kb.socialshare', 'ngImgCrop', 'vtex.ngCurrencyMask', 'uiCropper', 'ngDialog', 'socialLogin', 'angularMoment']);
 
 backMe
 .config(['$stateProvider', '$urlRouterProvider', 'FacebookProvider', '$mdDateLocaleProvider', '$injector', 'socialProvider', 'appConstant', function(_stateProvider, _urlRouterProvider, FacebookProvider, _mdDateLocaleProvider, _injector, socialProvider, appConstant) {
@@ -11,16 +11,6 @@ backMe
 				url: '/home',
 				templateUrl: 'templates/home.html',
 				controller: 'homeCtrl'
-		})
-		.state('about', {
-				url: '/about',
-				templateUrl: 'templates/about.html',
-				controller: 'aboutCtrl'
-		})
-		.state('team', {
-				url: '/team',
-				templateUrl: 'templates/team.html',
-				controller: 'teamCtrl'
 		})
 		.state('create', {
 				abstract: true,
@@ -151,6 +141,16 @@ backMe
 				templateUrl: 'templates/admin/projects.html',
 				controller: 'adminProjectsCtrl'
 		})
+		.state('admin.promotions', {
+				url: '/promotions',
+				templateUrl: 'templates/admin/promotions.html',
+				controller: 'adminPromotionsCtrl'
+		})
+		.state('admin.project', {
+				url: '/project/:projectId',
+				templateUrl: 'templates/admin/project.html',
+				controller: 'adminProjectCtrl'
+		})
 		.state('admin.payments', {
 				url: '/payments',
 				templateUrl: 'templates/admin/payments.html',
@@ -176,11 +176,104 @@ backMe
 				templateUrl: 'templates/admin/comments.html',
 				controller: 'adminCommentsCtrl'
 		})
+		.state('admin.reports', {
+				url: '/reports',
+				templateUrl: 'templates/admin/reports.html',
+				controller: 'adminReportsCtrl'
+		})
 		.state('admin.account', {
 				url: '/account',
 				templateUrl: 'templates/admin/account.html',
 				controller: 'adminAccountCtrl'
 		})
+	
+		//Other Pages
+		.state('about', {
+				url: '/about',
+				templateUrl: 'templates/about.html',
+				controller: 'commonPagesCtrl'
+		})
+		.state('team', {
+				url: '/team',
+				templateUrl: 'templates/team.html',
+				controller: 'commonPagesCtrl'
+		})
+		.state('privacy-policy', {
+				url: '/privacy-policy',
+				templateUrl: 'templates/privacy-policy.html',
+				controller: 'commonPagesCtrl'
+		})
+		.state('terms-of-sale', {
+				url: '/terms-of-sale',
+				templateUrl: 'templates/terms-of-sale.html',
+				controller: 'commonPagesCtrl'
+		})
+		.state('terms-of-use', {
+				url: '/terms-of-use',
+				templateUrl: 'templates/terms-of-use.html',
+				controller: 'commonPagesCtrl'
+		})
+		.state('report-abuse', {
+				url: '/report-abuse',
+				templateUrl: 'templates/report-abuse.html',
+				controller: 'commonPagesCtrl'
+		})
+		.state('csr-policy', {
+				url: '/csr-policy',
+				templateUrl: 'templates/csr-policy.html',
+				controller: 'commonPagesCtrl'
+		})
+		.state('core-values', {
+				url: '/core-values',
+				templateUrl: 'templates/core-values.html',
+				controller: 'commonPagesCtrl'
+		})
+		.state('careers', {
+				url: '/careers',
+				templateUrl: 'templates/careers.html',
+				controller: 'commonPagesCtrl'
+		})
+		.state('blog', {
+				url: '/blog',
+				templateUrl: 'templates/blog.html',
+				controller: 'commonPagesCtrl'
+		})
+		.state('engineering', {
+				url: '/engineering',
+				templateUrl: 'templates/engineering.html',
+				controller: 'commonPagesCtrl'
+		})
+		.state('sitemap', {
+				url: '/sitemap',
+				templateUrl: 'templates/sitemap.html',
+				controller: 'commonPagesCtrl'
+		})
+		.state('infortainment-media-us', {
+				url: '/infortainment-media-us',
+				templateUrl: 'templates/infortainment-media-us.html',
+				controller: 'commonPagesCtrl'
+		})
+		.state('tech-limited', {
+				url: '/tech-limited',
+				templateUrl: 'templates/tech-limited.html',
+				controller: 'commonPagesCtrl'
+		})
+		.state('india-inc', {
+				url: '/india-inc',
+				templateUrl: 'templates/india-inc.html',
+				controller: 'commonPagesCtrl'
+		})
+		.state('faq', {
+				url: '/faq',
+				templateUrl: 'templates/faq.html',
+				controller: 'commonPagesCtrl'
+		})
+		.state('contact-us', {
+				url: '/contact-us',
+				templateUrl: 'templates/contact-us.html',
+				controller: 'commonPagesCtrl'
+		})
+
 		;
 		/*config facebook login button*/
 		FacebookProvider.init(appConstant.fbKey);

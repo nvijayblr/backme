@@ -81,7 +81,41 @@ backMe.controller('projectCtrl', ['$scope', 'BaseServices', '$timeout', '$state'
 	}
 	//_scope.searchProjects('');
 
-
+    _scope.getTopDonors = function(_query) {
+		_scope.topDonors = {};
+		_services.http.serve({
+			method: 'GET',
+			url: _appConstant.baseUrl + 'topDonors/' + _scope.projectId
+		}, function(data){
+			_scope.topDonors = data;
+		}, function(err) {
+			console.log(err)
+		});
+	}
+	_scope.getTopDonors();
+	
+    _scope.getAllSupporters = function(_query) {
+		_scope.supporters = {};
+		_services.http.serve({
+			method: 'GET',
+			url: _appConstant.baseUrl + 'topSupporters/' + _scope.projectId
+		}, function(data){
+			_scope.supporters = data;
+		}, function(err) {
+			console.log(err)
+		});
+	}
+	_scope.getAllSupporters();
+	
+	_scope.showMore = true;
+	_scope.showMoreHide = function() {
+		if(_scope.showMore) {
+			$('.showHide').show();
+		} else {
+			$('.showHide').hide();
+		}
+		_scope.showMore = !_scope.showMore;
+	}
     _scope.addViews = function(_projectId, _userId) {
 		_services.http.serve({
 			method: 'PUT',
@@ -174,7 +208,7 @@ backMe.controller('projectCtrl', ['$scope', 'BaseServices', '$timeout', '$state'
 	}
 	
 	function generateRemainDaysGraph(totaldays, remaindays) {
-		console.log(totaldays, remaindays)
+		//console.log(totaldays, remaindays)
 		var width = 65,
 			height = 65,
 			twoPi = 2 * Math.PI,

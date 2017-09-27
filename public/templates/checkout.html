@@ -70,7 +70,7 @@
 									<label class="f-label">Comment</label>
 									<md-input-container class="textarea">
 										<label class="ph-label">Your Comment</label>
-										<textarea ng-model="checkout.comment" required></textarea>
+										<textarea ng-model="checkout.comment" class="checkout textarea fixed"></textarea>
 										<div class="error-lable required">Comment text field empty.</div>
 										<div class="error-lable format">Entering the invalid format.</div>
 									</md-input-container>
@@ -124,7 +124,38 @@
 								</div>-->
 
 								<div class="input-wrp">
-									<label class="f-label">Pay Through</label>
+									<label class="f-label">Choose Payment Method</label>
+									<div class="pay-method-wrp">
+										<div class="razorpay">
+											<div class="row">
+												<div class="col-md-7">
+													<img src="assets/images/cards.png" />
+												</div>
+												<div class="col-md-5">
+													<button class="btn btn-default btn-lg btn-subscribe btn-donate" ng-click="checkout.paythrough='Razorpay'; checkoutForm.submit()">Donate via Razorpay</button>
+												</div>
+											</div>
+											<p>
+												Accepts all types of payments from Indian/International donors.<br>
+												Very secure, fast and convenient.
+											</p>
+										</div>
+										<div class="paytm">
+											<div class="row">
+												<div class="col-md-7">
+													<img src="assets/images/paytm_card.png" />
+												</div>
+												<div class="col-md-5">
+													<button class="btn btn-default btn-lg btn-subscribe btn-donate" ng-click="checkout.paythrough='Paytm'; checkoutForm.submit()">Donate via Paytm</button>
+												</div>
+											</div>
+											<p>Very secure, fast and convenient.</p>
+										</div>
+									</div>
+								</div>
+
+								<!--<div class="input-wrp">
+									<label class="f-label">Choose Payment Method</label>
 									<md-input-container class="md-block select" flex-gt-sm>
 										<label class="ph-label">Pay Through</label>
 										<md-select ng-model="checkout.paythrough">
@@ -133,13 +164,11 @@
 										</md-select>
 										<div class="error-lable select">Pay Through is required!</div>
 									</md-input-container>
-								</div>
+								</div>-->
 
-								<div class="support-me">
+								<!--<div class="support-me">
 									<button class="btn btn-default btn-lg btn-subscribe btn-checkout" ng-click="checkoutForm.submit()">Donate</button>
-									
-									<!--<button class="btn btn-default btn-lg btn-subscribe btn-checkout" ng-click="rzpPayment($event)">RZP Donate</button>-->
-								</div>					
+								</div>-->					
 								<ul class="cards-list clearfix">
 									<li><img src="assets/images/payment-options.png" width="" /></li>
 								</ul>

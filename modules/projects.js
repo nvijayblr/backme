@@ -481,6 +481,7 @@ exports.projectsAPI = function(app, dbConnection, validate, multer, path, nestin
 		}
 	});
 	
+
 	/*Get Specific project by projectId without any condition*/
 	app.get('/getProjectDetails/:projectId', function (req, res) {
 		var projectId = req.params.projectId;
@@ -618,7 +619,7 @@ exports.projectsAPI = function(app, dbConnection, validate, multer, path, nestin
 
 	/*Get Home Page Promotion projects list*/
 	app.get('/homePagePromotion', function (req, res) {
-		var sql = "SELECT p.projectId, p.title, p.category, p.coverImage, p.moneyNeeded, p.endByDate, p.createdDate, p.userId, p.name, p.userPhoto, p.about, TIMESTAMPDIFF(DAY,CURDATE(),p.endByDate) as remainDays, (SELECT COUNT(*) from likes l where l.projectId=p.projectId) AS likesCount, (SELECT COUNT(*) from views v where v.projectId=p.projectId) AS viewsCount, (SELECT COUNT(*) from shares s where s.projectId=p.projectId) AS sharesCount, (SELECT COUNT(*) from favourites f where f.projectId=p.projectId) AS favCount, (SELECT COALESCE(SUM(amount),0) from payments pay where pay.projectId=p.projectId AND pay.txnStatus='TXN_SUCCESS') AS funded FROM projects p WHERE p.STATUS = 'ACTIVE' AND p.endByDate >= CURDATE() AND p.homePagePromotion='YES'";
+		var sql = "SELECT p.projectId, p.title, p.category, p.coverImage, p.moneyNeeded, p.endByDate, p.createdDate, p.userId, p.name, p.userPhoto, p.about, TIMESTAMPDIFF(DAY,CURDATE(),p.endByDate) as remainDays, (SELECT COUNT(*) from likes l where l.projectId=p.projectId) AS likesCount, (SELECT COUNT(*) from views v where v.projectId=p.projectId) AS viewsCount, (SELECT COUNT(*) from shares s where s.projectId=p.projectId) AS sharesCount, (SELECT COUNT(*) from favourites f where f.projectId=p.projectId) AS favCount, (SELECT COALESCE(SUM(amount),0) from payments pay where pay.projectId=p.projectId AND pay.txnStatus='TXN_SUCCESS') AS funded FROM projects p WHERE p.STATUS = 'ACTIVE' AND p.endByDate >= CURDATE() AND p.projectId IN (select projectId from promotions WHERE type='HOME_PROMOTION' AND status='ACTIVE')";
 		try {
 			dbConnection.query(sql, function (error, results, fields) {
 				if (error) {
@@ -632,7 +633,51 @@ exports.projectsAPI = function(app, dbConnection, validate, multer, path, nestin
 			res.status(500).send("Internal Server Error.");
 		}
 	});
-
+	
+	//Top donors for specific project. TODO: change the Limit value as per feedback. 
+	app.get('/topDonors/:projectId', function (req, res) {
+		var projectId = req.params.projectId;
+		if(!projectId) {
+			res.status(400).send("Bad Request: ProjectId should not be empty.");
+			return;
+		};
+		try {
+			dbConnection.query('SELECT projectId, firstName, lastName, amount, txnDate from payments WHERE projectId=? AND txnStatus="TXN_SUCCESS" AND purpose="DONATION" ORDER BY amount DESC LIMIT 5', [projectId], function (error, results, fields) {
+				if (error) {
+					console.log(error);
+					res.status(500).send("Internal Server Error.");
+					return;
+				}
+				res.status(200).send(results);
+			});
+		} catch(e) {
+			console.log(e);
+			res.status(500).send(e);
+		}	
+	});
+	
+	//all the supporters for specific project
+	app.get('/topSupporters/:projectId', function (req, res) {
+		var projectId = req.params.projectId;
+		if(!projectId) {
+			res.status(400).send("Bad Request: ProjectId should not be empty.");
+			return;
+		};
+		try {
+			dbConnection.query('SELECT projectId, firstName, lastName, amount, txnDate from payments WHERE projectId=? AND txnStatus="TXN_SUCCESS" AND purpose="DONATION"', [projectId], function (error, results, fields) {
+				if (error) {
+					console.log(error);
+					res.status(500).send("Internal Server Error.");
+					return;
+				}
+				res.status(200).send(results);
+			});
+		} catch(e) {
+			console.log(e);
+			res.status(500).send(e);
+		}	
+	});
+		
 	/*Get projects list for home page*/
 	app.get('/bySocial', function (req, res) {
 		var q = req.query.q || '';

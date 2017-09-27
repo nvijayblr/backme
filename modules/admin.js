@@ -1,6 +1,5 @@
 
 exports.adminAPI = function(app, dbConnection, validate, multer, path, nesting, async, moment, transporter, emails) {
-	
 	/*Get All projects*/
 	app.get('/admin/projects', function (req, res) {
 		var admin = req.query;
@@ -38,7 +37,105 @@ exports.adminAPI = function(app, dbConnection, validate, multer, path, nesting, 
 
 	});
 	
+	/*Get Specific project by projectId for admin*/
+	app.get('/admin/projects/:projectId', function (req, res) {
+		var projectId = req.params.projectId;
+		try {
+			if(projectId) {
+				dbConnection.query({sql: 'SELECT *, TIMESTAMPDIFF(HOUR,CURDATE(),endByDate) as remainHours, \
+					TIMESTAMPDIFF(DAY,CURDATE(),endByDate) as remainDays, TIMESTAMPDIFF(DAY,createdDate,endByDate) as totalDays, (SELECT COUNT(*) from likes l where l.projectId=projects.projectId) AS likesCount, (SELECT COUNT(*) from likes al where al.projectId=projects.projectId) AS alreadyLiked, (SELECT COUNT(*) from views v where v.projectId=projects.projectId) AS viewsCount, (SELECT COUNT(*) from payments p where p.projectId=projects.projectId AND txnStatus="TXN_SUCCESS") AS supportersCount FROM projects \
+					LEFT JOIN spendmoney ON (projects.projectId = spendmoney.projectId) \
+					LEFT JOIN projectsassets ON (projects.projectId = projectsassets.projectId) \
+					LEFT JOIN servicerewards ON (projects.projectId = servicerewards.projectId) \
+					LEFT JOIN supportrewards ON (projects.projectId = supportrewards.projectId) \
+					LEFT JOIN team ON (projects.projectId = team.projectId) \
+					LEFT JOIN (SELECT orderId, projectId, COALESCE(SUM(amount),0) as amount, count(orderId) as count FROM payments WHERE txnStatus="TXN_SUCCESS" GROUP BY projectId) payments ON (projects.projectId = payments.projectId) \
+					LEFT JOIN (SELECT projectId, likeId, count(likeId) as likeCount, EXISTS(SELECT * FROM likes) as alreadyLiked  from likes WHERE projectId=?) likes ON (projects.projectId = likes.projectId) \
+					WHERE projects.projectId=?', nestTables: true}, [projectId, projectId], function (error, results, fields) {
+					var nestingOptions = [
+						{ tableName : 'projects', pkey: 'projectId', fkeys:[{table:'spendmoney',col:'projectId'}, {table:'projectsassets',col:'projectId'}, {table:'servicerewards',col:'projectId'}, {table:'supportrewards',col:'projectId'}, {table:'team',col:'projectId'}, {table:'remaindayshours',col:'projectId'}, {table:'payments',col:'projectId'}, {table:'likes',col:'projectId'}]},
+						{ tableName : 'spendmoney', pkey: 'spendId'},
+						{ tableName : 'projectsassets', pkey: 'assetId'},
+						{ tableName : 'servicerewards', pkey: 'serviceId'},
+						{ tableName : 'supportrewards', pkey: 'supportId'},
+						{ tableName : 'team', pkey: 'teamId'},
+						{ tableName : 'remaindayshours', pkey: 'remainId'},
+						{ tableName : 'payments', pkey: 'orderId'},
+						{ tableName : 'likes', pkey: 'likeId'}
+					];
+					var nestedRows = nesting.convertToNested(results, nestingOptions);
+					if (error) {
+						console.log(error);
+						res.status(500).send("Internal Server Error.");
+						return;
+					}
+					res.status(200).send(nestedRows.length ? nestedRows[0] : nestedRows);
+				});
+			}
+		} catch(e) {
+			console.log(e);
+			res.status(500).send("Internal Server Error.");
+		}
+	});
+
 	
+	
+	app.get('/admin/promotedProjects', function (req, res) {
+		var admin = req.query;
+
+		if(admin.role == 'ADMIN' && admin.adminId) {
+			try {
+				dbConnection.query('SELECT p.projectId, p.title, p.category, p.name, pr.type, pr.fromDate, pr.toDate, pr.status from projects p, promotions pr WHERE p.projectId=pr.projectId AND p.projectId IN (SELECT projectId from assignprojects WHERE adminId=?)', [admin.adminId], function (error, results, fields) {
+					if (error) {
+						console.log(error);
+						res.status(500).send("Internal Server Error.");
+						return;
+					}
+					res.status(200).send(results);
+				});
+			} catch(e) {
+				console.log(e);
+				res.status(500).send(e);
+			}
+
+		} else {
+			try {
+				dbConnection.query('SELECT p.projectId, p.title, p.category, p.name, pr.type, pr.fromDate, pr.toDate, pr.status from projects p, promotions pr WHERE p.projectId=pr.projectId', function (error, results, fields) {
+					if (error) {
+						console.log(error);
+						res.status(500).send("Internal Server Error.");
+						return;
+					}
+					res.status(200).send(results);
+				});
+			} catch(e) {
+				console.log(e);
+				res.status(500).send(e);
+			}
+		}
+	});
+	
+	app.put('/admin/promotion/status', function (req, res) {
+		var project = req.body;
+		if(!project.projectId || !project.status || !project.type) {
+			res.status(400).send("Bad Request: Promotion projectId/status should not be empty.");
+			return;
+		};
+		try {
+			dbConnection.query('UPDATE promotions SET status=? WHERE type=? AND projectId IN ('+project.projectId+')', [project.status, project.type], function (error, results, fields) {
+				if (error) {
+					console.log(error);
+					res.status(500).send("Internal Server Error.");
+					return;
+				}
+				res.status(200).send(results);
+			});
+		} catch(e) {
+			console.log(e);
+			res.status(500).send(e);
+		}
+	});
+
 	/*Admin releted apis*/
 	
 	/*admin login*/
@@ -700,7 +797,7 @@ exports.adminAPI = function(app, dbConnection, validate, multer, path, nesting, 
 		};
 		if(admin.role == 'ADMIN' && admin.adminId) {
 			try {
-				dbConnection.query('SELECT COUNT(p.projectId) as projectCount, p.location, a.adminId FROM projects p, assignprojects a WHERE (p.createdDate BETWEEN ? AND ?) AND p.projectId=a.projectId AND a.adminId=? GROUP BY p.location', [admin.fromDate, admin.toDate, admin.adminId], function (error, results, fields) {
+				dbConnection.query('SELECT COUNT(p.projectId) as projectCount, p.location, a.adminId FROM projects p, assignprojects a WHERE (DATE(p.createdDate) BETWEEN ? AND ?) AND p.projectId=a.projectId AND a.adminId=? GROUP BY p.location', [admin.fromDate, admin.toDate, admin.adminId], function (error, results, fields) {
 					if (error) {
 						res.status(500).send(error);
 						return;
@@ -712,7 +809,7 @@ exports.adminAPI = function(app, dbConnection, validate, multer, path, nesting, 
 			}
 		} else {
 			try {
-				dbConnection.query('SELECT COUNT(*) as projectCount, location FROM projects WHERE createdDate BETWEEN ? AND ? GROUP BY location', [admin.fromDate, admin.toDate], function (error, results, fields) {
+				dbConnection.query('SELECT COUNT(*) as projectCount, location FROM projects WHERE DATE(createdDate) BETWEEN ? AND ? GROUP BY location', [admin.fromDate, admin.toDate], function (error, results, fields) {
 					if (error) {
 						res.status(500).send(error);
 						return;
@@ -725,7 +822,6 @@ exports.adminAPI = function(app, dbConnection, validate, multer, path, nesting, 
 		}
 	});
 
-
 	app.get('/admin/statistics/trending', function (req, res) {
 		var admin = req.query;
 		if(!admin.fromDate || !admin.toDate) {
@@ -734,8 +830,7 @@ exports.adminAPI = function(app, dbConnection, validate, multer, path, nesting, 
 		};
 		if(admin.role == 'ADMIN' && admin.adminId) {
 			try {
-				//TODO: update the 	query as based on the assigned projects to admin.
-				dbConnection.query("SELECT DATE_FORMAT(viewedOn, '%Y %b') as monthYear, COUNT(viewId) as viewCount, (SELECT COUNT(likeId) from likes WHERE DATE_FORMAT(likedOn, '%Y%m') = DATE_FORMAT(viewedOn, '%Y%m')) AS likesCount, (SELECT COUNT(shareId) from shares WHERE DATE_FORMAT(sharedOn, '%Y%m') = DATE_FORMAT(viewedOn, '%Y%m')) AS sharesCount, (SELECT COUNT(amount) from payments WHERE txnStatus='TXN_SUCCESS' AND DATE_FORMAT(txnDate, '%Y%m') = DATE_FORMAT(viewedOn, '%Y%m')) AS supportersCount from views WHERE viewedOn BETWEEN ? AND ? GROUP BY DATE_FORMAT(viewedOn, '%Y%m')", [admin.fromDate, admin.toDate], function (error, results, fields) {
+				dbConnection.query("SELECT DATE_FORMAT(viewedOn, '%Y %b') as monthYear, COUNT(viewId) as viewCount, (SELECT COUNT(likeId) from likes WHERE DATE_FORMAT(likedOn, '%Y%m') = DATE_FORMAT(viewedOn, '%Y%m') AND projectId IN(SELECT projectId FROM assignprojects WHERE adminId=?)) AS likesCount, (SELECT COUNT(shareId) from shares WHERE DATE_FORMAT(sharedOn, '%Y%m') = DATE_FORMAT(viewedOn, '%Y%m') AND projectId IN(SELECT projectId FROM assignprojects WHERE adminId=?)) AS sharesCount, (SELECT COUNT(amount) from payments WHERE txnStatus='TXN_SUCCESS' AND DATE_FORMAT(txnDate, '%Y%m') = DATE_FORMAT(viewedOn, '%Y%m') AND projectId IN(SELECT projectId FROM assignprojects WHERE adminId=?)) AS supportersCount from views WHERE DATE(viewedOn) BETWEEN ? AND ?  AND projectId IN(SELECT projectId FROM assignprojects WHERE adminId=?) GROUP BY DATE_FORMAT(viewedOn, '%Y%m')", [admin.adminId, admin.adminId, admin.adminId, admin.fromDate, admin.toDate, admin.adminId], function (error, results, fields) {
 					if (error) {
 						res.status(500).send(error);
 						return;
@@ -747,7 +842,7 @@ exports.adminAPI = function(app, dbConnection, validate, multer, path, nesting, 
 			}
 		} else {
 			try {
-				dbConnection.query("SELECT DATE_FORMAT(viewedOn, '%Y %b') as monthYear, COUNT(viewId) as viewCount, (SELECT COUNT(likeId) from likes WHERE DATE_FORMAT(likedOn, '%Y%m') = DATE_FORMAT(viewedOn, '%Y%m')) AS likesCount, (SELECT COUNT(shareId) from shares WHERE DATE_FORMAT(sharedOn, '%Y%m') = DATE_FORMAT(viewedOn, '%Y%m')) AS sharesCount, (SELECT COUNT(amount) from payments WHERE txnStatus='TXN_SUCCESS' AND DATE_FORMAT(txnDate, '%Y%m') = DATE_FORMAT(viewedOn, '%Y%m')) AS supportersCount from views WHERE viewedOn BETWEEN ? AND ? GROUP BY DATE_FORMAT(viewedOn, '%Y%m')", [admin.fromDate, admin.toDate], function (error, results, fields) {
+				dbConnection.query("SELECT DATE_FORMAT(viewedOn, '%Y %b') as monthYear, COUNT(viewId) as viewCount, (SELECT COUNT(likeId) from likes WHERE DATE_FORMAT(likedOn, '%Y%m') = DATE_FORMAT(viewedOn, '%Y%m')) AS likesCount, (SELECT COUNT(shareId) from shares WHERE DATE_FORMAT(sharedOn, '%Y%m') = DATE_FORMAT(viewedOn, '%Y%m')) AS sharesCount, (SELECT COUNT(amount) from payments WHERE txnStatus='TXN_SUCCESS' AND DATE_FORMAT(txnDate, '%Y%m') = DATE_FORMAT(viewedOn, '%Y%m')) AS supportersCount from views WHERE DATE(viewedOn) BETWEEN ? AND ? GROUP BY DATE_FORMAT(viewedOn, '%Y%m')", [admin.fromDate, admin.toDate], function (error, results, fields) {
 					if (error) {
 						res.status(500).send(error);
 						return;
@@ -770,7 +865,7 @@ exports.adminAPI = function(app, dbConnection, validate, multer, path, nesting, 
 		};
 		if(admin.role == 'ADMIN' && admin.adminId) {
 			try {
-				dbConnection.query("SELECT COUNT(p.projectId) as projectCount, DATE_FORMAT(createdDate, '%Y %b') as monthYear, a.adminId FROM projects p, assignprojects a WHERE (p.createdDate BETWEEN ? AND ?) AND p.projectId=a.projectId AND a.adminId=? GROUP BY DATE_FORMAT(createdDate, '%Y%m')", [admin.fromDate, admin.toDate, admin.adminId], function (error, results, fields) {
+				dbConnection.query("SELECT COUNT(p.projectId) as projectCount, DATE_FORMAT(createdDate, '%Y %b') as monthYear, a.adminId FROM projects p, assignprojects a WHERE (DATE(p.createdDate) BETWEEN ? AND ?) AND p.projectId=a.projectId AND a.adminId=? GROUP BY DATE_FORMAT(createdDate, '%Y%m')", [admin.fromDate, admin.toDate, admin.adminId], function (error, results, fields) {
 					if (error) {
 						res.status(500).send(error);
 						return;
@@ -782,7 +877,7 @@ exports.adminAPI = function(app, dbConnection, validate, multer, path, nesting, 
 			}
 		} else {
 			try {
-				dbConnection.query("SELECT COUNT(*) as projectCount, DATE_FORMAT(createdDate, '%Y %b') as monthYear FROM projects WHERE createdDate BETWEEN ? AND ? GROUP BY DATE_FORMAT(createdDate, '%Y%m')", [admin.fromDate, admin.toDate], function (error, results, fields) {
+				dbConnection.query("SELECT COUNT(*) as projectCount, DATE_FORMAT(createdDate, '%Y %b') as monthYear FROM projects WHERE DATE(createdDate) BETWEEN ? AND ? GROUP BY DATE_FORMAT(createdDate, '%Y%m')", [admin.fromDate, admin.toDate], function (error, results, fields) {
 					if (error) {
 						res.status(500).send(error);
 						return;
@@ -795,45 +890,563 @@ exports.adminAPI = function(app, dbConnection, validate, multer, path, nesting, 
 		}
 
 	});
+	
+	/*Get All projects statistics*/
+	app.get('/admin/report/statistics', function (req, res) {
+		var admin = req.query;
+		var response = {
+			totalProjects: 0,
+			totalFunded: 0,
+			projectsTopLocation: '',
+			fundedTopLocation: ''
+		};
+		
+		if(admin.role == 'ADMIN' && admin.adminId) {
+			try {
+				dbConnection.query('SELECT COUNT(*) as totalProjects, p.location, a.adminId, (SELECT COALESCE(SUM(amount),0) from payments pay where pay.projectId=p.projectId AND pay.txnStatus="TXN_SUCCESS") AS totalFunded FROM projects p, assignprojects a WHERE p.projectId=a.projectId AND a.adminId=? AND DATE(p.createdDate) BETWEEN ? AND ?', [admin.adminId, admin.fromDate, admin.toDate], function (error, results, fields) {
+					if (error) {
+						console.log(error);
+						res.status(500).send("Internal Server Error.");
+						return;
+					}
+					response.totalProjects = results.length?results[0].totalProjects:'';
+					response.totalProjects = results.length?results[0].totalProjects:'';
+					dbConnection.query('SELECT COALESCE(SUM(amount),0) AS totalFunded from payments WHERE txnStatus="TXN_SUCCESS" AND DATE(txnDate) BETWEEN ? AND ? AND projectId IN(SELECT projectId FROM assignprojects WHERE adminId=?)',[admin.fromDate, admin.toDate, admin.adminId], function (error, results, fields) {
+						if (error) {
+							console.log(error);
+							res.status(500).send("Internal Server Error.");
+							return;
+						}
+						response.totalFunded = results.length?results[0].totalFunded:'';
+						dbConnection.query('SELECT COUNT(*) as pcount, p.location, a.adminId FROM projects p, assignprojects a WHERE p.projectId=a.projectId AND a.adminId=? AND DATE(p.createdDate) BETWEEN ? AND ? GROUP BY p.location ORDER BY pcount DESC LIMIT 1', [admin.adminId, admin.fromDate, admin.toDate], function (error, results, fields) {
+							if (error) {
+								console.log(error);
+								res.status(500).send("Internal Server Error.");
+								return;
+							}
+							response.projectsTopLocation = results.length?results[0].location:'';
+							dbConnection.query('SELECT p.location, (SELECT COALESCE(SUM(amount),0) from payments pay where pay.projectId=p.projectId AND pay.txnStatus="TXN_SUCCESS" AND DATE(pay.txnDate) BETWEEN ? AND ?) AS totalFunded, a.adminId FROM projects p, assignprojects a WHERE p.projectId=a.projectId AND a.adminId=? GROUP BY p.location ORDER BY totalFunded DESC LIMIT 1', [admin.fromDate, admin.toDate, admin.adminId], function (error, results, fields) {
+								if (error) {
+									console.log(error);
+									res.status(500).send("Internal Server Error.");
+									return;
+								}
+								response.fundedTopLocation = results.length?results[0].location:'';
+								res.status(200).send(response);
+							});					
+						});					
+					});
+				});
+			} catch(e) {
+				console.log(e);
+				res.status(500).send(e);
+			}
 
+		} else {
+			try {
+				dbConnection.query('SELECT COUNT(*) as totalProjects, p.location, (SELECT COALESCE(SUM(amount),0) from payments pay where pay.projectId=p.projectId AND pay.txnStatus="TXN_SUCCESS") AS totalFunded FROM projects p WHERE DATE(p.createdDate) BETWEEN ? AND ?',[admin.fromDate, admin.toDate], function (error, results, fields) {
+					if (error) {
+						console.log(error);
+						res.status(500).send("Internal Server Error.");
+						return;
+					}
+					response.totalProjects = results.length?results[0].totalProjects:'';
+					dbConnection.query('SELECT COALESCE(SUM(amount),0) AS totalFunded from payments WHERE txnStatus="TXN_SUCCESS" AND DATE(txnDate) BETWEEN ? AND ?',[admin.fromDate, admin.toDate], function (error, results, fields) {
+						if (error) {
+							console.log(error);
+							res.status(500).send("Internal Server Error.");
+							return;
+						}
+						response.totalFunded = results.length?results[0].totalFunded:'';
+						dbConnection.query('SELECT COUNT(*) as pcount, location FROM projects WHERE DATE(createdDate) BETWEEN ? AND ? GROUP BY location ORDER BY pcount DESC LIMIT 1',[admin.fromDate, admin.toDate], function (error, results, fields) {
+							if (error) {
+								console.log(error);
+								res.status(500).send("Internal Server Error.");
+								return;
+							}
+							response.projectsTopLocation = results.length?results[0].location:'';
+							dbConnection.query('SELECT p.location, (SELECT COALESCE(SUM(amount),0) from payments pay where pay.projectId=p.projectId AND pay.txnStatus="TXN_SUCCESS" AND DATE(pay.txnDate) BETWEEN ? AND ? ) AS totalFunded FROM projects p GROUP BY p.location ORDER BY totalFunded DESC LIMIT 1',[admin.fromDate, admin.toDate], function (error, results, fields) {
+								if (error) {
+									console.log(error);
+									res.status(500).send("Internal Server Error.");
+									return;
+								}
+								response.fundedTopLocation = results.length?results[0].location:'';
+								res.status(200).send(response);
+							});
+						});
+					});
+				});
+			} catch(e) {
+				console.log(e);
+				res.status(500).send(e);
+			}
+		}
+	});
 
+	
+	/*Get top 10 projects based on likes and comments*/
+	app.get('/admin/report/topProjects', function (req, res) {
+		var admin = req.query;
+		if(admin.role == 'ADMIN' && admin.adminId) {
+			try {
+				dbConnection.query('SELECT p.projectId, p.title, p.coverImage, a.adminId, (SELECT COUNT(*) FROM likes WHERE p.projectId=likes.projectId AND DATE(likes.likedOn) BETWEEN ? AND ?) as likesCount, (SELECT COUNT(*) FROM comments WHERE p.projectId=comments.projectId AND DATE(comments.commentedOn) BETWEEN ? AND ?) as commentsCount, (SELECT SUM(likesCount+commentsCount)) AS totalCount FROM projects p, assignprojects a WHERE p.projectId=a.projectId AND a.adminId=? GROUP BY p.projectId HAVING totalCount>0 ORDER BY totalCount DESC', [admin.fromDate, admin.toDate, admin.fromDate, admin.toDate, admin.adminId], function (error, results, fields) {
+					if (error) {
+						console.log(error);
+						res.status(500).send("Internal Server Error.");
+						return;
+					}
+					res.status(200).send(results);
+				});
+			} catch(e) {
+				console.log(e);
+				res.status(500).send(e);
+			}
+
+		} else {
+			try {
+				dbConnection.query('SELECT projectId, title, coverImage, (SELECT COUNT(*) FROM likes WHERE projects.projectId=likes.projectId AND DATE(likes.likedOn) BETWEEN ? AND ?) as likesCount, (SELECT COUNT(*) FROM comments WHERE projects.projectId=comments.projectId AND DATE(comments.commentedOn) BETWEEN ? AND ?) as commentsCount, (SELECT SUM(likesCount+commentsCount)) AS totalCount FROM projects HAVING totalCount>0 ORDER BY totalCount DESC',[admin.fromDate, admin.toDate, admin.fromDate, admin.toDate], function (error, results, fields) {
+					if (error) {
+						console.log(error);
+						res.status(500).send("Internal Server Error.");
+						return;
+					}
+					res.status(200).send(results);
+				});
+			} catch(e) {
+				console.log(e);
+				res.status(500).send(e);
+			}
+		}
+	});
+	
+	/*Get top 10 funded projects based payments received*/
+	app.get('/admin/report/topFunded', function (req, res) {
+		var admin = req.query;
+
+		if(admin.role == 'ADMIN' && admin.adminId) {
+			try {
+				dbConnection.query('SELECT p.projectId, p.title, p.coverImage, a.adminId, (SELECT COALESCE(SUM(amount),0) from payments pay where pay.projectId=p.projectId AND pay.txnStatus="TXN_SUCCESS" AND DATE(pay.txnDate) BETWEEN ? AND ?) AS funded FROM projects p, assignprojects a WHERE p.projectId=a.projectId AND a.adminId=? GROUP BY p.projectId HAVING funded>0 ORDER BY funded DESC', [admin.fromDate, admin.toDate, admin.adminId], function (error, results, fields) {
+					if (error) {
+						console.log(error);
+						res.status(500).send("Internal Server Error.");
+						return;
+					}
+					res.status(200).send(results);
+				});
+			} catch(e) {
+				console.log(e);
+				res.status(500).send(e);
+			}
+
+		} else {
+			try {
+				dbConnection.query('SELECT p.projectId, p.title, p.coverImage, a.adminId, (SELECT COALESCE(SUM(amount),0) from payments pay where pay.projectId=p.projectId AND pay.txnStatus="TXN_SUCCESS" AND DATE(pay.txnDate) BETWEEN ? AND ?) AS funded FROM projects p, assignprojects a GROUP BY p.projectId HAVING funded>0 ORDER BY funded DESC',[admin.fromDate, admin.toDate], function (error, results, fields) {
+					if (error) {
+						console.log(error);
+						res.status(500).send("Internal Server Error.");
+						return;
+					}
+					res.status(200).send(results);
+				});
+			} catch(e) {
+				console.log(e);
+				res.status(500).send(e);
+			}
+		}
+	});
+	
+	/*Get Over funded projects based payments received*/
+	app.get('/admin/report/overFunded', function (req, res) {
+		var admin = req.query;
+
+		if(admin.role == 'ADMIN' && admin.adminId) {
+			try {
+				dbConnection.query('SELECT p.projectId, p.title, p.coverImage, p.moneyNeeded, a.adminId, (SELECT COALESCE(SUM(amount),0) from payments pay where pay.projectId=p.projectId AND pay.txnStatus="TXN_SUCCESS" AND DATE(pay.txnDate) BETWEEN ? AND ?) AS funded FROM projects p, assignprojects a WHERE p.projectId=a.projectId AND a.adminId=? GROUP BY p.projectId HAVING funded>p.moneyNeeded ORDER BY funded DESC', [admin.fromDate, admin.toDate, admin.adminId], function (error, results, fields) {
+					if (error) {
+						console.log(error);
+						res.status(500).send("Internal Server Error.");
+						return;
+					}
+					res.status(200).send(results);
+				});
+			} catch(e) {
+				console.log(e);
+				res.status(500).send(e);
+			}
+
+		} else {
+			try {
+				dbConnection.query('SELECT p.projectId, p.title, p.coverImage, p.moneyNeeded, a.adminId, (SELECT COALESCE(SUM(amount),0) from payments pay where pay.projectId=p.projectId AND pay.txnStatus="TXN_SUCCESS" AND DATE(pay.txnDate) BETWEEN ? AND ?) AS funded FROM projects p, assignprojects a GROUP BY p.projectId HAVING funded>=p.moneyNeeded ORDER BY funded DESC',[admin.fromDate, admin.toDate], function (error, results, fields) {
+					if (error) {
+						console.log(error);
+						res.status(500).send("Internal Server Error.");
+						return;
+					}
+					res.status(200).send(results);
+				});
+			} catch(e) {
+				console.log(e);
+				res.status(500).send(e);
+			}
+		}
+	});
+	
+	/*Get Less funded projects based payments received*/
+	app.get('/admin/report/lessFunded', function (req, res) {
+		var admin = req.query;
+
+		if(admin.role == 'ADMIN' && admin.adminId) {
+			try {
+				dbConnection.query('SELECT p.projectId, p.title, p.coverImage, p.moneyNeeded, a.adminId, (SELECT COALESCE(SUM(amount),0) from payments pay where pay.projectId=p.projectId AND pay.txnStatus="TXN_SUCCESS" AND DATE(pay.txnDate) BETWEEN ? AND ?) AS funded, (SELECT(funded/p.moneyNeeded)*100)AS percent FROM projects p, assignprojects a WHERE a.adminId=? GROUP BY p.projectId HAVING funded<p.moneyNeeded AND funded>0 AND percent<=50 ORDER BY funded DESC', [admin.fromDate, admin.toDate, admin.adminId], function (error, results, fields) {
+					if (error) {
+						console.log(error);
+						res.status(500).send("Internal Server Error.");
+						return;
+					}
+					res.status(200).send(results);
+				});
+			} catch(e) {
+				console.log(e);
+				res.status(500).send(e);
+			}
+
+		} else {
+			try {
+				dbConnection.query('SELECT p.projectId, p.title, p.coverImage, p.moneyNeeded, (SELECT COALESCE(SUM(amount),0) from payments pay where pay.projectId=p.projectId AND pay.txnStatus="TXN_SUCCESS" AND DATE(pay.txnDate) BETWEEN ? AND ?) AS funded, (SELECT(funded/p.moneyNeeded)*100)AS percent FROM projects p GROUP BY p.projectId HAVING funded<p.moneyNeeded AND funded>0 AND percent<=50 ORDER BY funded DESC',[admin.fromDate, admin.toDate], function (error, results, fields) {
+					if (error) {
+						console.log(error);
+						res.status(500).send("Internal Server Error.");
+						return;
+					}
+					res.status(200).send(results);
+				});
+			} catch(e) {
+				console.log(e);
+				res.status(500).send(e);
+			}
+		}
+	});
+	
+	
+	/*Get top donors based payments received*/
+	app.get('/admin/report/topDonors', function (req, res) {
+		var admin = req.query;
+
+		if(admin.role == 'ADMIN' && admin.adminId) {
+			try {
+				dbConnection.query('SELECT pay.projectId, pay.firstName, pay.amount, a.adminId from payments pay, assignprojects a WHERE pay.projectId=a.projectId AND a.adminId=? AND pay.txnStatus="TXN_SUCCESS" AND DATE(pay.txnDate) BETWEEN ? AND ? ORDER BY pay.amount DESC', [admin.adminId, admin.fromDate, admin.toDate], function (error, results, fields) {
+					if (error) {
+						console.log(error);
+						res.status(500).send("Internal Server Error.");
+						return;
+					}
+					res.status(200).send(results);
+				});
+			} catch(e) {
+				console.log(e);
+				res.status(500).send(e);
+			}
+
+		} else {
+			try {
+				dbConnection.query('SELECT projectId, firstName, amount from payments WHERE txnStatus="TXN_SUCCESS" AND DATE(txnDate) BETWEEN ? AND ? ORDER BY amount DESC',[admin.fromDate, admin.toDate], function (error, results, fields) {
+					if (error) {
+						console.log(error);
+						res.status(500).send("Internal Server Error.");
+						return;
+					}
+					res.status(200).send(results);
+				});
+			} catch(e) {
+				console.log(e);
+				res.status(500).send(e);
+			}
+		}
+	});
+	
+	
+	/*Get top location based payments received*/
+	app.get('/admin/report/topCities', function (req, res) {
+		var admin = req.query;
+
+		if(admin.role == 'ADMIN' && admin.adminId) {
+			try {
+				dbConnection.query('SELECT p.projectId, p.location, a.adminId, (SELECT COALESCE(SUM(amount),0) from payments pay where pay.projectId=p.projectId AND pay.txnStatus="TXN_SUCCESS" AND DATE(pay.txnDate) BETWEEN ? AND ?) AS totalFunded FROM projects p, assignprojects a WHERE p.projectId=a.projectId AND a.adminId=? GROUP BY p.location HAVING totalFunded>0 ORDER BY totalFunded DESC', [admin.fromDate, admin.toDate, admin.adminId], function (error, results, fields) {
+					if (error) {
+						console.log(error);
+						res.status(500).send("Internal Server Error.");
+						return;
+					}
+					res.status(200).send(results);
+				});
+			} catch(e) {
+				console.log(e);
+				res.status(500).send(e);
+			}
+
+		} else {
+			try {
+				dbConnection.query('SELECT p.projectId, p.location, (SELECT COALESCE(SUM(amount),0) from payments pay where pay.projectId=p.projectId AND pay.txnStatus="TXN_SUCCESS" AND DATE(pay.txnDate) BETWEEN ? AND ?) AS totalFunded FROM projects p GROUP BY p.location HAVING totalFunded>0 ORDER BY totalFunded DESC',[admin.fromDate, admin.toDate], function (error, results, fields) {
+					if (error) {
+						console.log(error);
+						res.status(500).send("Internal Server Error.");
+						return;
+					}
+					res.status(200).send(results);
+				});
+			} catch(e) {
+				console.log(e);
+				res.status(500).send(e);
+			}
+		}
+	});
+	
+	/*Get accounting details*/
+	app.get('/admin/report/accounting', function (req, res) {
+		var admin = req.query;
+		var userSharePercent = 90;
+		var companySharePercent = 7;
+		var procesingChargePercent = 2;
+		var taxesForUserPercent = 15;
+		var accounting = {
+			totalFunds: 0,
+			userShare: 0,
+			companyShare: 0,
+			procesingCharge: 0,
+			acutualCompanyShare: 0,
+			homePromotionPurchase: 0,
+			socialPromotionPurchase: 0,
+			totalCompanyEarning: 0,
+			taxesForUser: 0,
+			balanceFund: 0,
+			fundDispersed: 0,
+			balanceWithTheCompany: 0
+		}
+		
+		if(admin.role == 'ADMIN' && admin.adminId) {
+			try {
+				dbConnection.query('SELECT (SELECT COALESCE(SUM(amount),0) FROM (SELECT amount from payments WHERE txnStatus="TXN_SUCCESS" AND DATE(txnDate) BETWEEN ? AND ? AND purpose="DONATION" AND projectId IN(SELECT projectId FROM assignprojects WHERE adminId=?))AS totalFunds )AS totalFunds, (SELECT COALESCE(SUM(amount),0) FROM (SELECT amount from payments WHERE txnStatus="TXN_SUCCESS" AND DATE(txnDate) BETWEEN ? AND ? AND purpose="HOME_PROMOTION" AND projectId IN(SELECT projectId FROM assignprojects WHERE adminId=?))AS homePromotionPurchase )AS homePromotionPurchase, (SELECT COALESCE(SUM(amount),0) FROM (SELECT amount from payments WHERE txnStatus="TXN_SUCCESS" AND DATE(txnDate) BETWEEN ? AND ? AND purpose="SOCIAL_PROMOTION" AND projectId IN(SELECT projectId FROM assignprojects WHERE adminId=?))AS homePromotionPurchase )AS socialPromotionPurchase', [admin.fromDate, admin.toDate, admin.adminId, admin.fromDate, admin.toDate, admin.adminId, admin.fromDate, admin.toDate, admin.adminId], function (error, results, fields) {
+					if (error) {
+						console.log(error);
+						res.status(500).send("Internal Server Error.");
+						return;
+					}
+					if(results.length) {
+						accounting.totalFunds 				=	results[0].totalFunds?results[0].totalFunds:0;
+						accounting.userShare 				= 	accounting.totalFunds*userSharePercent/100;
+						accounting.companyShare 			= 	accounting.totalFunds*companySharePercent/100;
+						accounting.procesingCharge 			= 	accounting.totalFunds*procesingChargePercent/100;
+						accounting.acutualCompanyShare 		= 	accounting.totalFunds - accounting.procesingCharge;
+						accounting.homePromotionPurchase 	= 	results[0].homePromotionPurchase?results[0].homePromotionPurchase:0;
+						accounting.socialPromotionPurchase 	= 	results[0].socialPromotionPurchase?results[0].socialPromotionPurchase:0;
+						accounting.totalCompanyEarning 		= 	accounting.acutualCompanyShare + 
+																accounting.homePromotionPurchase + 
+																accounting.socialPromotionPurchase;
+						accounting.taxesForUser 			= 	accounting.userShare*taxesForUserPercent/100;
+						accounting.balanceFund		 		= 	accounting.totalFunds - 
+																accounting.companyShare -
+																accounting.procesingCharge -
+																accounting.taxesForUser;
+						accounting.fundDispersed 			=	results[0].fundDispersed?results[0].fundDispersed:0;
+						accounting.balanceWithTheCompany	= 	accounting.userShare - accounting.fundDispersed;
+
+					}
+					res.status(200).send(accounting);
+				});
+			} catch(e) {
+				console.log(e);
+				res.status(500).send(e);
+			}
+
+		} else {
+			try {
+				dbConnection.query('SELECT (SELECT COALESCE(SUM(amount),0) FROM (SELECT amount from payments WHERE txnStatus="TXN_SUCCESS" AND DATE(txnDate) BETWEEN ? AND ? AND purpose="DONATION")AS totalFunds )AS totalFunds, (SELECT COALESCE(SUM(amount),0) FROM (SELECT amount from payments WHERE txnStatus="TXN_SUCCESS" AND DATE(txnDate) BETWEEN ? AND ? AND purpose="HOME_PROMOTION")AS homePromotionPurchase )AS homePromotionPurchase, (SELECT COALESCE(SUM(amount),0) FROM (SELECT amount from payments WHERE txnStatus="TXN_SUCCESS" AND DATE(txnDate) BETWEEN ? AND ? AND purpose="SOCIAL_PROMOTION")AS homePromotionPurchase )AS socialPromotionPurchase', [admin.fromDate, admin.toDate, admin.fromDate, admin.toDate, admin.fromDate, admin.toDate], function (error, results, fields) {
+					if (error) {
+						console.log(error);
+						res.status(500).send("Internal Server Error.");
+						return;
+					}
+					if(results.length) {
+						accounting.totalFunds 				=	results[0].totalFunds?results[0].totalFunds:0;
+						accounting.userShare 				= 	accounting.totalFunds*userSharePercent/100;
+						accounting.companyShare 			= 	accounting.totalFunds*companySharePercent/100;
+						accounting.procesingCharge 			= 	accounting.totalFunds*procesingChargePercent/100;
+						accounting.acutualCompanyShare 		= 	accounting.totalFunds - accounting.procesingCharge;
+						accounting.homePromotionPurchase 	= 	results[0].homePromotionPurchase?results[0].homePromotionPurchase:0;
+						accounting.socialPromotionPurchase 	= 	results[0].socialPromotionPurchase?results[0].socialPromotionPurchase:0;
+						accounting.totalCompanyEarning 		= 	accounting.acutualCompanyShare + 
+																accounting.homePromotionPurchase + 
+																accounting.socialPromotionPurchase;
+						accounting.taxesForUser 			= 	accounting.userShare*taxesForUserPercent/100;
+						accounting.balanceFund		 		= 	accounting.totalFunds - 
+																accounting.companyShare -
+																accounting.procesingCharge -
+																accounting.taxesForUser;
+						accounting.fundDispersed 			=	results[0].fundDispersed?results[0].fundDispersed:0;
+						accounting.balanceWithTheCompany	= 	accounting.userShare - accounting.fundDispersed;
+
+					}
+					res.status(200).send(accounting);
+				});
+			} catch(e) {
+				console.log(e);
+				res.status(500).send(e);
+			}
+		}
+	});
+	
+	/*Get accounting details based on projectId*/
+	app.get('/admin/report/accounting/:projectId', function (req, res) {
+		var admin = req.query;
+		var projectId = req.params.projectId;
+		var userSharePercent = 90;
+		var companySharePercent = 7;
+		var procesingChargePercent = 2;
+		var taxesForUserPercent = 15;
+		var accounting = {
+			totalFunds: 0,
+			userShare: 0,
+			companyShare: 0,
+			procesingCharge: 0,
+			acutualCompanyShare: 0,
+			homePromotionPurchase: 0,
+			socialPromotionPurchase: 0,
+			totalCompanyEarning: 0,
+			taxesForUser: 0,
+			balanceFund: 0,
+			fundDispersed: 0,
+			balanceWithTheCompany: 0
+		}
+		
+		try {
+			dbConnection.query('SELECT (SELECT COALESCE(SUM(amount),0) FROM (SELECT amount from payments WHERE txnStatus="TXN_SUCCESS" AND purpose="DONATION" AND projectId=?)AS totalFunds )AS totalFunds, (SELECT COALESCE(SUM(amount),0) FROM (SELECT amount from payments WHERE txnStatus="TXN_SUCCESS" AND purpose="HOME_PROMOTION" AND projectId=?)AS homePromotionPurchase )AS homePromotionPurchase, (SELECT COALESCE(SUM(amount),0) FROM (SELECT amount from payments WHERE txnStatus="TXN_SUCCESS" AND purpose="SOCIAL_PROMOTION" AND projectId=?)AS homePromotionPurchase )AS socialPromotionPurchase', [projectId, projectId, projectId], function (error, results, fields) {
+				if (error) {
+					console.log(error);
+					res.status(500).send("Internal Server Error.");
+					return;
+				}
+				if(results.length) {
+					accounting.totalFunds 				=	results[0].totalFunds?results[0].totalFunds:0;
+					accounting.userShare 				= 	accounting.totalFunds*userSharePercent/100;
+					accounting.companyShare 			= 	accounting.totalFunds*companySharePercent/100;
+					accounting.procesingCharge 			= 	accounting.totalFunds*procesingChargePercent/100;
+					accounting.acutualCompanyShare 		= 	accounting.totalFunds - accounting.procesingCharge;
+					accounting.homePromotionPurchase 	= 	results[0].homePromotionPurchase?results[0].homePromotionPurchase:0;
+					accounting.socialPromotionPurchase 	= 	results[0].socialPromotionPurchase?results[0].socialPromotionPurchase:0;
+					accounting.totalCompanyEarning 		= 	accounting.acutualCompanyShare + 
+															accounting.homePromotionPurchase + 
+															accounting.socialPromotionPurchase;
+					accounting.taxesForUser 			= 	accounting.userShare*taxesForUserPercent/100;
+					accounting.balanceFund		 		= 	accounting.totalFunds - 
+															accounting.companyShare -
+															accounting.procesingCharge -
+															accounting.taxesForUser;
+					accounting.fundDispersed 			=	results[0].fundDispersed?results[0].fundDispersed:0;
+					accounting.balanceWithTheCompany	= 	accounting.userShare - accounting.fundDispersed;
+
+				}
+				res.status(200).send(accounting);
+			});
+		} catch(e) {
+			console.log(e);
+			res.status(500).send(e);
+		}
+	});
+	
+	/*Get likes by weekwise*/
+	app.get('/admin/report/likes/weekly', function (req, res) {
+		var admin = req.query;
+		var likes = {};
+		try {
+			dbConnection.query("SELECT WEEK(likedOn) week, COUNT(likeId) as count, CONCAT(DATE_FORMAT(DATE_ADD(likedOn, INTERVAL(1-DAYOFWEEK(likedOn)) DAY),'%b %d'), ' - ', DATE_FORMAT(DATE_ADD(likedOn, INTERVAL(7-DAYOFWEEK(likedOn)) DAY),'%b %d')) AS DateRange FROM likes WHERE projectId=? GROUP BY YEARWEEK(likedOn)", [admin.projectId], function (error, results, fields) {
+				if (error) {
+					console.log(error);
+					res.status(500).send("Internal Server Error.");
+					return;
+				}
+				likes.weekly = results.length ? results : {};
+				dbConnection.query("SELECT count(likeId) as total FROM likes WHERE projectId = ?", [admin.projectId], function (error, results, fields) {
+					if (error) {
+						console.log(error);
+						res.status(500).send("Internal Server Error.");
+						return;
+					}
+					likes.count = results.length ? results[0] : 0;
+					res.status(200).send(likes);
+				});
+			});
+		} catch(e) {
+			console.log(e);
+			res.status(500).send(e);
+		}
+	});
+	
+	
+	/*Get views by weekwise*/
+	app.get('/admin/report/views/weekly', function (req, res) {
+		var admin = req.query;
+		var views = {};
+		try {
+			dbConnection.query("SELECT WEEK(viewedOn) week, COUNT(viewId) as count, CONCAT(DATE_FORMAT(DATE_ADD(viewedOn, INTERVAL(1-DAYOFWEEK(viewedOn)) DAY),'%b %d'), ' - ', DATE_FORMAT(DATE_ADD(viewedOn, INTERVAL(7-DAYOFWEEK(viewedOn)) DAY),'%b %d')) AS DateRange FROM views WHERE projectId=? GROUP BY YEARWEEK(viewedOn)", [admin.projectId], function (error, results, fields) {
+				if (error) {
+					console.log(error);
+					res.status(500).send("Internal Server Error.");
+					return;
+				}
+				views.weekly = results.length ? results : {};
+				dbConnection.query("SELECT count(viewId) as total FROM views WHERE projectId=?", [admin.projectId], function (error, results, fields) {
+					if (error) {
+						console.log(error);
+						res.status(500).send("Internal Server Error.");
+						return;
+					}
+					views.count = results.length ? results[0] : 0;
+					res.status(200).send(views);
+				});
+			});
+		} catch(e) {
+			console.log(e);
+			res.status(500).send(e);
+		}
+	});
+	
+	
+	/*Get payments by weekwise*/
+	app.get('/admin/report/payments/weekly', function (req, res) {
+		var admin = req.query;
+		try {
+			dbConnection.query("SELECT WEEK(txnDate) week, SUM(amount) as total, CONCAT(DATE_FORMAT(DATE_ADD(txnDate, INTERVAL(1-DAYOFWEEK(txnDate)) DAY),'%b %d'), ' - ', DATE_FORMAT(DATE_ADD(txnDate, INTERVAL(7-DAYOFWEEK(txnDate)) DAY),'%b %d')) AS DateRange FROM payments WHERE projectId=? AND txnStatus='TXN_SUCCESS' AND purpose='DONATION' GROUP BY YEARWEEK(txnDate)", [admin.projectId], function (error, results, fields) {
+				if (error) {
+					console.log(error);
+					res.status(500).send("Internal Server Error.");
+					return;
+				}
+				res.status(200).send(results);
+			});
+		} catch(e) {
+			console.log(e);
+			res.status(500).send(e);
+		}
+	});
+	
+	
+	/*Get payments by weekwise*/
+	app.get('/admin/report/payments/moneyraised', function (req, res) {
+		var admin = req.query;
+		try {
+			dbConnection.query("SELECT firstName, amount, DATE_FORMAT(txnDate, '%b %d %Y') as transDate FROM payments WHERE projectId=? AND txnStatus='TXN_SUCCESS' AND purpose='DONATION'", [admin.projectId], function (error, results, fields) {
+				if (error) {
+					console.log(error);
+					res.status(500).send("Internal Server Error.");
+					return;
+				}
+				res.status(200).send(results);
+			});
+		} catch(e) {
+			console.log(e);
+			res.status(500).send(e);
+		}
+	});
+	
 }
-
-//SELECT p.projectId, p.title, (SELECT COUNT(*) from likes l where l.projectId=p.projectId) AS likesCount, (SELECT COUNT(*) from views v where v.projectId=p.projectId) AS viewsCount, (SELECT COUNT(*) from shares s where s.projectId=p.projectId) AS sharesCount, (SELECT COALESCE(SUM(amount),0) from payments pay where pay.projectId=p.projectId AND pay.txnStatus='TXN_SUCCESS') AS funded, (SELECT count(amount) from payments paycount where paycount.projectId=p.projectId AND paycount.txnStatus='TXN_SUCCESS') AS fundedCount, (SELECT SUM(likesCount+viewsCount)) AS socialCount FROM projects p HAVING socialCount>0 ORDER BY socialCount
-
-
-//Bar Graph - No. of projects Trend Month on Month
-
-//SELECT DATE_FORMAT(viewedOn, '%Y%b') as monthYear, COUNT(viewId) as viewCount, (SELECT COUNT(likeId) from likes WHERE DATE_FORMAT(likedOn, '%Y%m') = DATE_FORMAT(viewedOn, '%Y%m')) AS likesCount, (SELECT COUNT(shareId) from shares WHERE DATE_FORMAT(sharedOn, '%Y%m') = DATE_FORMAT(viewedOn, '%Y%m')) AS sharesCount, (SELECT COUNT(amount) from payments WHERE txnStatus='TXN_SUCCESS' AND DATE_FORMAT(txnDate, '%Y%m') = DATE_FORMAT(viewedOn, '%Y%m')) AS supportersCount from views GROUP BY DATE_FORMAT(viewedOn, '%Y%m')
-
-
-//CREATE TABLE `backme`.`assignprojects` ( `assignId` INT NOT NULL AUTO_INCREMENT , `projectId` INT NOT NULL , `adminId` INT NOT NULL , `assignedDate` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() , `reviewedDate` TIMESTAMP NOT NULL , `status` VARCHAR(255) NOT NULL , `comments` VARCHAR(1000) NOT NULL , PRIMARY KEY (`assignId`)) ENGINE = InnoDB;
-
-
-//SELECT a.adminId, COUNT(ap.assignId) as assignCount from admin a LEFT JOIN assignprojects ap ON a.adminId = ap.adminId GROUP BY a.adminId ORDER BY assignCount LIMIT 1
-
-
-//SELECT COUNT(*) as projectCount, DATE_FORMAT(createdDate, '%Y %b') as monthYear FROM projects WHERE createdDate BETWEEN ? AND ? GROUP BY DATE_FORMAT(createdDate, '%Y%m')
-
-//SELECT COUNT(*) as projectCount, DATE_FORMAT(createdDate, '%Y %b') as monthYear FROM projects GROUP BY DATE_FORMAT(createdDate, '%Y%m')
-
-
-
-//SELECT COUNT(p.projectId) as projectCount, p.location, a.adminId FROM projects p, assignprojects a WHERE p.projectId=a.projectId GROUP BY p.location
-
-
-//SELECT p.*, a.adminId FROM projects p, assignprojects a WHERE p.projectId=a.projectId ORDER BY p.projectId DESC
-
-//SELECT p.*, (SELECT COUNT(*) from likes l where l.projectId=p.projectId) AS likesCount, a.adminId FROM projects p, assignprojects a WHERE p.projectId=a.projectId ORDER BY p.projectId DESC
-
-/*//SELECT p.*, TIMESTAMPDIFF(HOUR,CURDATE(),endByDate) as remainHours, TIMESTAMPDIFF(DAY,CURDATE(),endByDate) as remainDays, TIMESTAMPDIFF(DAY,createdDate,endByDate) as totalDays, a.adminId, (SELECT COUNT(*) from likes l where l.projectId=p.projectId) AS likesCount, (SELECT COUNT(*) from likes al where al.projectId=p.projectId) AS alreadyLiked, (SELECT COUNT(*) from views v where v.projectId=p.projectId) AS viewsCount, (SELECT COUNT(*) from payments p where p.projectId=p.projectId AND txnStatus="TXN_SUCCESS") AS supportersCount, a.adminId FROM projects p 
-LEFT JOIN assignprojects a ON (p.projectId=a.projectId)
-					LEFT JOIN spendmoney ON (p.projectId = spendmoney.projectId) 
-					LEFT JOIN projectsassets ON (p.projectId = projectsassets.projectId) 
-					LEFT JOIN servicerewards ON (p.projectId = servicerewards.projectId) 
-					LEFT JOIN supportrewards ON (p.projectId = supportrewards.projectId) 
-					LEFT JOIN team ON (p.projectId = team.projectId) 
-					LEFT JOIN (SELECT orderId, projectId, COALESCE(SUM(amount),0) as amount, count(orderId) as count FROM payments WHERE txnStatus="TXN_SUCCESS" GROUP BY projectId) payments ON (p.projectId = payments.projectId) WHERE p.projectId=a.projectId AND a.adminId=8 ORDER BY p.projectId DESC*/
-
-
-

@@ -41,20 +41,8 @@ exports.route = function(app, dbConnection, validate, multer, path, nesting, asy
 					});
 				},
 				function (wCB) {
-					if(resData.purpose == 'HOME_PROMOTION' && resData.txnStatus == 'TXN_SUCCESS') {
-						dbConnection.query('UPDATE projects SET homePagePromotion="YES" WHERE projectId = ?', resData.projectId, function (error, results, fields) {
-							if (error) {
-								return wCB(error);
-							}
-							wCB();
-						});
-					} else {
-						wCB();
-					}
-				},
-				function (wCB) {
-					if(resData.purpose == 'SOCIAL_PROMOTION' && resData.txnStatus == 'TXN_SUCCESS') {
-						dbConnection.query('UPDATE projects SET socialPromotion="YES" WHERE projectId = ?', resData.projectId, function (error, results, fields) {
+					if(resData.purpose == 'HOME_PROMOTION' || resData.purpose == 'SOCIAL_PROMOTION') {
+						dbConnection.query("INSERT INTO promotions SET projectId=?, type=?, fromDate=CURRENT_TIMESTAMP(), toDate=NOW()+interval 1 month, status='ACTIVE'", [resData.projectId, resData.purpose], function (error, results, fields) {
 							if (error) {
 								return wCB(error);
 							}
@@ -100,8 +88,8 @@ exports.route = function(app, dbConnection, validate, multer, path, nesting, asy
 					});
 				},
 				function (wCB) {
-					if(payments.purpose == 'HOME_PROMOTION') {
-						dbConnection.query('UPDATE projects SET homePagePromotion="YES" WHERE projectId = ?', payments.projectId, function (error, results, fields) {
+					if(payments.purpose == 'HOME_PROMOTION' || payments.purpose == 'SOCIAL_PROMOTION') {
+						dbConnection.query("INSERT INTO promotions SET projectId=?, type=?, fromDate=CURRENT_TIMESTAMP(), toDate=NOW()+interval 1 month, status='ACTIVE'", [payments.projectId, payments.purpose], function (error, results, fields) {
 							if (error) {
 								return wCB(error);
 							}
@@ -111,9 +99,9 @@ exports.route = function(app, dbConnection, validate, multer, path, nesting, asy
 						wCB();
 					}
 				},
-				function (wCB) {
+				/*function (wCB) {
 					if(payments.purpose == 'SOCIAL_PROMOTION') {
-						dbConnection.query('UPDATE projects SET socialPromotion="YES" WHERE projectId = ?', payments.projectId, function (error, results, fields) {
+						dbConnection.query('UPDATE projects SET socialPromotion="YES", socialPromotionStatus="ACTIVE" WHERE projectId = ?', payments.projectId, function (error, results, fields) {
 							if (error) {
 								return wCB(error);
 							}
@@ -122,7 +110,7 @@ exports.route = function(app, dbConnection, validate, multer, path, nesting, asy
 					} else {
 						wCB();
 					}
-				},
+				},*/
 				function (wCB) {
 					response.status(200).send({orderId:orderId});
 				}

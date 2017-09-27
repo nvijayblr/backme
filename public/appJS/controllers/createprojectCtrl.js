@@ -43,8 +43,6 @@ backMe.controller('createprojectCtrl', ['$scope', 'BaseServices', '$timeout', '$
 		"status": "DRAFT",
 		"noOfDays": "",
 		"daysDate": "Days",
-		"socialPromotion": "NO",
-		"homePagePromotion": "NO",
 		"stepsCompleted": 0
 	  };
 	_scope.disableStartProject = true;

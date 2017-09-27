@@ -32,7 +32,6 @@ backMe.controller('homeCtrl', ['$scope', 'BaseServices', '$timeout', 'appConstan
 			url: _appConstant.baseUrl + 'homePagePromotion'
 		}, function(data){
 			_scope.homePromotion = data;
-			console.log(_scope.homePromotion);
 		}, function(err) {
 			console.log(err)
 		});

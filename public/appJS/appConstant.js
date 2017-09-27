@@ -11,10 +11,10 @@ backMe.constant('appConstant', {
 	currentAdmin: _currentAdmin,
 	fbKey: '211137599382729',
 	linkedInKey: '',
-	googleClientId: '47668821926-o59d17ntaav3fi8jvbkl0pc9d5gjukrm',
-	baseUrl: 'http://localhost:3001/',
-	/*googleClientId: '1022772628270-d0a4laj9hasu9ahg4gqjshqhq3pvboch',
-	baseUrl: 'http://supportmytalent.in/',*/
+	/*googleClientId: '47668821926-o59d17ntaav3fi8jvbkl0pc9d5gjukrm',
+	baseUrl: 'http://localhost:3001/',*/
+	googleClientId: '1022772628270-d0a4laj9hasu9ahg4gqjshqhq3pvboch',
+	baseUrl: 'http://supportmytalent.in/',
 	projectMaxDays: 999
 });
 
