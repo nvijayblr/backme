@@ -14,7 +14,7 @@
     "ccavenue": "^1.0.2",
     "cors": "^2.8.3",
     "ejs": "^2.5.6",
-    "electron": "^1.6.11",
+    "electron": "^9.1.0",
     "express": "^4.15.2",
     "forever": "^0.15.3",
     "googleapis": "^19.0.0",
